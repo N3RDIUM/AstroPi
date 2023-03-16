@@ -8,6 +8,9 @@ import os
 # Import constants
 import constants
 
+# If the log file already exists, delete it
+if os.path.exists("log.txt"):
+    os.remove("log.txt")
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 
 class AstroPi(QtWidgets.QMainWindow):
