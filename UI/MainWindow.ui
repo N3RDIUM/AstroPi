@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../assets/AstroPi.png</normaloff>../assets/AstroPi.png</iconset>
+    <normaloff>../../../.designer/assets/AstroPi.png</normaloff>../../../.designer/assets/AstroPi.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -104,7 +104,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>-&gt;</string>
+         <string>→</string>
         </property>
        </widget>
        <widget class="Line" name="line">
@@ -1012,12 +1012,38 @@
      <rect>
       <x>0</x>
       <y>580</y>
-      <width>751</width>
+      <width>711</width>
       <height>87</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="toolButton">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>580</y>
+      <width>33</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>x</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="toolButton_2">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>620</y>
+      <width>33</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>↓</string>
     </property>
    </widget>
   </widget>
@@ -1067,6 +1093,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../assets/AstroPi.png"/>
+ </resources>
  <connections/>
 </ui>
