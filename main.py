@@ -3,6 +3,10 @@ from PyQt5 import QtWidgets, uic
 import logging
 import time
 import sys
+import os
+
+# Import constants
+import constants
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -33,6 +37,24 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add click callbacks to the buttons
         self.toolButton.clicked.connect(self.clearLog)
         self.toolButton_2.clicked.connect(self.saveLog)
+        self.pushButton_7.clicked.connect(self.setSaveDir)
+        
+        # Add callback to slider
+        self.horizontalSlider.valueChanged.connect(self.setProcessorFanSpeed)
+        self.horizontalSlider_2.valueChanged.connect(self.setSensorFanSpeed)
+        self.horizontalSlider_3.valueChanged.connect(self.setISO)
+        self.horizontalSlider_4.valueChanged.connect(self.setFocus)
+        
+        # Set default values
+        self.save_dir = None
+        self.board_status = constants.DISCONNECTED
+        self.board_ip = None
+        self.session_time_setting = 0
+        self.processor_fan_speed = 0
+        self.sensor_fan_speed = 0
+        self.exposure = 0
+        self.iso = 0
+        self.focus = 0
         
     def resizeEvent(self, event):
         """
@@ -53,9 +75,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.tabWidget.move(new_width, 0)
         self.textEdit.resize(new_width, 90)
         self.textEdit.move(0, height - 150)
-        self.toolButton.move(new_width - 32, height - 150)
+        self.toolButton.move(new_width - 64, height - 150)
         self.toolButton.resize(32, 32)
-        self.toolButton_2.move(new_width - 32, height - 118)
+        self.toolButton_2.move(new_width - 64, height - 118)
         self.toolButton_2.resize(32, 32)
         
         # Log the new size of the window
@@ -123,6 +145,74 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("No file was selected", logging.WARNING)
         except Exception as e:
             self.log("Error saving log: " + str(e), logging.ERROR)
+            
+    def setProcessorFanSpeed(self, speed):
+        """
+        Set the processor fan speed
+        """
+        speed = round(speed / 99 * 100)
+        if speed == 0:
+            self.label_19.setText("Auto")
+            self.log("Processor fan speed set to Auto", logging.DEBUG)
+            self.processor_fan_speed = constants.AUTO
+        else:
+            self.label_19.setText(str(speed) + "%")
+            self.processor_fan_speed = speed
+    
+    def setSensorFanSpeed(self, speed):
+        """
+        Set the sensor fan speed
+        """
+        speed = round(speed / 99 * 100)
+        if speed == 0:
+            self.label_20.setText("Auto")
+            self.log("Sensor fan speed set to Auto", logging.DEBUG)
+            self.sensor_fan_speed = constants.AUTO
+        else:
+            self.label_20.setText(str(speed) + "%")
+            self.sensor_fan_speed = speed
+        
+    def setISO(self, iso):
+        """
+        Set the ISO
+        """
+        iso = round(iso / 99 * 1500) + 100
+        self.label_23.setText(str(iso))
+        self.iso = iso
+        
+    def setFocus(self, focus):
+        """
+        Set the focus
+        """
+        if focus == 0:
+            self.label_26.setText("Auto")
+            self.focus = constants.AUTO
+            self.log("Focus set to Auto", logging.DEBUG)
+        elif focus == 99:
+            self.label_26.setText("Infinity")
+            self.focus = constants.INFINITY
+            self.log("Focus set to Infinity", logging.DEBUG)
+        else:
+            self.label_26.setText(str(focus))
+            self.focus = focus
+            
+    def setSaveDir(self):
+        """
+        Open a file dialog to select a directory to save images to
+        """
+        dialog = QtWidgets.QFileDialog()
+        dialog.create()
+        dir = dialog.getExistingDirectory()
+
+        while dialog.isVisible():
+            QtWidgets.QApplication.processEvents()
+        
+        if os.path.isdir(dir):
+            self.save_dir = dir
+            self.lineEdit_5.setText(dir)
+            self.log("Save directory set to: " + dir, logging.INFO)
+        
+        dialog.close()
 
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication

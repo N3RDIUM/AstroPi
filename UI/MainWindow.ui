@@ -360,7 +360,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>0%</string>
+         <string>Auto</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_20">
@@ -373,7 +373,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>0%</string>
+         <string>Auto</string>
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_2">
@@ -561,7 +561,7 @@
           <x>20</x>
           <y>110</y>
           <width>71</width>
-          <height>41</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
@@ -591,7 +591,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>5cm</string>
+         <string>Auto</string>
         </property>
        </widget>
        <widget class="QSlider" name="horizontalSlider_4">
@@ -718,30 +718,50 @@
          <string>Approximate ETA: 0 seconds</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_38">
-        <property name="geometry">
-         <rect>
-          <x>270</x>
-          <y>120</y>
-          <width>51</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>0 sec</string>
-        </property>
-       </widget>
-       <widget class="QSlider" name="horizontalSlider_5">
+       <widget class="QLineEdit" name="lineEdit_4">
         <property name="geometry">
          <rect>
           <x>90</x>
-          <y>120</y>
-          <width>171</width>
-          <height>20</height>
+          <y>110</y>
+          <width>81</width>
+          <height>32</height>
          </rect>
         </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_6">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>110</y>
+          <width>81</width>
+          <height>32</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_18">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>110</y>
+          <width>21</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>&lt;p align=&quot;center&quot;&gt;&lt;h3&gt;/&lt;/h3&gt;&lt;/p&gt;</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_38">
+        <property name="geometry">
+         <rect>
+          <x>280</x>
+          <y>110</y>
+          <width>21</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sec</string>
         </property>
        </widget>
       </widget>
@@ -857,7 +877,7 @@
          </rect>
         </property>
         <property name="value">
-         <number>24</number>
+         <number>0</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_31">
@@ -909,7 +929,7 @@
          </rect>
         </property>
         <property name="value">
-         <number>24</number>
+         <number>0</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_34">
@@ -922,7 +942,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>0/0</string>
+         <string>0/0s</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_35">
