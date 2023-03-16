@@ -944,7 +944,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>[CAPTURING] / [IDLE]</string>
+         <string>&lt;span style=&quot;color:green&quot;&gt;[CAPTURING]&lt;/span&gt; / [IDLE]</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButton_8">
