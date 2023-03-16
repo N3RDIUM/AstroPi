@@ -18,7 +18,7 @@ class AstroPi(QtWidgets.QMainWindow):
         uic.loadUi('./UI/MainWindow.ui', self) # Load the .ui file
         
         # Log success
-        self.log("<strong>AstroPi v2023.0.1</strong>")
+        self.log("<strong>AstroPi v2023.0.12</strong>")
         self.log("AstroPi has started successfully!")
         
         self.show() # Show the GUI
