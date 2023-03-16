@@ -1065,6 +1065,16 @@
     <addaction name="separator"/>
     <addaction name="actionAbout_AstroPi"/>
    </widget>
+   <widget class="QMenu" name="menuBoard">
+    <property name="title">
+     <string>Board</string>
+    </property>
+    <addaction name="actionPull_updates"/>
+    <addaction name="actionSystem_update"/>
+    <addaction name="actionRun_tests"/>
+    <addaction name="actionConnect_to_shell"/>
+   </widget>
+   <addaction name="menuBoard"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -1090,6 +1100,26 @@
   <action name="actionAbout_AstroPi">
    <property name="text">
     <string>About AstroPi</string>
+   </property>
+  </action>
+  <action name="actionPull_updates">
+   <property name="text">
+    <string>Pull updates</string>
+   </property>
+  </action>
+  <action name="actionSystem_update">
+   <property name="text">
+    <string>System update</string>
+   </property>
+  </action>
+  <action name="actionRun_tests">
+   <property name="text">
+    <string>Run tests</string>
+   </property>
+  </action>
+  <action name="actionConnect_to_shell">
+   <property name="text">
+    <string>Connect to shell</string>
    </property>
   </action>
  </widget>
