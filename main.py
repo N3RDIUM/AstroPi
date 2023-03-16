@@ -24,7 +24,10 @@ class AstroPi(QtWidgets.QMainWindow):
         self.show() # Show the GUI
         
         # Set the background image of the window as the AstroPi logo
-        self.label_17.setStyleSheet("background-image: url(\"./assets/AstroPi.png\"); background-repeat: no-repeat; background-position: center; background-color: black;")
+        self.label_17.setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
+                                    background-repeat: no-repeat; 
+                                    background-position: center; 
+                                    background-color: black;""")
         self.setStyleSheet("background-color: black;")
         
         # Add click callbacks to the buttons
