@@ -40,8 +40,11 @@ class AstroPi(QtWidgets.QMainWindow):
         # Get the current width and height of the window
         width = size.width()
         height = size.height()
+        
+        # Get the new width of the window
         new_width = width - 330
         
+        # Set the size and location of the widgets
         self.label_17.resize(new_width, height - 160)
         self.tabWidget.resize(330, height)
         self.tabWidget.move(new_width, 0)
@@ -52,6 +55,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.toolButton_2.move(new_width - 32, height - 118)
         self.toolButton_2.resize(32, 32)
         
+        # Log the new size of the window
         self.log("Window resized to: " + str(width) + "x" + str(height), logging.DEBUG)
         
     def log(self, text, level=logging.INFO):
@@ -60,20 +64,28 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         # Get timestamp
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        # Set text color based on logging level
         if level == logging.INFO:
-            self.textEdit.append(f"<font color=\"green\">{timestamp} [INFO] " + text + "</font>")
+            color = "green"
+        elif level == logging.WARNING:
+            color = "yellow"
+        elif level == logging.ERROR:
+            color = "red"
+        elif level == logging.DEBUG:
+            color = "white"
+        else:
+            color = "blue"
+        # Write text to the textEdit
+        self.textEdit.append(f"<font color=\"{color}\">{timestamp} [{logging.getLevelName(level)}] " + text + "</font>")
+        # Write text to the log file
+        if level == logging.INFO:
             logging.info(text)
         elif level == logging.WARNING:
-            self.textEdit.append(f"<font color=\"yellow\">{timestamp} [WARNING] " + text + "</font>")
             logging.warning(text)
         elif level == logging.ERROR:
-            self.textEdit.append(f"<font color=\"red\">{timestamp} [ERROR] " + text + "</font>")
             logging.error(text)
         elif level == logging.DEBUG:
-            self.textEdit.append(f"<font color=\"white\">{timestamp} [DEBUG] " + text + "</font>")
             logging.debug(text)
-        else:
-            self.textEdit.append(f"<font color=\"blue\">{timestamp} [UNKNOWN] " + text + "</font>")
             
         
     def clearLog(self):
