@@ -26,8 +26,8 @@ class AstroPi(QtWidgets.QMainWindow):
         self.label_17.resize(new_width, height - 90)
         self.tabWidget.resize(330, height)
         self.tabWidget.move(new_width, 0)
-        self.scrollArea_4.resize(new_width, 90)
-        self.scrollArea_4.move(0, height - 140)
+        self.textEdit.resize(new_width, 90)
+        self.textEdit.move(0, height - 150)
 
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication

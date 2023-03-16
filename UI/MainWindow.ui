@@ -1003,37 +1003,18 @@
      <string>&lt;p align=&quot;center&quot; style=&quot;color:grey&quot;&gt;&lt;h1&gt;NO OUTPUT&lt;/h1&gt;&lt;/p&gt;</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollArea_4">
+   <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>580</y>
       <width>751</width>
-      <height>90</height>
+      <height>87</height>
      </rect>
     </property>
-    <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOn</enum>
-    </property>
-    <property name="sizeAdjustPolicy">
-     <enum>QAbstractScrollArea::AdjustIgnored</enum>
-    </property>
-    <property name="widgetResizable">
+    <property name="readOnly">
      <bool>true</bool>
     </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents_4">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>747</width>
-       <height>65</height>
-      </rect>
-     </property>
-    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
