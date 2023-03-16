@@ -14,6 +14,10 @@ class AstroPi(QtWidgets.QMainWindow):
         uic.loadUi('./UI/MainWindow.ui', self) # Load the .ui file
         self.show() # Show the GUI
         
+        # Set the background image of the window as the AstroPi logo
+        self.label_17.setStyleSheet("background-image: url(\"./assets/AstroPi.png\"); background-repeat: no-repeat; background-position: center; background-color: black;")
+        self.setStyleSheet("background-color: black;")
+        
     # On resize event
     def resizeEvent(self, event):
         # Get the new size of the window
