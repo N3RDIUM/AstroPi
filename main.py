@@ -248,6 +248,7 @@ class AstroPi(QtWidgets.QMainWindow):
                 self.log("Error sending kill server command: " + str(e), logging.ERROR)
         # Close the log file
         logging.shutdown()
+        sys.exit()
 
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication
