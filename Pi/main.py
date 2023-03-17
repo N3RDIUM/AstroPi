@@ -69,7 +69,7 @@ def getconfig():
         "message": userconfig,
     })
     
-@app.route("system", methods=["POST"])
+@app.route("/system", methods=["POST"])
 def system():
     """
     System maintainance tasks

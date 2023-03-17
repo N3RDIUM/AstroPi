@@ -28,7 +28,32 @@ class AstroPiBoard:
         self.window.log(f"Board comms URL: {self.comms_url}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
         self.session_running = False
-        self.params = {}
+        self.params = { # default params
+            'image_count': '1', 
+            'interval': '0', 
+            'exposure_numerator': '1', 
+            'exposure_denominator': '1',
+            'iso': -1, 
+            'focus': -2, 
+            'brightness': 100, 
+            'contrast': 100, 
+            'exposure_compensation': 0, 
+            'sharpness': 0, 
+            'awb_gain_mode': 0, 
+            'drc_strength': 0, 
+            'image_denoise': 0, 
+            'exposure_mode': 0, 
+            'flash_mode': 0, 
+            'resolution': 0, 
+            'metering_mode': 0, 
+            'effect_params': '', 
+            'color_effect_u': '255',
+            'color_effect_v': '255',
+            'zoom_x': '0.0', 
+            'zoom_y': '0.0', 
+            'zoom_w': '1.0', 
+            'zoom_h': '1.0'
+        }
         # Create a Flask app to listen for board status updates
         self.app = flask.Flask(__name__)
         
@@ -85,6 +110,7 @@ class AstroPiBoard:
         Set a value on the board
         """
         self.params[key] = value
+        print(self.params)
     
     def update_params(self):
         for key, value in self.params.items():
@@ -106,3 +132,7 @@ class AstroPiBoard:
             self.window.log(f"Board system response: {response.status_code} {response.text}", logging.DEBUG)
         else:
             raise Exception("Invalid system command")
+        
+    def eval_settings(self):
+        print(self.params)
+        return True

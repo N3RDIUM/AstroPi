@@ -46,6 +46,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.pushButton.clicked.connect(self.connect)
         self.pushButton_2.clicked.connect(self.pullUpdates)
         self.pushButton_3.clicked.connect(self.systemUpdate)
+        self.pushButton_6.clicked.connect(self.startSession)
         
         # Add callback to slider
         self.horizontalSlider.valueChanged.connect(self.setProcessorFanSpeed)
@@ -352,103 +353,88 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("sharpness", self.sharpness)
             
-    def setImageCount(self, count):
+    def setImageCount(self):
         """
         Set the image counter
         """
         if self.comms:
-            self.comms.set("image_count", count)
+            self.comms.set("image_count", self.lineEdit_2.text())
             
-    def setInterval(self, interval):
+    def setInterval(self):
         """
         Set the interval
         """
         if self.comms:
-            self.comms.set("interval", interval)
+            self.comms.set("interval", self.lineEdit_3.text())
         
-    def setExposureNumerator(self, numerator):
+    def setExposureNumerator(self):
         """
         Set the exposure numerator
         """
         if self.comms:
-            self.comms.set("exposure_numerator", numerator)
+            self.comms.set("exposure_numerator", self.lineEdit_4.text())
         
-    def setExposureDenominator(self, denominator):
+    def setExposureDenominator(self):
         """
         
         Set the exposure denominator
         """
         if self.comms:
-            self.comms.set("exposure_denominator", denominator)
-    
-
-    def setAWBGainNumerator(self, numerator):
-        """
-        Set the AWB gain numerator
-        """
-        if self.comms:
-            self.comms.set("awb_gain_numerator", numerator)
-    
-    def setAWBGainDenominator(self, denominator):
-        """
-        Set the AWB gain denominator
-        """
-        if self.comms:
-            self.comms.set("awb_gain_denominator", denominator)
+            self.comms.set("exposure_denominator", self.lineEdit_6.text())
             
-    def setEffectParams(self, params):
+    def setEffectParams(self):
         """
         Set the effect parameters
         """
         try:
-            effect_params = json.loads(params)
+            effect_params = json.loads(self.lineEdit_13.text())
         except:
             effect_params = {}
             self.log("Invalid JSON for effect parameters", logging.ERROR)
         if self.comms:
             self.comms.set("effect_params", effect_params)
         
-    def setColorEffectU(self, u):
+    def setColorEffectU(self):
         """
         Set the color effect U
         """
         if self.comms:
-            self.comms.set("color_effect_u", u)
+            self.comms.set("color_effect_u", self.lineEdit_9.text())
         
-    def setColorEffectV(self, v):
+    def setColorEffectV(self):
         """
         Set the color effect V
         """
         if self.comms:
-            self.comms.set("color_effect_v", v)
-            
-    def setZoomX(self, x):
+            self.comms.set("color_effect_v", self.lineEdit_10.text())
+        
+    def setZoomX(self):
         """
         Set the zoom X
         """
         if self.comms:
-            self.comms.set("zoom_x", x)
+            self.comms.set("zoom_x", self.lineEdit_14.text())
         
-    def setZoomY(self, y):
+    def setZoomY(self):
         """
         Set the zoom Y
         """
         if self.comms:
-            self.comms.set("zoom_y", y)
+            self.comms.set("zoom_y", self.lineEdit_15.text())
 
-    def setZoomW(self, w):
+    def setZoomW(self):
         """
         Set the zoom W
         """
         if self.comms:
-            self.comms.set("zoom_w", w)
+            self.comms.set("zoom_w", self.lineEdit_16.text())
             
-    def setZoomH(self, h):
+    def setZoomH(self):
         """
         Set the zoom H
         """
         if self.comms:
-            self.comms.set("zoom_h", h)
+            self.comms.set("zoom_h", self.lineEdit_17.text())
             
     def setSessionTime(self, time):
         if self.comms:
@@ -538,7 +524,7 @@ class AstroPi(QtWidgets.QMainWindow):
         if not self.comms:
             self.log("No comms. Please connect your AstroPi.", logging.ERROR)
             return
-        if not self.comms.eval_settings:
+        if not self.comms.eval_settings():
             self.log("Settings not evaluated", logging.ERROR)
             return
         if self.comms.session_running:
