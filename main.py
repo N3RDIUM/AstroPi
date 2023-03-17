@@ -63,8 +63,6 @@ class AstroPi(QtWidgets.QMainWindow):
         self.lineEdit_3.editingFinished.connect(self.setInterval)
         self.lineEdit_4.editingFinished.connect(self.setExposureNumerator)
         self.lineEdit_6.editingFinished.connect(self.setExposureDenominator)
-        self.lineEdit_7.editingFinished.connect(self.setAWBGainDenominator)
-        self.lineEdit_8.editingFinished.connect(self.setAWBGainNumerator)
         self.lineEdit_13.editingFinished.connect(self.setEffectParams)
         self.lineEdit_9.editingFinished.connect(self.setColorEffectU)
         self.lineEdit_10.editingFinished.connect(self.setColorEffectV)
