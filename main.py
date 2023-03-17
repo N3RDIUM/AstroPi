@@ -249,11 +249,7 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         # Close the connection to the AstroPi
         if self.comms:
-            try:
-                self.comms.kill_server()
-                self.log("Kill server command sent")
-            except Exception as e:
-                self.log("Error sending kill server command: " + str(e), logging.ERROR)
+            del self.comms
         # Close the log file
         logging.shutdown()
         sys.exit()

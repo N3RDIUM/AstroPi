@@ -2,7 +2,6 @@ import flask
 import requests
 import os
 import logging
-import socket
 import constants
 
 # If the log file already exists, delete it
@@ -28,16 +27,35 @@ log(f"Device port: {constants.ASTROPI_PORT}")
 # Create the Flask app
 app = flask.Flask(__name__)
 
-@app.route("/", methods=["POST", "GET"])
+global client_ip
+client_ip = None
+global config
+userconfig = {}
+
+@app.route("/connect", methods=["POST"])
 def communicate():
     """
-    Communicate with the computer
+    Communicate with the AstroPi board
     """
-    if flask.request.method == "GET":
-        return "Hello from the AstroPi board!"
     # Get the data from the request
-    data = flask.request.get_json()
-    log(f"Received data: {data}")
+    data = flask.request.form
+    client_ip = data["device_ip"]
+    return flask.jsonify({"success": True})
+
+@app.route("/config", methods=["POST"])
+def config():
+    """
+    Set a configuration value
+    """
+    # Get the data from the request
+    data = flask.request.form
+    key = data["key"]
+    value = data["value"]
+    userconfig[key] = value
+    return flask.jsonify({
+        "success": True,
+        "message": f"Set {key} to {value}"
+    })
 
 # Run the Flask app
 if __name__ == "__main__":

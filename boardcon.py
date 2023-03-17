@@ -2,15 +2,14 @@
 import threading
 import requests
 import flask
-import socket
+import os
 import logging
 
 # Import constants
 import Pi.constants as constants
 
-# Get device IP
-hostname = socket.gethostname()
-device_ip = socket.gethostbyname(hostname)
+# Get device IP from ifconfig
+device_ip = os.popen("ifconfig").read().split("inet ")[1].split(" ")[0]
 
 class AstroPiBoard:
     """
@@ -72,16 +71,17 @@ class AstroPiBoard:
         self.server_thread.start()
         
         self.set_state(constants.CONNECTING)
-        res = requests.get(self.comms_url)
+        res = requests.post(self.comms_url + "connect", data={"device_ip": device_ip})
         self.window.log(f"Board connect response: {res.status_code} {res.text}", logging.INFO)
         if res.status_code == 200:
             self.set_state(constants.CONNECTED)
         else:
             self.set_state(constants.DISCONNECTED)
+            raise Exception("Board connection failed (Error: " + res.text + ")")
 
     def set(self, key, value):
         """
         Set a value on the board
         """
-        response = requests.post(self.comms_url, data={"command": "set", "key": key, "value": value})
+        response = requests.post(self.comms_url + "config", data={"key": key, "value": value})
         self.window.log(f"Board set response: {response.status_code} {response.text}", logging.DEBUG)
