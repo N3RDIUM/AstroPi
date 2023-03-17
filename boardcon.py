@@ -6,7 +6,7 @@ import socket
 import logging
 
 # Import constants
-import constants
+import Pi.constants as constants
 
 # Get device IP
 hostname = socket.gethostname()
@@ -26,16 +26,14 @@ class AstroPiBoard:
         self.window = window
         self.ip = board_ip
         self.comms_url = f"http://{self.ip}:{constants.ASTROPI_PORT}/"
+        self.window.log(f"Board comms URL: {self.comms_url}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
         
         # Create a Flask app to listen for board status updates
         self.app = flask.Flask(__name__)
         
-        @self.app.route("/", methods=["POST", "GET"])
+        @self.app.route("/", methods=["POST"])
         def update():
-            if flask.request.method == "GET":
-                self.set_state(constants.CONNECTED)
-                return self.status
             self._update(flask.request.form)
             # Stringify the form data
             form_data = ""
@@ -45,7 +43,7 @@ class AstroPiBoard:
             
         # Start the Flask app in a new thread
         def start_server():
-            self.app.run(port=constants.ASTROPI_CLIENT_PORT, debug=True)
+            self.app.run(port=constants.ASTROPI_CLIENT_PORT, debug=True, use_reloader=False)
         self.server_thread = threading.Thread(target=start_server)
         self.server_thread.start()
         
@@ -79,15 +77,9 @@ class AstroPiBoard:
         Connect to the board
         """
         self.set_state(constants.CONNECTING)
-        requests.post(self.comms_url, data={
-            "command": "connect",
-            "client_ip": device_ip
-        })
-        threading.Thread(target=self.confirm_connection).start()
-        
-    def confirm_connection(self):
-        # Wait for the board to connect
-        while True:
-            if self.state == constants.CONNECTED:
-                break
-        self.set_state(constants.CONNECTED)
+        res = requests.get(self.comms_url)
+        self.window.log(f"Board connect response: {res.status_code} {res.text}", logging.INFO)
+        if res.status_code == 200:
+            self.set_state(constants.CONNECTED)
+        else:
+            self.set_state(constants.DISCONNECTED)

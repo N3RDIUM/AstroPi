@@ -7,7 +7,7 @@ import sys
 import os
 
 # Import constants
-import constants
+import Pi.constants as constants
 
 # If the log file already exists, delete it
 if os.path.exists("log.txt"):
@@ -228,6 +228,7 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms = boardcon.AstroPiBoard(ip, self)
             self.comms.connect()
             self.log("Connected to AstroPi at " + ip, logging.INFO)
+            self.pushButton.setEnabled(False)
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
