@@ -46,4 +46,4 @@ def communicate():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(port=constants.ASTROPI_PORT, debug=True)
+    app.run(port=constants.ASTROPI_PORT, debug=True, host="0.0.0.0")
