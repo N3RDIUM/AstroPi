@@ -61,8 +61,7 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add callbacks to line edits
         self.lineEdit_2.editingFinished.connect(self.setImageCount)
         self.lineEdit_3.editingFinished.connect(self.setInterval)
-        self.lineEdit_4.editingFinished.connect(self.setExposureNumerator)
-        self.lineEdit_6.editingFinished.connect(self.setExposureDenominator)
+        self.lineEdit_4.editingFinished.connect(self.setExposure)
         self.lineEdit_13.editingFinished.connect(self.setEffectParams)
         self.lineEdit_9.editingFinished.connect(self.setColorEffectU)
         self.lineEdit_10.editingFinished.connect(self.setColorEffectV)
@@ -70,6 +69,8 @@ class AstroPi(QtWidgets.QMainWindow):
         self.lineEdit_15.editingFinished.connect(self.setZoomY)
         self.lineEdit_16.editingFinished.connect(self.setZoomW)
         self.lineEdit_17.editingFinished.connect(self.setZoomH)
+        self.lineEdit_7.editingFinished.connect(self.setResolutionW)
+        self.lineEdit_8.editingFinished.connect(self.setResolutionH)
         
         # Add callbacks to combo boxes
         self.comboBox.currentIndexChanged.connect(self.setSessionTime)
@@ -81,29 +82,12 @@ class AstroPi(QtWidgets.QMainWindow):
         self.comboBox_7.currentIndexChanged.connect(self.setExposureMode)
         self.comboBox_8.currentIndexChanged.connect(self.setImageDenoise)
         self.comboBox_9.currentIndexChanged.connect(self.setFlashMode)
-        self.comboBox_10.currentIndexChanged.connect(self.setMeteringMode)
-        self.comboBox_11.currentIndexChanged.connect(self.setResolution)
-        self.comboBox_12.currentIndexChanged.connect(self.setImageEffect)
+        self.comboBox_11.currentIndexChanged.connect(self.setMeteringMode)
+        self.comboBox_10.currentIndexChanged.connect(self.setImageEffect)
         
         # Set default values to variables
         self.save_dir = None
         self.comms = None
-        
-        # Set default values to widgets
-        self.horizontalSlider.setValue(100)
-        self.horizontalSlider_2.setValue(50)
-        self.horizontalSlider_3.setValue(50)
-        self.horizontalSlider_4.setValue(0)
-        self.horizontalSlider_5.setValue(50)
-        self.horizontalSlider_6.setValue(50)
-        self.horizontalSlider_7.setValue(0)
-        self.horizontalSlider_8.setValue(50)
-        
-        self.lineEdit_2.setText("0")
-        self.lineEdit_14.setText("0.0")
-        self.lineEdit_15.setText("0.0")
-        self.lineEdit_16.setText("1.0")
-        self.lineEdit_17.setText("1.0")
         
     def resizeEvent(self, event):
         """
@@ -365,20 +349,12 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("interval", self.lineEdit_3.text())
         
-    def setExposureNumerator(self):
+    def setExposure(self):
         """
         Set the exposure numerator
         """
         if self.comms:
-            self.comms.set("exposure_numerator", self.lineEdit_4.text())
-        
-    def setExposureDenominator(self):
-        """
-        
-        Set the exposure denominator
-        """
-        if self.comms:
-            self.comms.set("exposure_denominator", self.lineEdit_6.text())
+            self.comms.set("exposure", self.lineEdit_4.text())
             
     def setEffectParams(self):
         """
@@ -434,6 +410,20 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("zoom_h", self.lineEdit_17.text())
             
+    def setResolutionW(self):
+        """
+        Set the resolution width
+        """
+        if self.comms:
+            self.comms.set("resolution_x", self.lineEdit_7.text())
+            
+    def setResolutionH(self):
+        """
+        Set the resolution height
+        """
+        if self.comms:
+            self.comms.set("resolution_x", self.lineEdit_8.text())
+            
     def setSessionTime(self, time):
         if self.comms:
             self.comms.set("session_time", time)
@@ -464,7 +454,7 @@ class AstroPi(QtWidgets.QMainWindow):
         Set the AWB mode
         """
         if self.comms:
-            self.comms.set("awb_gain_mode", mode)
+            self.comms.set("awb_mode", mode)
             
     def setDRCStrength(self, strength):
         """
@@ -500,13 +490,6 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if self.comms:
             self.comms.set("metering_mode", mode)
-            
-    def setResolution(self, resolution):
-        """
-        Set the resolution
-        """
-        if self.comms:
-            self.comms.set("resolution", resolution)
         
     def setImageEffect(self, effect):
         """
