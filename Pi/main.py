@@ -37,11 +37,7 @@ def communicate():
         return "Hello from the AstroPi board!"
     # Get the data from the request
     data = flask.request.get_json()
-    cmd_type = data["command"]
-    print(cmd_type)
-    if cmd_type == "connect":
-        log("Board connected!")
-        return flask.jsonify({"status": "connected"})
+    log(f"Received data: {data}")
 
 # Run the Flask app
 if __name__ == "__main__":

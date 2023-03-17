@@ -162,6 +162,8 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             self.label_19.setText(str(speed) + "%")
             self.processor_fan_speed = speed
+        if self.comms:
+            self.comms.set("processor_fan_speed", self.processor_fan_speed)
     
     def setSensorFanSpeed(self, speed):
         """
@@ -175,6 +177,8 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             self.label_20.setText(str(speed) + "%")
             self.sensor_fan_speed = speed
+        if self.comms:
+            self.comms.set("sensor_fan_speed", self.sensor_fan_speed)
         
     def setISO(self, iso):
         """
@@ -183,6 +187,8 @@ class AstroPi(QtWidgets.QMainWindow):
         iso = round(iso / 99 * 1500) + 100
         self.label_23.setText(str(iso))
         self.iso = iso
+        if self.comms:
+            self.comms.set("iso", self.iso)
         
     def setFocus(self, focus):
         """
@@ -199,6 +205,8 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             self.label_26.setText(str(focus))
             self.focus = focus
+        if self.comms:
+            self.comms.set("focus", self.focus)
             
     def setSaveDir(self):
         """

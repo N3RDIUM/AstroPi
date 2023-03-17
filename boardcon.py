@@ -78,3 +78,10 @@ class AstroPiBoard:
             self.set_state(constants.CONNECTED)
         else:
             self.set_state(constants.DISCONNECTED)
+
+    def set(self, key, value):
+        """
+        Set a value on the board
+        """
+        response = requests.post(self.comms_url, data={"command": "set", "key": key, "value": value})
+        self.window.log(f"Board set response: {response.status_code} {response.text}", logging.DEBUG)
