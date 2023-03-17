@@ -1,5 +1,6 @@
 # imports
 from PyQt5 import QtWidgets, uic
+import boardcon
 import logging
 import time
 import sys
@@ -41,6 +42,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.toolButton.clicked.connect(self.clearLog)
         self.toolButton_2.clicked.connect(self.saveLog)
         self.pushButton_7.clicked.connect(self.setSaveDir)
+        self.pushButton.clicked.connect(self.connect)
         
         # Add callback to slider
         self.horizontalSlider.valueChanged.connect(self.setProcessorFanSpeed)
@@ -50,14 +52,13 @@ class AstroPi(QtWidgets.QMainWindow):
         
         # Set default values
         self.save_dir = None
-        self.board_status = constants.DISCONNECTED
-        self.board_ip = None
         self.session_time_setting = 0
         self.processor_fan_speed = 0
         self.sensor_fan_speed = 0
         self.exposure = 0
         self.iso = 0
         self.focus = 0
+        self.comms = None
         
     def resizeEvent(self, event):
         """
@@ -216,6 +217,35 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("Save directory set to: " + dir, logging.INFO)
         
         dialog.close()
+        
+    def connect(self):
+        """
+        Connect to the AstroPi
+        """
+        try:
+            # Get the IP address
+            ip = self.lineEdit.text()
+            self.comms = boardcon.AstroPiBoard(ip, self)
+            self.comms.connect()
+            self.log("Connected to AstroPi at " + ip, logging.INFO)
+        except Exception as e:
+            self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
+            self.comms.set_state(constants.DISCONNECTED)
+            
+    # On window close
+    def closeEvent(self, event):
+        """
+        On window close
+        """
+        # Close the connection to the AstroPi
+        if self.comms:
+            try:
+                self.comms.kill_server()
+                self.log("Kill server command sent")
+            except Exception as e:
+                self.log("Error sending kill server command: " + str(e), logging.ERROR)
+        # Close the log file
+        logging.shutdown()
 
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication

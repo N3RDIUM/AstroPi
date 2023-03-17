@@ -1,5 +1,12 @@
+ASTROPI_PORT = 2077 # ;)
+ASTROPI_CLIENT_PORT = 2078
 DISCONNECTED = 0
+DISCONNECTED_TEXT = "<p style='color: red;'>DISCONNECTED</p>"
 CONNECTED = 1
+CONNECTED_TEXT = "<p style='color: green;'>CONNECTED</p>"
 CONNECTING = 2
+CONNECTING_TEXT = "<p style='color: yellow;'>CONNECTING</p>"
+UNKNOWN = 3
+UNKNOWN_TEXT = "<p style='color: blue;'>UNKNOWN</p>"
 AUTO = -1
 INFINITY = -2
