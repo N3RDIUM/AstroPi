@@ -232,6 +232,7 @@ class AstroPi(QtWidgets.QMainWindow):
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
+            del self.comms
             
     # On window close
     def closeEvent(self, event):
