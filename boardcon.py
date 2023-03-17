@@ -29,7 +29,13 @@ class AstroPiBoard:
         self.set_state(constants.DISCONNECTED)
         self.session_running = False
         self.params = { # default params
-            'image_count': '1', 
+            'session_name': 2, # SESSION SETTINGS
+            'processor_fan_state': 0,
+            'processor_fan_speed': 0,
+            'camera_fan_state': 0,
+            'camera_fan_speed': 0,
+            'transfer_quality': 0,        
+            'image_count': '1', # CAMERA SETTINGS
             'interval': '0', 
             'exposure_numerator': '1', 
             'exposure_denominator': '1',
