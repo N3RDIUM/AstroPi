@@ -28,7 +28,7 @@ class AstroPiBoard:
         self.comms_url = f"http://{self.ip}:{constants.ASTROPI_PORT}/"
         self.window.log(f"Board comms URL: {self.comms_url}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
-        
+        self.app = None
         # Create a Flask app to listen for board status updates
         self.app = flask.Flask(__name__)
         
@@ -40,12 +40,6 @@ class AstroPiBoard:
             for key, value in flask.request.form.items():
                 form_data += f"{key}: {value}\n"
             self.window.log(f"Board update:\n{form_data}", logging.DEBUG)
-            
-        # Start the Flask app in a new thread
-        def start_server():
-            self.app.run(port=constants.ASTROPI_CLIENT_PORT, debug=True, use_reloader=False)
-        self.server_thread = threading.Thread(target=start_server)
-        self.server_thread.start()
         
     def set_state(self, state):
         """
@@ -65,17 +59,18 @@ class AstroPiBoard:
         """
         Kill the Flask server
         """
-        func = flask.request.environ.get('werkzeug.server.shutdown')
-        if func is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
-        func()
         self.server_thread.join()
-        self.set_state(constants.DISCONNECTED)
         
     def connect(self):
         """
         Connect to the board
-        """
+        """        
+        # Start the Flask app in a new thread
+        def start_server():
+            self.app.run(port=constants.ASTROPI_CLIENT_PORT, debug=True, use_reloader=False)
+        self.server_thread = threading.Thread(target=start_server, daemon=True)
+        self.server_thread.start()
+        
         self.set_state(constants.CONNECTING)
         res = requests.get(self.comms_url)
         self.window.log(f"Board connect response: {res.status_code} {res.text}", logging.INFO)
