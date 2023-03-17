@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 import boardcon
 import logging
 import time
+import json
 import sys
 import os
 
@@ -36,29 +37,74 @@ class AstroPi(QtWidgets.QMainWindow):
                                     background-repeat: no-repeat; 
                                     background-position: center; 
                                     background-color: black;""")
-        self.setStyleSheet("background-color: black;")
+        # self.setStyleSheet("background-color: black;")
         
         # Add click callbacks to the buttons
         self.toolButton.clicked.connect(self.clearLog)
         self.toolButton_2.clicked.connect(self.saveLog)
         self.pushButton_7.clicked.connect(self.setSaveDir)
         self.pushButton.clicked.connect(self.connect)
+        self.pushButton_2.clicked.connect(self.pullUpdates)
+        self.pushButton_3.clicked.connect(self.systemUpdate)
         
         # Add callback to slider
         self.horizontalSlider.valueChanged.connect(self.setProcessorFanSpeed)
         self.horizontalSlider_2.valueChanged.connect(self.setSensorFanSpeed)
         self.horizontalSlider_3.valueChanged.connect(self.setISO)
         self.horizontalSlider_4.valueChanged.connect(self.setFocus)
+        self.horizontalSlider_5.valueChanged.connect(self.setBrightness)
+        self.horizontalSlider_6.valueChanged.connect(self.setContrast)
+        self.horizontalSlider_7.valueChanged.connect(self.setExposureCompensation)
+        self.horizontalSlider_8.valueChanged.connect(self.setSharpness)
         
-        # Set default values
+        # Add callbacks to line edits
+        self.lineEdit_2.editingFinished.connect(self.setImageCount)
+        self.lineEdit_3.editingFinished.connect(self.setInterval)
+        self.lineEdit_4.editingFinished.connect(self.setExposureNumerator)
+        self.lineEdit_6.editingFinished.connect(self.setExposureDenominator)
+        self.lineEdit_7.editingFinished.connect(self.setAWBGainDenominator)
+        self.lineEdit_8.editingFinished.connect(self.setAWBGainNumerator)
+        self.lineEdit_13.editingFinished.connect(self.setEffectParams)
+        self.lineEdit_9.editingFinished.connect(self.setColorEffectU)
+        self.lineEdit_10.editingFinished.connect(self.setColorEffectV)
+        self.lineEdit_14.editingFinished.connect(self.setZoomX)
+        self.lineEdit_15.editingFinished.connect(self.setZoomY)
+        self.lineEdit_16.editingFinished.connect(self.setZoomW)
+        self.lineEdit_17.editingFinished.connect(self.setZoomH)
+        
+        # Add callbacks to combo boxes
+        self.comboBox.currentIndexChanged.connect(self.setSessionTime)
+        self.comboBox_2.currentIndexChanged.connect(self.setProcessorFanState)
+        self.comboBox_3.currentIndexChanged.connect(self.setCameraFanState)
+        self.comboBox_4.currentIndexChanged.connect(self.setTransferQuality)
+        self.comboBox_5.currentIndexChanged.connect(self.setAWBMode)
+        self.comboBox_6.currentIndexChanged.connect(self.setDRCStrength)
+        self.comboBox_7.currentIndexChanged.connect(self.setExposureMode)
+        self.comboBox_8.currentIndexChanged.connect(self.setImageDenoise)
+        self.comboBox_9.currentIndexChanged.connect(self.setFlashMode)
+        self.comboBox_10.currentIndexChanged.connect(self.setMeteringMode)
+        self.comboBox_11.currentIndexChanged.connect(self.setResolution)
+        self.comboBox_12.currentIndexChanged.connect(self.setImageEffect)
+        
+        # Set default values to variables
         self.save_dir = None
-        self.session_time_setting = 0
-        self.processor_fan_speed = 0
-        self.sensor_fan_speed = 0
-        self.exposure = 0
-        self.iso = 0
-        self.focus = 0
         self.comms = None
+        
+        # Set default values to widgets
+        self.horizontalSlider.setValue(100)
+        self.horizontalSlider_2.setValue(50)
+        self.horizontalSlider_3.setValue(50)
+        self.horizontalSlider_4.setValue(0)
+        self.horizontalSlider_5.setValue(50)
+        self.horizontalSlider_6.setValue(50)
+        self.horizontalSlider_7.setValue(0)
+        self.horizontalSlider_8.setValue(50)
+        
+        self.lineEdit_2.setText("0")
+        self.lineEdit_14.setText("0.0")
+        self.lineEdit_15.setText("0.0")
+        self.lineEdit_16.setText("1.0")
+        self.lineEdit_17.setText("1.0")
         
     def resizeEvent(self, event):
         """
@@ -149,6 +195,18 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("No file was selected", logging.WARNING)
         except Exception as e:
             self.log("Error saving log: " + str(e), logging.ERROR)
+            
+    def pullUpdates(self):
+        if self.comms:
+            self.comms.system(constants.SYSTEM_UPDATE)
+        else:
+            self.log("No connection to the camera", logging.WARNING)
+            
+    def systemUpdate(self):
+        if self.comms:
+            self.comms.system(constants.SYSTEM_UPDATE)
+        else:
+            self.log("No connection to the camera", logging.WARNING)
             
     def setProcessorFanSpeed(self, speed):
         """
@@ -254,10 +312,243 @@ class AstroPi(QtWidgets.QMainWindow):
         logging.shutdown()
         sys.exit()
 
+    def setBrightness(self, brightness):
+        """
+        Set the brightness
+        """
+        brightness = round(brightness / 99 * 100)
+        self.label_45.setText(str(brightness))
+        self.brightness = brightness
+        if self.comms:
+            self.comms.set("brightness", self.brightness)
+    
+    def setContrast(self, contrast):
+        """
+        Set the contrast
+        """
+        contrast = round(contrast / 99 * 200) - 100
+        self.label_49.setText(str(contrast))
+        self.contrast = contrast
+        if self.comms:
+            self.comms.set("contrast", self.contrast)
+            
+    def setExposureCompensation(self, compensation):
+        """
+        Set the exposure compensation
+        """
+        compensation = round(compensation / 99 * 50) - 25
+        self.label_54.setText(str(compensation))
+        self.exposure_compensation = compensation
+        if self.comms:
+            self.comms.set("exposure_compensation", self.exposure_compensation)
+            
+    def setSharpness(self, sharpness):
+        """
+        Set the sharpness
+        """
+        sharpness = round(sharpness / 99 * 200) - 100
+        self.label_65.setText(str(sharpness))
+        self.sharpness = sharpness
+        if self.comms:
+            self.comms.set("sharpness", self.sharpness)
+            
+    def setImageCount(self, count):
+        """
+        Set the image counter
+        """
+        if self.comms:
+            self.comms.set("image_count", count)
+            
+    def setInterval(self, interval):
+        """
+        Set the interval
+        """
+        if self.comms:
+            self.comms.set("interval", interval)
+        
+    def setExposureNumerator(self, numerator):
+        """
+        Set the exposure numerator
+        """
+        if self.comms:
+            self.comms.set("exposure_numerator", numerator)
+        
+    def setExposureDenominator(self, denominator):
+        """
+        
+        Set the exposure denominator
+        """
+        if self.comms:
+            self.comms.set("exposure_denominator", denominator)
+    
+
+    def setAWBGainNumerator(self, numerator):
+        """
+        Set the AWB gain numerator
+        """
+        if self.comms:
+            self.comms.set("awb_gain_numerator", numerator)
+    
+    def setAWBGainDenominator(self, denominator):
+        """
+        Set the AWB gain denominator
+        """
+        if self.comms:
+            self.comms.set("awb_gain_denominator", denominator)
+            
+    def setEffectParams(self, params):
+        """
+        Set the effect parameters
+        """
+        try:
+            effect_params = json.loads(params)
+        except:
+            effect_params = {}
+            self.log("Invalid JSON for effect parameters", logging.ERROR)
+        if self.comms:
+            self.comms.set("effect_params", effect_params)
+        
+    def setColorEffectU(self, u):
+        """
+        Set the color effect U
+        """
+        if self.comms:
+            self.comms.set("color_effect_u", u)
+        
+    def setColorEffectV(self, v):
+        """
+        Set the color effect V
+        """
+        if self.comms:
+            self.comms.set("color_effect_v", v)
+            
+    def setZoomX(self, x):
+        """
+        Set the zoom X
+        """
+        if self.comms:
+            self.comms.set("zoom_x", x)
+        
+    def setZoomY(self, y):
+        """
+        Set the zoom Y
+        """
+        if self.comms:
+            self.comms.set("zoom_y", y)
+
+    def setZoomW(self, w):
+        """
+        Set the zoom W
+        """
+        if self.comms:
+            self.comms.set("zoom_w", w)
+            
+    def setZoomH(self, h):
+        """
+        Set the zoom H
+        """
+        if self.comms:
+            self.comms.set("zoom_h", h)
+            
+    def setSessionTime(self, time):
+        if self.comms:
+            self.comms.set("session_time", time)
+
+    def setProcessorFanState(self, state):
+        """
+        Set the processor fan state
+        """
+        if self.comms:
+            self.comms.set("processor_fan_state", state)
+            
+    def setCameraFanState(self, state):
+        """
+        Set the camera fan state
+        """
+        if self.comms:
+            self.comms.set("camera_fan_state", state)
+            
+    def setTransferQuality(self, quality):
+        """
+        Set the transfer quality
+        """
+        if self.comms:
+            self.comms.set("transfer_quality", quality)
+            
+    def setAWBMode(self, mode):
+        """
+        Set the AWB mode
+        """
+        if self.comms:
+            self.comms.set("awb_gain_mode", mode)
+            
+    def setDRCStrength(self, strength):
+        """
+        Set the DRC strength
+        """
+        if self.comms:
+            self.comms.set("drc_strength", strength)
+            
+    def setExposureMode(self, mode):
+        """
+        Set the exposure mode
+        """
+        if self.comms:
+            self.comms.set("exposure_mode", mode)
+            
+    def setFlashMode(self, mode):
+        """
+        Set the flash mode
+        """
+        if self.comms:
+            self.comms.set("flash_mode", mode)
+            
+    def setImageDenoise(self, denoise):
+        """
+        Set the image denoise
+        """
+        if self.comms:
+            self.comms.set("image_denoise", denoise)
+        
+    def setMeteringMode(self, mode):
+        """
+        Set the metering mode
+        """
+        if self.comms:
+            self.comms.set("metering_mode", mode)
+            
+    def setResolution(self, resolution):
+        """
+        Set the resolution
+        """
+        if self.comms:
+            self.comms.set("resolution", resolution)
+        
+    def setImageEffect(self, effect):
+        """
+        Set the image effect
+        """
+        if self.comms:
+            self.comms.set("image_effect", effect)
+            
+    def startSession(self):
+        """
+        Start the session!
+        """
+        if not self.comms:
+            self.log("No comms. Please connect your AstroPi.", logging.ERROR)
+            return
+        if not self.comms.eval_settings:
+            self.log("Settings not evaluated", logging.ERROR)
+            return
+        if self.comms.session_running:
+            self.log("Session already running", logging.ERROR)
+            return
+        self.comms.start_session()
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication
     app = QtWidgets.QApplication(sys.argv)
     # Show the GUI
     window = AstroPi()
     # Execute the main loop
-    sys.exit(app.exec_())
+    sys.exit(app.exec_()) 

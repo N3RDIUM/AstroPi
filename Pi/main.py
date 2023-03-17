@@ -52,10 +52,51 @@ def config():
     key = data["key"]
     value = data["value"]
     userconfig[key] = value
+    
     return flask.jsonify({
         "success": True,
-        "message": f"Set {key} to {value}"
+        "message": f"Set {key} to {value}",
     })
+
+@app.route("/getconfig", methods=["GET"])
+def getconfig():
+    """
+    Get a configuration value
+    """
+    # Get the data from the request
+    return flask.jsonify({
+        "success": True,
+        "message": userconfig,
+    })
+    
+@app.route("system", methods=["POST"])
+def system():
+    """
+    System maintainance tasks
+    """
+    # Get the data from the request
+    data = flask.request.form
+    command = data["command"]
+    if command == constants.PULL_UPDATES:
+        # Pull updates from the GitHub repo
+        os.system("cd .. && git pull")
+        os.system("cd Pi")
+        return flask.jsonify({
+            "success": True,
+            "message": "Pulled updates from GitHub"
+        })
+    elif command == constants.SYSTEM_UPDATE:
+        # Update the system
+        os.system("sudo apt update && sudo apt upgrade -y")
+        return flask.jsonify({
+            "success": True,
+            "message": "Updated the system"
+        })
+    else:
+        return flask.jsonify({
+            "success": False,
+            "message": "Unknown command"
+        })
 
 # Run the Flask app
 if __name__ == "__main__":

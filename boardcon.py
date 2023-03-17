@@ -27,7 +27,8 @@ class AstroPiBoard:
         self.comms_url = f"http://{self.ip}:{constants.ASTROPI_PORT}/"
         self.window.log(f"Board comms URL: {self.comms_url}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
-        self.app = None
+        self.session_running = False
+        self.params = {}
         # Create a Flask app to listen for board status updates
         self.app = flask.Flask(__name__)
         
@@ -83,5 +84,25 @@ class AstroPiBoard:
         """
         Set a value on the board
         """
+        self.params[key] = value
+    
+    def update_params(self):
+        for key, value in self.params.items():
+            self.set_param(key, value)
+            
+    def set_param(self, key, value):
         response = requests.post(self.comms_url + "config", data={"key": key, "value": value})
         self.window.log(f"Board set response: {response.status_code} {response.text}", logging.DEBUG)
+        
+    def system(self, type):
+        """
+        Perform system tasks on the Pi
+        """
+        if type == constants.SYSTEM_UPDATE:
+            response = requests.post(self.comms_url + "system", data={"command": type})
+            self.window.log(f"Board system response: {response.status_code} {response.text}", logging.DEBUG)
+        elif type == constants.PULL_UPDATES:
+            response = requests.post(self.comms_url + "system", data={"command": type})
+            self.window.log(f"Board system response: {response.status_code} {response.text}", logging.DEBUG)
+        else:
+            raise Exception("Invalid system command")

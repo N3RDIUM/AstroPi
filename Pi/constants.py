@@ -8,5 +8,7 @@ CONNECTING = 2
 CONNECTING_TEXT = "<p style='color: yellow;'>CONNECTING</p>"
 UNKNOWN = 3
 UNKNOWN_TEXT = "<p style='color: blue;'>UNKNOWN</p>"
+SYSTEM_UPDATE = 4
+PULL_UPDATES = 5
 AUTO = -1
 INFINITY = -2
