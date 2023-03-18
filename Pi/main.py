@@ -119,8 +119,7 @@ try:
                 "response": "init",
                 "data": "Initializing camera..."
             }).encode("utf-8"))
-            import picamera2
-            camera = picamera2.Picamera2()
+            from picamera2 import Picamera2
             
             # Configure the camera
             conn.send(json.dumps({
@@ -128,8 +127,9 @@ try:
                 "response": "init",
                 "data": "Configuring camera..."
             }).encode("utf-8"))
-            capture_config = camera.create_still_configuration()
-            camera.create_still_configuration(capture_config)
+            picam2 = Picamera2()
+            camera_config = picam2.create_still_configuration(main={"size": (4608, 2592)})
+            picam2.configure(camera_config)
             
             # Start the session
             conn.send(json.dumps({
@@ -137,7 +137,7 @@ try:
                 "response": "session",
                 "data": "Starting session, warming up..."
             }).encode("utf-8"))
-            camera.start()
+            picam2.start()
             time.sleep(2) # Warm up the camera
             
             for i in range(0, _config["image_count"]):
@@ -146,7 +146,7 @@ try:
                     "response": "session",
                     "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                 }).encode("utf-8"))
-                camera.capture_file("./Pi/captures/" + str(i) + ".jpg")
+                picam2.capture_file("./Pi/captures/" + str(i) + ".jpg")
                 time.sleep(_config["interval"])
             
             conn.send(json.dumps({
