@@ -130,13 +130,12 @@ try:
                     "data": "Configuring camera..."
                 }).encode("utf-8"))
                 picam2 = Picamera2()
-                camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)})
+                camera_config = picam2.create_still_configuration(main={
+                    "size": (1920, 1080),
+                    "ExposureMode": "night",
+                    "ExposureTime": _config["exposure"],
+                })
                 picam2.configure(camera_config)
-                
-                # print all camera settings supported by the camera
-                print("Camera settings available:")
-                for key, value in picam2.camera_settings.items():
-                    print(key, value)
                 
                 # Start the session
                 conn.send(json.dumps({
