@@ -8,13 +8,6 @@ import time
 # Import constants
 import Pi.constants as constants
 
-# Get device IP from ifconfig
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-device_ip = s.getsockname()[0]
-s.close()
-print("Device IP: " + device_ip)
-
 class AstroPiBoard:
     """
     AstroPiBoard class
@@ -29,7 +22,6 @@ class AstroPiBoard:
         self.window = window
         self.ip = board_ip
         self.window.log(f"Board IP: {self.ip}", logging.DEBUG)
-        self.window.log(f"Client addr: {device_ip}:{constants.ASTROPI_CLIENT_PORT}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
         self._config = { # default _config
             'session_time': 2, # SESSION SETTINGS
