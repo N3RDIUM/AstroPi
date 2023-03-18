@@ -64,99 +64,96 @@ try:
     conn, addr = _socket.accept()
     log('Connected by: ' + str(addr))
     while True:
-        try:
-            data = conn.recv(1024)
-            if not data: continue
-            log("Received: " + str(data))
-            data = json.loads(data)
-            if data["command"] == "connect":
+        data = conn.recv(1024)
+        if not data: continue
+        log("Received: " + str(data))
+        data = json.loads(data)
+        if data["command"] == "connect":
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "success",
+                "data": "Connected to the AstroPi successfully!"
+            }).encode("utf-8"))
+        elif data["command"] == "set":
+            _config[data["key"]] = data["value"]
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "success",
+                "data": "Set " + data["key"] + " to " + str(data["value"])
+            }).encode("utf-8"))
+        elif data["command"] == "setall":
+            _config = data["config"]
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "success",
+                "data": "Set all config values successfully!" 
+            }).encode("utf-8"))
+        elif data["command"] == "get":
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "success",
+                "data": _config[data["key"]]
+            }).encode("utf-8"))
+        elif data["command"] == "system":
+            if data["type"] == constants.PULL_UPDATES:
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "success",
-                    "data": "Connected to the AstroPi successfully!"
+                    "data": os.popen("git pull").read()
                 }).encode("utf-8"))
-            elif data["command"] == "set":
-                _config[data["key"]] = data["value"]
+            elif data["type"] == constants.SYSTEM_UPDATE:
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "success",
-                    "data": "Set " + data["key"] + " to " + str(data["value"])
+                    "data": os.popen("sudo apt-get update && sudo apt-get upgrade -y").read()
                 }).encode("utf-8"))
-            elif data["command"] == "setall":
-                _config = data["config"]
+            else:
                 conn.send(json.dumps({
                     "status": "connected",
-                    "response": "success",
-                    "data": "Set all config values successfully!" 
+                    "response": "Error: Invalid system command",
+                    "data": "Invalid system command"
                 }).encode("utf-8"))
-            elif data["command"] == "get":
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "success",
-                    "data": _config[data["key"]]
-                }).encode("utf-8"))
-            elif data["command"] == "system":
-                if data["type"] == constants.PULL_UPDATES:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "success",
-                        "data": os.popen("git pull").read()
-                    }).encode("utf-8"))
-                elif data["type"] == constants.SYSTEM_UPDATE:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "success",
-                        "data": os.popen("sudo apt-get update && sudo apt-get upgrade -y").read()
-                    }).encode("utf-8"))
-                else:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "Error: Invalid system command",
-                        "data": "Invalid system command"
-                    }).encode("utf-8"))
-            elif data["command"] == "start":
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "init",
-                    "data": "Initializing camera..."
-                }).encode("utf-8"))
-                import picamera2
-                camera = picamera2.Picamera2()
-                
-                # Configure the camera
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "init",
-                    "data": "Configuring camera..."
-                }).encode("utf-8"))
-                capture_config = camera.create_still_configuration("""raw={}""")
-                camera.create_still_configuration(capture_config)
-                
-                # Start the session
+        elif data["command"] == "start":
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "init",
+                "data": "Initializing camera..."
+            }).encode("utf-8"))
+            import picamera2
+            camera = picamera2.Picamera2()
+            
+            # Configure the camera
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "init",
+                "data": "Configuring camera..."
+            }).encode("utf-8"))
+            capture_config = camera.create_still_configuration("""raw={}""")
+            camera.create_still_configuration(capture_config)
+            
+            # Start the session
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "session",
+                "data": "Starting session, warming up..."
+            }).encode("utf-8"))
+            camera.start()
+            time.sleep(2) # Warm up the camera
+            
+            for i in range(0, _config["image_count"]):
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "session",
-                    "data": "Starting session, warming up..."
+                    "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                 }).encode("utf-8"))
-                camera.start()
-                time.sleep(2) # Warm up the camera
-                
-                for i in range(0, _config["image_count"]):
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "session",
-                        "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
-                    }).encode("utf-8"))
-                    camera.capture_file("./Pi/captures/" + str(i) + ".jpg")
-                    time.sleep(_config["interval"])
-                
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "session",
-                    "data": "Done!"
-                }).encode("utf-8"))
-        except Exception as e:
-            log("Error: " + str(e), logging.ERROR)
+                camera.capture_file("./Pi/captures/" + str(i) + ".jpg")
+                time.sleep(_config["interval"])
+            
+            conn.send(json.dumps({
+                "status": "connected",
+                "response": "session",
+                "data": "Done!"
+            }).encode("utf-8"))
 except KeyboardInterrupt:
     log("KeyboardInterrupt")
     _socket.close()
