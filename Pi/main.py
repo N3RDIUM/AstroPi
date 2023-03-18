@@ -132,7 +132,6 @@ try:
                 picam2 = Picamera2()
                 camera_config = picam2.create_still_configuration(main={
                     "size": (1920, 1080),
-                    "ExposureMode": "night",
                     "ExposureTime": _config["exposure"],
                 })
                 picam2.configure(camera_config)
