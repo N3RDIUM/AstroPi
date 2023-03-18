@@ -1,16 +1,19 @@
 # imports
 import threading
-import requests
-import flask
-import os
 import logging
+import socket
 import json
+import time
 
 # Import constants
 import Pi.constants as constants
 
 # Get device IP from ifconfig
-device_ip = os.popen("ifconfig").read().split("inet ")[1].split(" ")[0]
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+device_ip = s.getsockname()[0]
+s.close()
+print("Device IP: " + device_ip)
 
 class AstroPiBoard:
     """
@@ -25,11 +28,10 @@ class AstroPiBoard:
         """
         self.window = window
         self.ip = board_ip
-        self.comms_url = f"http://{self.ip}:{constants.ASTROPI_PORT}/"
-        self.window.log(f"Board comms URL: {self.comms_url}", logging.DEBUG)
+        self.window.log(f"Board IP: {self.ip}", logging.DEBUG)
+        self.window.log(f"Client addr: {device_ip}:{constants.ASTROPI_CLIENT_PORT}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
-        self.session_running = False
-        self.params = { # default params
+        self._config = { # default _config
             'session_time': 2, # SESSION SETTINGS
             'processor_fan_state': 0,
             'processor_fan_speed': 0,
@@ -51,7 +53,7 @@ class AstroPiBoard:
             'exposure_mode': 0, 
             'flash_mode': 0, 
             'metering_mode': 0, 
-            'effect_params': '', 
+            'effect__config': '', 
             'color_effect_u': '255',
             'color_effect_v': '255',
             'zoom_x': '0.0', 
@@ -64,34 +66,6 @@ class AstroPiBoard:
         self.progress = {
             "image_count": 0,
         }
-        self.update_params()
-        
-        # Create a Flask app to listen for board status updates
-        self.app = flask.Flask(__name__)
-        
-        @self.app.route("/", methods=["POST"])
-        def update():
-            self._update(flask.request.form)
-            # Stringify the form data
-            form_data = ""
-            for key, value in flask.request.form.items():
-                form_data += f"{key}: {value}\n"
-            self.window.log(f"Board update:\n{form_data}", logging.DEBUG)
-            
-        @self.app.route("/statue_update", methods=["POST"])
-        def status_update():
-            self._status_update(flask.request.form)
-            # Stringify the form data
-            form_data = ""
-            for key, value in flask.request.form.items():
-                form_data += f"{key}: {value}\n"
-            self.window.log(f"Board status update:\n{form_data}", logging.DEBUG)
-            
-    def _status_update(self, data):
-        """
-        Update the board status
-        """
-        self.progress = data
         
     def set_state(self, state):
         """
@@ -106,58 +80,77 @@ class AstroPiBoard:
             self.window.label_3.setText(constants.CONNECTING_TEXT)
         else:
             self.window.label_3.setText(constants.UNKNOWN_TEXT)
-        
-    def kill_server(self):
-        """
-        Kill the Flask server
-        """
-        self.server_thread.join()
-        
+            
     def connect(self):
         """
         Connect to the board
         """        
-        # Start the Flask app in a new thread
-        def start_server():
-            self.app.run(port=constants.ASTROPI_CLIENT_PORT, debug=True, use_reloader=False)
-        self.server_thread = threading.Thread(target=start_server, daemon=True)
-        self.server_thread.start()
+        self.thread = threading.Thread(target=self.start_socket_client)
+        self.thread.start()
         
+    def terminate(self):
+        """
+        Terminate the connection to the board
+        """
+        self.set_state(constants.DISCONNECTED)
+        self.socket.close()
+        self.thread.join()
+        
+    # Start the socket client in a new thread
+    def start_socket_client(self):
         self.set_state(constants.CONNECTING)
-        res = requests.post(self.comms_url + "connect", data={"device_ip": device_ip})
-        self.window.log(f"Board connect response: {res.status_code} {res.text}", logging.INFO)
-        if res.status_code == 200:
-            self.set_state(constants.CONNECTED)
-        else:
-            self.set_state(constants.DISCONNECTED)
-            raise Exception("Board connection failed (Error: " + res.text + ")")
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.ip, constants.ASTROPI_PORT))
+        self.socket.send(json.dumps({
+            "command": "connect",
+        }).encode("utf-8"))
+        time.sleep(1)
+        self.update__config()
+        while True:
+            data = self.socket.recv(1024).decode("utf-8")
+            if not data: continue
+            else:
+                self.window.log("AstroPi says: " + str(data), logging.DEBUG)
+                data = json.loads(data)
+                if data["status"] == "connected":
+                    self.set_state(constants.CONNECTED)
+            
+            if self.state == constants.DISCONNECTED:
+                break
 
     def set(self, key, value):
         """
         Set a value on the board
         """
-        self.params[key] = value
+        self._config[key] = value
     
-    def update_params(self):
-        for key, value in self.params.items():
-            self.set_param(key, value)
+    def update__config(self):
+        """
+        Update the _config on the board
+        """
+        self.socket.send(json.dumps({
+            "command": "setall",
+            "config": self._config
+        }).encode("utf-8"))
             
     def set_param(self, key, value):
-        response = requests.post(self.comms_url + "config", data={"key": key, "value": value})
-        self.window.log(f"Board set response: {response.status_code} {response.text}", logging.DEBUG)
+        """
+        Set a parameter on the board
+        """
+        self.socket.send(json.dumps({
+            "command": "set",
+            "key": key,
+            "value": value
+        }).encode("utf-8"))
         
     def system(self, type):
         """
         Perform system tasks on the Pi
         """
-        if type == constants.SYSTEM_UPDATE:
-            response = requests.post(self.comms_url + "system", data={"command": type})
-            self.window.log(f"Board system response: {response.status_code} {response.text}", logging.DEBUG)
-        elif type == constants.PULL_UPDATES:
-            response = requests.post(self.comms_url + "system", data={"command": type})
-            self.window.log(f"Board system response: {response.status_code} {response.text}", logging.DEBUG)
-        else:
-            raise Exception("Invalid system command")
+        self.socket.send(json.dumps({
+            "command": "system",
+            "type": type,
+        }).encode("utf-8"))
         
     def eval_settings(self):
         """
@@ -165,40 +158,39 @@ class AstroPiBoard:
         before starting a session
         """
         try:
-            self.params['session_time'] = int(self.params['session_time'])
-            self.params['processor_fan_state'] = int(self.params['processor_fan_state'])
-            self.params['processor_fan_speed'] = int(self.params['processor_fan_speed'])
-            self.params['camera_fan_state'] = int(self.params['camera_fan_state'])
-            self.params['camera_fan_speed'] = int(self.params['camera_fan_speed'])
-            self.params['transfer_quality'] = int(self.params['transfer_quality'])
+            self._config['session_time'] = int(self._config['session_time'])
+            self._config['processor_fan_state'] = int(self._config['processor_fan_state'])
+            self._config['processor_fan_speed'] = int(self._config['processor_fan_speed'])
+            self._config['camera_fan_state'] = int(self._config['camera_fan_state'])
+            self._config['camera_fan_speed'] = int(self._config['camera_fan_speed'])
+            self._config['transfer_quality'] = int(self._config['transfer_quality'])
             
-            self.params['image_count'] = int(self.params['image_count'])
-            self.params['interval'] = int(self.params['interval'])
-            self.params['exposure_numerator'] = int(self.params['exposure_numerator'])
-            self.params['exposure_denominator'] = int(self.params['exposure_denominator'])
-            self.params['iso'] = int(self.params['iso'])
-            self.params['focus'] = int(self.params['focus'])
-            self.params['brightness'] = int(self.params['brightness'])
-            self.params['contrast'] = int(self.params['contrast'])
-            self.params['exposure_compensation'] = int(self.params['exposure_compensation'])
-            self.params['sharpness'] = int(self.params['sharpness'])
-            self.params['awb_mode'] = int(self.params['awb_mode'])
-            self.params['drc_strength'] = int(self.params['drc_strength'])
-            self.params['image_denoise'] = int(self.params['image_denoise'])
-            self.params['exposure_mode'] = int(self.params['exposure_mode'])
-            self.params['flash_mode'] = int(self.params['flash_mode'])
-            self.params['metering_mode'] = int(self.params['metering_mode'])
-            self.params['color_effect_u'] = int(self.params['color_effect_u'])
-            self.params['color_effect_v'] = int(self.params['color_effect_v'])
-            self.params['zoom_x'] = float(self.params['zoom_x'])
-            self.params['zoom_y'] = float(self.params['zoom_y'])
-            self.params['zoom_w'] = float(self.params['zoom_w'])
-            self.params['zoom_h'] = float(self.params['zoom_h'])
+            self._config['image_count'] = int(self._config['image_count'])
+            self._config['interval'] = int(self._config['interval'])
+            self._config['exposure'] = int(self._config['exposure'])
+            self._config['iso'] = int(self._config['iso'])
+            self._config['focus'] = int(self._config['focus'])
+            self._config['brightness'] = int(self._config['brightness'])
+            self._config['contrast'] = int(self._config['contrast'])
+            self._config['exposure_compensation'] = int(self._config['exposure_compensation'])
+            self._config['sharpness'] = int(self._config['sharpness'])
+            self._config['awb_mode'] = int(self._config['awb_mode'])
+            self._config['drc_strength'] = int(self._config['drc_strength'])
+            self._config['image_denoise'] = int(self._config['image_denoise'])
+            self._config['exposure_mode'] = int(self._config['exposure_mode'])
+            self._config['flash_mode'] = int(self._config['flash_mode'])
+            self._config['metering_mode'] = int(self._config['metering_mode'])
+            self._config['color_effect_u'] = int(self._config['color_effect_u'])
+            self._config['color_effect_v'] = int(self._config['color_effect_v'])
+            self._config['zoom_x'] = float(self._config['zoom_x'])
+            self._config['zoom_y'] = float(self._config['zoom_y'])
+            self._config['zoom_w'] = float(self._config['zoom_w'])
+            self._config['zoom_h'] = float(self._config['zoom_h'])
             
-            self.params['resolution_x'] = int(self.params['resolution_x'])
-            self.params['resolution_y'] = int(self.params['resolution_y'])
+            self._config['resolution_x'] = int(self._config['resolution_x'])
+            self._config['resolution_y'] = int(self._config['resolution_y'])
             
-            self.params["effect_params"] = json.loads(self.params["effect_params"])
+            # self._config["effect__config"] = json.loads(self._config["effect__config"])
             return True
         except Exception as e:
             self.window.log(f"Error evaluating settings: {e}", logging.ERROR)
@@ -209,8 +201,7 @@ class AstroPiBoard:
         Start the session on the board
         """
         if self.eval_settings():
-            self.update_params()
-            response = requests.post(self.comms_url + "start", data={"session_time": self.params['session_time']})
-            self.window.log(f"Board start response: {response.status_code} {response.text}", logging.DEBUG)
+            self.update__config()
+            pass # TODO
         else:
             self.window.log("Session start failed", logging.ERROR)

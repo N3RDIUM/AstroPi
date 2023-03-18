@@ -62,7 +62,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.lineEdit_2.editingFinished.connect(self.setImageCount)
         self.lineEdit_3.editingFinished.connect(self.setInterval)
         self.lineEdit_4.editingFinished.connect(self.setExposure)
-        self.lineEdit_13.editingFinished.connect(self.setEffectParams)
+        self.lineEdit_13.editingFinished.connect(self.setEffect_config)
         self.lineEdit_9.editingFinished.connect(self.setColorEffectU)
         self.lineEdit_10.editingFinished.connect(self.setColorEffectV)
         self.lineEdit_14.editingFinished.connect(self.setZoomX)
@@ -144,7 +144,7 @@ class AstroPi(QtWidgets.QMainWindow):
             logging.error(text)
         elif level == logging.DEBUG:
             logging.debug(text)
-            
+        print(f"{timestamp} [{logging.getLevelName(level)}] " + text)
         
     def clearLog(self):
         """
@@ -181,13 +181,15 @@ class AstroPi(QtWidgets.QMainWindow):
             
     def pullUpdates(self):
         if self.comms:
-            self.comms.system(constants.SYSTEM_UPDATE)
+            self.comms.system(constants.PULL_UPDATES)
+            self.log("Pulling updates", logging.INFO)
         else:
             self.log("No connection to the camera", logging.WARNING)
             
     def systemUpdate(self):
         if self.comms:
             self.comms.system(constants.SYSTEM_UPDATE)
+            self.log("Updating system", logging.INFO)
         else:
             self.log("No connection to the camera", logging.WARNING)
             
@@ -283,17 +285,20 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms.set_state(constants.DISCONNECTED)
             self.comms.kill_server()
             
-    # On window close
-    def closeEvent(self, event):
-        """
-        On window close
-        """
-        # Close the connection to the AstroPi
-        if self.comms:
-            del self.comms
-        # Close the log file
-        logging.shutdown()
-        sys.exit()
+    # # On window close
+    # def closeEvent(self, event):
+    #     """
+    #     On window close
+    #     """
+    #     # Close the connection to the AstroPi
+    #     if self.comms:
+    #         self.comms.terminate()
+    #     # Close the log file
+    #     logging.shutdown()
+    #     # Close the window
+    #     event.accept()
+    #     # Exit the program
+    #     sys.exit()
 
     def setBrightness(self, brightness):
         """
@@ -356,17 +361,17 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("exposure", self.lineEdit_4.text())
             
-    def setEffectParams(self):
+    def setEffect_config(self):
         """
         Set the effect parameters
         """
         try:
-            effect_params = json.loads(self.lineEdit_13.text())
+            effect__config = json.loads(self.lineEdit_13.text())
         except:
-            effect_params = {}
+            effect__config = {}
             self.log("Invalid JSON for effect parameters", logging.ERROR)
         if self.comms:
-            self.comms.set("effect_params", effect_params)
+            self.comms.set("effect__config", effect__config)
         
     def setColorEffectU(self):
         """
@@ -512,10 +517,15 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("Session already running", logging.ERROR)
             return
         self.comms.start_session()
+        
 if __name__ == "__main__":
     # Create an instance of QtWidgets.QApplication
     app = QtWidgets.QApplication(sys.argv)
     # Show the GUI
     window = AstroPi()
     # Execute the main loop
-    sys.exit(app.exec_()) 
+    app.exec_()
+    # Exit the application
+    if window.comms:
+        window.comms.terminate()
+    sys.exit()

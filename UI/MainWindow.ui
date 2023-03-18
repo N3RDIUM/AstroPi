@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../.designer/assets/AstroPi.png</normaloff>../../../.designer/assets/AstroPi.png</iconset>
+    <normaloff>../../../../.designer/assets/AstroPi.png</normaloff>../../../../.designer/assets/AstroPi.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -318,7 +318,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-413</y>
+         <y>0</y>
          <width>296</width>
          <height>1221</height>
         </rect>

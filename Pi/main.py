@@ -1,10 +1,10 @@
-import flask
-import requests
-import picamera
-import threading
 import os
-import logging
+import socket
+import json
 import constants
+import logging
+import time
+import sys
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
@@ -16,144 +16,157 @@ def log(msg, level=logging.INFO):
     Log a message to the log file and print it to the console
     """
     logging.log(level, msg)
+    print(msg)
 
-# Get the ifconfig ip address
-ip = os.popen("ifconfig").read().split("inet ")[1].split(" ")[0]
-log(f"Device IP: {ip}")
-log(f"Device port: {constants.ASTROPI_PORT}")
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+device_ip = s.getsockname()[0]
+s.close()
+log("Device IP: " + device_ip)
 
-# Create the Flask app
-app = flask.Flask(__name__)
+_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+_socket.bind((device_ip, constants.ASTROPI_PORT))
+_socket.listen(1)
 
-# Config variables
-params = {}
+_config = { # default _config
+    'session_time': 2, # SESSION SETTINGS
+    'processor_fan_state': 0,
+    'processor_fan_speed': 0,
+    'camera_fan_state': 0,
+    'camera_fan_speed': 0,
+    'transfer_quality': 0,        
+    'image_count': '1', # CAMERA SETTINGS
+    'interval': '0', 
+    'exposure': '1', 
+    'iso': -1, 
+    'focus': -2, 
+    'brightness': 50, 
+    'contrast': 100, 
+    'exposure_compensation': 0, 
+    'sharpness': 0, 
+    'awb_mode': 0, 
+    'drc_strength': 0, 
+    'image_denoise': 0, 
+    'exposure_mode': 0, 
+    'flash_mode': 0, 
+    'metering_mode': 0, 
+    'effect__config': '', 
+    'color_effect_u': '255',
+    'color_effect_v': '255',
+    'zoom_x': '0.0', 
+    'zoom_y': '0.0', 
+    'zoom_w': '1.0', 
+    'zoom_h': '1.0',
+    'resolution_x': '4608', # IMAGE RESOLUTIONS
+    'resolution_y': '2592',
+} 
+try:
+    conn, addr = _socket.accept()
+    log('Connected by: ' + str(addr))
+    while True:
+        try:
+            data = conn.recv(1024)
+            if not data: continue
+            log("Received: " + str(data))
+            data = json.loads(data)
+            if data["command"] == "connect":
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "success",
+                    "data": "Connected to the AstroPi successfully!"
+                }).encode("utf-8"))
+            elif data["command"] == "set":
+                _config[data["key"]] = data["value"]
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "success",
+                    "data": "Set " + data["key"] + " to " + str(data["value"])
+                }).encode("utf-8"))
+            elif data["command"] == "setall":
+                _config = data["config"]
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "success",
+                    "data": "Set all config values successfully!" 
+                }).encode("utf-8"))
+            elif data["command"] == "get":
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "success",
+                    "data": _config[data["key"]]
+                }).encode("utf-8"))
+            elif data["command"] == "system":
+                if data["type"] == constants.PULL_UPDATES:
+                    conn.send(json.dumps({
+                        "status": "connected",
+                        "response": "success",
+                        "data": os.popen("git pull").read()
+                    }).encode("utf-8"))
+                elif data["type"] == constants.SYSTEM_UPDATE:
+                    conn.send(json.dumps({
+                        "status": "connected",
+                        "response": "success",
+                        "data": os.popen("sudo apt-get update && sudo apt-get upgrade -y").read()
+                    }).encode("utf-8"))
+                else:
+                    conn.send(json.dumps({
+                        "status": "connected",
+                        "response": "Error: Invalid system command",
+                        "data": "Invalid system command"
+                    }).encode("utf-8"))
+            elif data["command"] == "start":
+                import picamera
+                camera = picamera.PiCamera2()
 
-@app.route("/connect", methods=["POST"])
-def communicate():
-    """
-    Communicate with the AstroPi board
-    """
-    # Get the data from the request
-    data = flask.request.form
-    global client_ip
-    client_ip = data["device_ip"]
-    return flask.jsonify({"success": True})
+                # Configure the camera
+                if _config["iso"] == constants.AUTO:
+                    _config["iso"] = "auto"
+                camera.iso = _config["iso"]
 
-@app.route("/config", methods=["POST"])
-def config():
-    """
-    Set a configuration value
-    """
-    # Get the data from the request
-    data = flask.request.form
-    key = data["key"]
-    value = data["value"]
-    params[key] = value
-    
-    return flask.jsonify({
-        "success": True,
-        "message": f"Set {key} to {value}",
-    })
+                if _config["focus"] == constants.AUTO:
+                    _config["focus"] = "auto"
+                elif _config["focus"] == constants.INFINITY:
+                    _config["focus"] = "infinity"
+                camera.exposure_mode = _config["focus"]
 
-@app.route("/getconfig", methods=["GET"])
-def getconfig():
-    """
-    Get a configuration value
-    """
-    # Get the data from the request
-    return flask.jsonify({
-        "success": True,
-        "message": params,
-    })
-    
-@app.route("/system", methods=["POST"])
-def system():
-    """
-    System maintainance tasks
-    """
-    # Get the data from the request
-    data = flask.request.form
-    command = data["command"]
-    if command == constants.PULL_UPDATES:
-        # Pull updates from the GitHub repo
-        os.system("cd .. && git pull")
-        os.system("cd Pi")
-        return flask.jsonify({
-            "success": True,
-            "message": "Pulled updates from GitHub"
-        })
-    elif command == constants.SYSTEM_UPDATE:
-        # Update the system
-        os.system("sudo apt update && sudo apt upgrade -y")
-        return flask.jsonify({
-            "success": True,
-            "message": "Updated the system"
-        })
-    else:
-        return flask.jsonify({
-            "success": False,
-            "message": "Unknown command"
-        })
-        
-@app.route("/start", methods=["POST"])
-def start():
-    """
-    Start the AstroPi imaging session
-    """
-    camera = picamera.PiCamera()
-    
-    # Configure the camera
-    if params["iso"] == constants.AUTO:
-        params["iso"] = "auto"
-    camera.iso = params["iso"]
-    
-    if params["focus"] == constants.AUTO:
-        params["focus"] = "auto"
-    elif params["focus"] == constants.INFINITY:
-        params["focus"] = "infinity"
-    camera.exposure_mode = params["focus"]
-    
-    if params["image_denoise"] == 0:
-        camera.image_denoise = False
-    else:
-        camera.image_denoise = True
-    
-    camera.brightness = params["brightness"]
-    camera.contrast = params["contrast"]
-    camera.exposure_compensation = params["exposure_compensation"]
-    camera.sharpness = params["sharpness"]
-    camera.shutter_speed = params["exposure"]
-    camera.resolution = (params["resolution_x"], params["resolution_y"])
-    
-    awb_modes = camera.AWB_MODES
-    camera.awb_mode = awb_modes[params["awb_mode"]]
-    exposure_modes = camera.EXPOSURE_MODES
-    camera.exposure_mode = exposure_modes[params["exposure_mode"]]
-    flash_modes = camera.FLASH_MODES
-    camera.flash_mode = flash_modes[params["flash_mode"]]
-    metering_modes = camera.METER_MODES
-    camera.meter_mode = metering_modes[params["metering_mode"]]
-    drc_strengths = camera.DRC_STRENGTHS
-    camera.drc_strength = drc_strengths[params["drc_strength"]]
+                if _config["image_denoise"] == 0:
+                    camera.image_denoise = False
+                else:
+                    camera.image_denoise = True
 
-    camera.zoom = (params["zoom_x"], params["zoom_y"], params["zoom_w"], params["zoom_h"])
-    camera.color_effects = (params["color_effect_u"], params["color_effect_v"])
-    
-    # Start the imaging session
-    log("Starting the imaging session")
-    camera.start_preview()
-    for i in range(params["image_count"]):
-        camera.capture(f"../Images/{i}.jpg")
-        log(f"Captured image {i}")
-        requests.post(f"http://{client_ip}:{constants.ASTROPI_CLIENT_PORT}/state_update", data={
-            "image_count": i
-        })
-    return flask.jsonify({
-        "success": True,
-        "message": "Started the AstroPi imaging session"
-    })
-    
-# Run the Flask app
-if __name__ == "__main__":
-    os.system("ifconfig")
-    app.run(port=constants.ASTROPI_PORT, debug=True, host="0.0.0.0")
+                camera.brightness = _config["brightness"]
+                camera.contrast = _config["contrast"]
+                camera.exposure_compensation = _config["exposure_compensation"]
+                camera.sharpness = _config["sharpness"]
+                camera.shutter_speed = _config["exposure"]
+                camera.resolution = (_config["resolution_x"], _config["resolution_y"])
+
+                awb_modes = camera.AWB_MODES
+                camera.awb_mode = awb_modes[_config["awb_mode"]]
+                exposure_modes = camera.EXPOSURE_MODES
+                camera.exposure_mode = exposure_modes[_config["exposure_mode"]]
+                flash_modes = camera.FLASH_MODES
+                camera.flash_mode = flash_modes[_config["flash_mode"]]
+                metering_modes = camera.METER_MODES
+                camera.meter_mode = metering_modes[_config["metering_mode"]]
+                drc_strengths = camera.DRC_STRENGTHS
+                camera.drc_strength = drc_strengths[_config["drc_strength"]]
+
+                camera.zoom = (_config["zoom_x"], _config["zoom_y"], _config["zoom_w"], _config["zoom_h"])
+                camera.color_effects = (_config["color_effect_u"], _config["color_effect_v"])
+                
+                camera.start()
+                time.sleep(2)
+                capture_config = camera.create_still_configuration(raw={})
+                for i in range(int(_config["image_count"])):
+                    buffers, metadata = camera.switch_mode_and_capture_buffers(capture_config, ["main", "raw"])
+                    camera.helpers.save(camera.helpers.make_image(buffers[0], capture_config["main"]), metadata, "full.jpg")
+                    camera.helpers.save_dng(buffers[1], metadata, capture_config["raw"], "full.dng")
+                    camera.release()
+                camera.close()
+        except Exception as e:
+            log("Error: " + str(e), logging.ERROR)
+except KeyboardInterrupt:
+    log("KeyboardInterrupt")
+    _socket.close()
+    sys.exit(0)
