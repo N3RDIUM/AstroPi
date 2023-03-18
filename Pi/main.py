@@ -133,7 +133,7 @@ try:
                 camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)})
                 picam2.configure(camera_config)
                 
-                picam2.controls.exposure_time = int(_config["exposure"])
+                picam2.controls.shutter_speed = int(_config["exposure"])
                 
                 # Start the session
                 conn.send(json.dumps({
