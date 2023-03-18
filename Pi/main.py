@@ -123,42 +123,42 @@ try:
                 import picamera
                 camera = picamera.PiCamera()
                 
-                # Configure the camera
-                if _config["iso"] == constants.AUTO:
-                    _config["iso"] = "auto"
-                camera.iso = _config["iso"]
+                # # Configure the camera
+                # if _config["iso"] == constants.AUTO:
+                #     _config["iso"] = "auto"
+                # camera.iso = _config["iso"]
 
-                if _config["focus"] == constants.AUTO:
-                    _config["focus"] = "auto"
-                elif _config["focus"] == constants.INFINITY:
-                    _config["focus"] = "infinity"
-                camera.exposure_mode = _config["focus"]
+                # if _config["focus"] == constants.AUTO:
+                #     _config["focus"] = "auto"
+                # elif _config["focus"] == constants.INFINITY:
+                #     _config["focus"] = "infinity"
+                # camera.exposure_mode = _config["focus"]
 
-                if _config["image_denoise"] == 0:
-                    camera.image_denoise = False
-                else:
-                    camera.image_denoise = True
+                # if _config["image_denoise"] == 0:
+                #     camera.image_denoise = False
+                # else:
+                #     camera.image_denoise = True
 
                 camera.brightness = _config["brightness"]
                 camera.contrast = _config["contrast"]
                 camera.exposure_compensation = _config["exposure_compensation"]
                 camera.sharpness = _config["sharpness"]
                 camera.shutter_speed = _config["exposure"]
-                camera.resolution = (_config["resolution_x"], _config["resolution_y"])
+                # camera.resolution = (_config["resolution_x"], _config["resolution_y"])
 
-                awb_modes = camera.AWB_MODES
-                camera.awb_mode = awb_modes[_config["awb_mode"]]
-                exposure_modes = camera.EXPOSURE_MODES
-                camera.exposure_mode = exposure_modes[_config["exposure_mode"]]
-                flash_modes = camera.FLASH_MODES
-                camera.flash_mode = flash_modes[_config["flash_mode"]]
-                metering_modes = camera.METER_MODES
-                camera.meter_mode = metering_modes[_config["metering_mode"]]
-                drc_strengths = camera.DRC_STRENGTHS
-                camera.drc_strength = drc_strengths[_config["drc_strength"]]
+                # awb_modes = camera.AWB_MODES
+                # camera.awb_mode = awb_modes[_config["awb_mode"]]
+                # exposure_modes = camera.EXPOSURE_MODES
+                # camera.exposure_mode = exposure_modes[_config["exposure_mode"]]
+                # flash_modes = camera.FLASH_MODES
+                # camera.flash_mode = flash_modes[_config["flash_mode"]]
+                # metering_modes = camera.METER_MODES
+                # camera.meter_mode = metering_modes[_config["metering_mode"]]
+                # drc_strengths = camera.DRC_STRENGTHS
+                # camera.drc_strength = drc_strengths[_config["drc_strength"]]
 
-                camera.zoom = (_config["zoom_x"], _config["zoom_y"], _config["zoom_w"], _config["zoom_h"])
-                camera.color_effects = (_config["color_effect_u"], _config["color_effect_v"])
+                # camera.zoom = (_config["zoom_x"], _config["zoom_y"], _config["zoom_w"], _config["zoom_h"])
+                # camera.color_effects = (_config["color_effect_u"], _config["color_effect_v"])
                 
                 conn.send(json.dumps({
                     "status": "connected",

@@ -203,8 +203,7 @@ class AstroPiBoard:
         if self.eval_settings():
             self.update__config()
             self.socket.send(json.dumps({
-                "command": "start",
-                "config": self._config
+                "command": "start"
             }).encode("utf-8"))
         else:
             self.window.log("Session start failed", logging.ERROR)
