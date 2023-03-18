@@ -134,7 +134,7 @@ try:
                     "size": (1920, 1080),
                 })
                 picam2.configure(camera_config)
-                print(picam2.camera_controls())
+                picam2.camera_controls["ExposureTime"] = int(_config["exposure"])
                 
                 # Start the session
                 conn.send(json.dumps({
