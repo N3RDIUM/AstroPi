@@ -133,7 +133,10 @@ try:
                 camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)})
                 picam2.configure(camera_config)
                 
-                picam2.controls.shutter = int(_config["exposure"])
+                # print all camera settings supported by the camera
+                print("Camera settings available:")
+                for key, value in picam2.camera_settings.items():
+                    print(key, value)
                 
                 # Start the session
                 conn.send(json.dumps({
