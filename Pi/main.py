@@ -128,7 +128,7 @@ try:
                 "response": "init",
                 "data": "Configuring camera..."
             }).encode("utf-8"))
-            capture_config = camera.create_still_configuration(raw={})
+            capture_config = camera.create_still_configuration()
             camera.create_still_configuration(capture_config)
             
             # Start the session
