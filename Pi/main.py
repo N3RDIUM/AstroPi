@@ -140,14 +140,18 @@ try:
             picam2.start()
             time.sleep(2) # Warm up the camera
             
+            # Go to captures directory
+            os.system("cd captures")
             for i in range(0, _config["image_count"]):
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "session",
                     "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                 }).encode("utf-8"))
-                picam2.capture_file("./Pi/captures/" + str(i) + ".jpg")
+                picam2.capture_file("captures/" + str(i) + ".jpg")
                 time.sleep(_config["interval"])
+            picam2.stop()
+            os.system("cd ..")
             
             conn.send(json.dumps({
                 "status": "connected",
