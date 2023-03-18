@@ -120,65 +120,36 @@ try:
                     "response": "init",
                     "data": "Initializing camera..."
                 }).encode("utf-8"))
-                import picamera
-                camera = picamera.PiCamera()
+                import picamera2
+                camera = picamera2.Picamera2()
                 
-                # # Configure the camera
-                # if _config["iso"] == constants.AUTO:
-                #     _config["iso"] = "auto"
-                # camera.iso = _config["iso"]
-
-                # if _config["focus"] == constants.AUTO:
-                #     _config["focus"] = "auto"
-                # elif _config["focus"] == constants.INFINITY:
-                #     _config["focus"] = "infinity"
-                # camera.exposure_mode = _config["focus"]
-
-                # if _config["image_denoise"] == 0:
-                #     camera.image_denoise = False
-                # else:
-                #     camera.image_denoise = True
-
-                camera.brightness = _config["brightness"]
-                camera.contrast = _config["contrast"]
-                camera.exposure_compensation = _config["exposure_compensation"]
-                camera.sharpness = _config["sharpness"]
-                camera.shutter_speed = _config["exposure"]
-                # camera.resolution = (_config["resolution_x"], _config["resolution_y"])
-
-                # awb_modes = camera.AWB_MODES
-                # camera.awb_mode = awb_modes[_config["awb_mode"]]
-                # exposure_modes = camera.EXPOSURE_MODES
-                # camera.exposure_mode = exposure_modes[_config["exposure_mode"]]
-                # flash_modes = camera.FLASH_MODES
-                # camera.flash_mode = flash_modes[_config["flash_mode"]]
-                # metering_modes = camera.METER_MODES
-                # camera.meter_mode = metering_modes[_config["metering_mode"]]
-                # drc_strengths = camera.DRC_STRENGTHS
-                # camera.drc_strength = drc_strengths[_config["drc_strength"]]
-
-                # camera.zoom = (_config["zoom_x"], _config["zoom_y"], _config["zoom_w"], _config["zoom_h"])
-                # camera.color_effects = (_config["color_effect_u"], _config["color_effect_v"])
-                
+                # Configure the camera
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "init",
-                    "data": "Warming up..."
+                    "data": "Configuring camera..."
+                }).encode("utf-8"))
+                capture_config = camera.create_still_configuration("""raw={}""")
+                camera.create_still_configuration(capture_config)
+                
+                # Start the session
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "session",
+                    "data": "Starting session, warming up..."
                 }).encode("utf-8"))
                 camera.start()
-                time.sleep(2)
-                capture_config = camera.create_still_configuration(raw={})
-                for i in range(int(_config["image_count"])):
+                time.sleep(2) # Warm up the camera
+                
+                for i in range(0, _config["image_count"]):
                     conn.send(json.dumps({
                         "status": "connected",
                         "response": "session",
-                        "data": f"Capturing image {i+1} of {int(_config['image_count'])}..."
+                        "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                     }).encode("utf-8"))
-                    buffers, metadata = camera.switch_mode_and_capture_buffers(capture_config, ["main", "raw"])
-                    camera.helpers.save(camera.helpers.make_image(buffers[0], capture_config["main"]), metadata, "full.jpg")
-                    camera.helpers.save_dng(buffers[1], metadata, capture_config["raw"], "full.dng")
-                    camera.release()
-                camera.close()
+                    camera.capture_file("./Pi/captures/" + str(i) + ".jpg")
+                    time.sleep(_config["interval"])
+                
                 conn.send(json.dumps({
                     "status": "connected",
                     "response": "session",
