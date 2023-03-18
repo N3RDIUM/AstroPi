@@ -156,7 +156,7 @@ try:
                     imgfile.write("")
                     imgfile.close()
                     # Capture the image
-                    picam2.capture_file("captures/capture_" + str(i) + ".jpg")
+                    picam2.capture_file("capture_" + str(i) + ".jpg")
                     time.sleep(_config["interval"])
                 picam2.stop()
                 
