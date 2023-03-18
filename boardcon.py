@@ -40,7 +40,7 @@ class AstroPiBoard:
             'transfer_quality': 0,        
             'image_count': '1', # CAMERA SETTINGS
             'interval': '0', 
-            'exposure': '1', 
+            'exposure': '100000', 
             'iso': -1, 
             'focus': -2, 
             'brightness': 50, 

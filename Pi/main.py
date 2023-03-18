@@ -37,7 +37,7 @@ _config = { # default _config
     'transfer_quality': 0,        
     'image_count': '1', # CAMERA SETTINGS
     'interval': '0', 
-    'exposure': '1', 
+    'exposure': '100000', 
     'iso': -1, 
     'focus': -2, 
     'brightness': 50, 
@@ -132,6 +132,8 @@ try:
                 picam2 = Picamera2()
                 camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)})
                 picam2.configure(camera_config)
+                
+                picam2.controls.exposure_time = int(_config["exposure"])
                 
                 # Start the session
                 conn.send(json.dumps({
