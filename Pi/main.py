@@ -148,7 +148,7 @@ try:
                     "response": "session",
                     "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                 }).encode("utf-8"))
-                picam2.capture_file("captures/" + str(i) + ".jpg")
+                picam2.capture_file("capture_" + str(i) + ".jpg")
                 time.sleep(_config["interval"])
             picam2.stop()
             os.system("cd ..")
