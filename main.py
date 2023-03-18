@@ -513,9 +513,6 @@ class AstroPi(QtWidgets.QMainWindow):
         if not self.comms.eval_settings():
             self.log("Settings not evaluated", logging.ERROR)
             return
-        if self.comms.session_running:
-            self.log("Session already running", logging.ERROR)
-            return
         self.comms.start_session()
         
 if __name__ == "__main__":

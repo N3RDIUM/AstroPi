@@ -115,9 +115,14 @@ try:
                         "data": "Invalid system command"
                     }).encode("utf-8"))
             elif data["command"] == "start":
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "init",
+                    "data": "Initializing camera..."
+                }).encode("utf-8"))
                 import picamera
-                camera = picamera.PiCamera2()
-
+                camera = picamera.PiCamera()
+                
                 # Configure the camera
                 if _config["iso"] == constants.AUTO:
                     _config["iso"] = "auto"
@@ -155,15 +160,30 @@ try:
                 camera.zoom = (_config["zoom_x"], _config["zoom_y"], _config["zoom_w"], _config["zoom_h"])
                 camera.color_effects = (_config["color_effect_u"], _config["color_effect_v"])
                 
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "init",
+                    "data": "Warming up..."
+                }).encode("utf-8"))
                 camera.start()
                 time.sleep(2)
                 capture_config = camera.create_still_configuration(raw={})
                 for i in range(int(_config["image_count"])):
+                    conn.send(json.dumps({
+                        "status": "connected",
+                        "response": "session",
+                        "data": f"Capturing image {i+1} of {int(_config['image_count'])}..."
+                    }).encode("utf-8"))
                     buffers, metadata = camera.switch_mode_and_capture_buffers(capture_config, ["main", "raw"])
                     camera.helpers.save(camera.helpers.make_image(buffers[0], capture_config["main"]), metadata, "full.jpg")
                     camera.helpers.save_dng(buffers[1], metadata, capture_config["raw"], "full.dng")
                     camera.release()
                 camera.close()
+                conn.send(json.dumps({
+                    "status": "connected",
+                    "response": "session",
+                    "data": "Done!"
+                }).encode("utf-8"))
         except Exception as e:
             log("Error: " + str(e), logging.ERROR)
 except KeyboardInterrupt:
