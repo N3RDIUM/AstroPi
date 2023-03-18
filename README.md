@@ -34,3 +34,17 @@ I've made a light application to control your AstroPi. It's available on Linux a
 
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) before contributing.
+
+# TODO
+## NON-CODE
+- [ ] Write the installation instructions
+- [ ] Write the usage instructions
+- [ ] Write the contributing guidelines
+- [ ] Create a demo video
+- [ ] Create some sample images
+##  CODE
+- [ ] Stream to socket, get live preview
+- [ ] Create setup for windows, linux
+- [ ] Create setup for mac (maybe?)
+- [ ] Create a mobile app (for travellers)
+- [ ] Create a web app (for remote control)
