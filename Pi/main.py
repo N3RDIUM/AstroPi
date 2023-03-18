@@ -143,17 +143,20 @@ try:
                 time.sleep(2) # Warm up the camera
                 
                 # Go to captures directory
-                os.system("cd captures")
                 for i in range(0, _config["image_count"]):
                     conn.send(json.dumps({
                         "status": "connected",
                         "response": "session",
                         "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                     }).encode("utf-8"))
-                    picam2.capture_file("capture_" + str(i) + ".jpg")
+                    # Create the file prior to capture
+                    imgfile = open("captures/capture_" + str(i) + ".jpg", "w")
+                    imgfile.write("")
+                    imgfile.close()
+                    # Capture the image
+                    picam2.capture_file("captures/capture_" + str(i) + ".jpg")
                     time.sleep(_config["interval"])
                 picam2.stop()
-                os.system("cd ..")
                 
                 conn.send(json.dumps({
                     "status": "connected",
