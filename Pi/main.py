@@ -152,11 +152,6 @@ try:
                         "response": "session",
                         "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
                     }).encode("utf-8"))
-                    # Create the file prior to capture
-                    imgfile = open("~/Pictures/capture_" + str(i) + ".jpg", "w")
-                    imgfile.write("")
-                    imgfile.close()
-                    # Capture the image
                     picam2.capture_file("capture_" + str(i) + ".jpg")
                     time.sleep(_config["interval"])
                 picam2.stop()
