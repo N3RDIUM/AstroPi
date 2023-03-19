@@ -90,6 +90,7 @@ try:
                 log("Connected to transfer client successfully!")
                 break
         transfer = TransferThread(fileconn)
+        transfer.start()
         while True:
             data = conn.recv(1024)
             if not data: continue

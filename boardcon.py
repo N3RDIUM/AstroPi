@@ -77,13 +77,21 @@ class AstroPiBoard:
         self.set_state(constants.CONNECTING)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.ip, constants.ASTROPI_PORT))
+        self.window.log("Socket created successfully!")
+        time.sleep(2)
+        self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
+        self.file_socket.send(json.dumps({
+            "command": "connect",
+        }).encode("utf-8"))
+        self.window.log("File socket created successfully!")
+        time.sleep(1)
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
         time.sleep(1)
-        self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
         self.update__config()
+        self.window.log("Synced config with board")
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
             if not _data: continue
@@ -159,7 +167,7 @@ class AstroPiBoard:
             self._config['image_count'] = int(self._config['image_count'])
             self._config['interval'] = int(self._config['interval'])
             self._config['ExposureTime'] = int(self._config['ExposureTime'])
-            print(self._config["ExposureTime"])
+            (self._config["ExposureTime"])
             return True
         except Exception as e:
             self.window.log(f"Error evaluating settings: {e}", logging.ERROR)
