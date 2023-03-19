@@ -54,6 +54,8 @@ class TransferThread:
     def start(self):
         self.thread = threading.Thread(target=self._start)
         self.thread.start()
+        self.status_reporter = threading.Thread(target=self._status_reporter)
+        self.status_reporter.start()
         
     def _start(self):
         time.sleep(0.1)
@@ -65,13 +67,17 @@ class TransferThread:
             log("Sending file: " + path)
             with open(path, "rb") as f:
                 data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 1024):
-                self.conn.send(data[i:i+1024].encode("utf-8"))
+            for i in range(0, len(data), 4096):
+                self.conn.send(data[i:i+4096].encode("utf-8"))
             log("Sent file: " + path)
-            time.sleep(1/100)
+            time.sleep(1)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
+    def _status_reporter(self):
+        log("Started status reporter")
+        while True:
+            log(len(self.filequeue))    
 try:
     try:
         conn, addr = _socket.accept()
