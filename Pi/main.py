@@ -38,38 +38,7 @@ while True:
         print("Socket already in use, retrying in 5 seconds...")
         time.sleep(5)
 _socket.listen(1)
-
-# Now you'll ask me why I'm doing this.
-# Well, it makes it easier to look at the max min and default values of the config
-_config = { 
-#   'Example': (min, max, default)[2], #=setting, ##=not added to UI yet
-    'AwbMode': (0, 7, 0)[2], 
-    'Sharpness': (0.0, 16.0, 1.0)[2], 
-    'NoiseReductionMode': (0, 4, 0)[2], #
-    'FrameDurationLimits': (33333, 120000, None)[2], ##
-    'Contrast': (0.0, 32.0, 1.0)[2], 
-    'ColourCorrectionMatrix': (-16.0, 16.0, None)[2], 
-    'ExposureValue': (-8.0, 8.0, 0.0)[2], 
-    'AeExposureMode': (0, 3, 0)[2], #
-    'Saturation': (0.0, 32.0, 1.0)[2], 
-    'ColourGains': (0.0, 32.0, None)[2], 
-    'AfMode': (0, 2, 0)[2], #
-    'LensPosition': (0.0, 32.0, 1.0)[2], 
-    'AfMetering': (0, 1, 0)[2], #
-    'Brightness': (-1.0, 1.0, 0.0)[2], 
-    'AfSpeed': (0, 1, 0)[2], #
-    'AeMeteringMode': (0, 3, 0)[2], #
-    'AwbEnable': (False, True, None)[2], #
-    'AfWindows': ((0, 0, 0, 0), (65535, 65535, 65535, 65535), (0, 0, 0, 0))[2], ##
-    'AfPause': (0, 2, 0)[2], #
-    'AeConstraintMode': (0, 3, 0)[2], #
-    'AeEnable': (False, True, None)[2], #
-    'AnalogueGain': (1.0, 16.0, None)[2], 
-    'AfRange': (0, 2, 0)[2], #
-    'ExposureTime': (0, 66666, None)[2], 
-    'ScalerCrop': ((0, 0, 0, 0), (65535, 65535, 65535, 65535), (0, 0, 0, 0))[2], ##
-    'AfTrigger': (0, 1, 0)[2] #
-}
+_config = {}
 
 try:
     try:
