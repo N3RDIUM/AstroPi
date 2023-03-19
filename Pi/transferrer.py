@@ -21,7 +21,7 @@ class Transferrer():
         self.running = True
         self.image_queue = []
         
-    def _start(self) -> None:
+    def start(self) -> None:
         """
         Start listening for images to transfer.
         """
