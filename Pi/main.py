@@ -91,6 +91,10 @@ try:
                 camera_fan_speed = _config.pop("camera_fan_speed")
                 processor_fan_state = _config.pop("processor_fan_state")
                 camera_fan_state = _config.pop("camera_fan_state")
+                # Also remove all "None" values
+                for key in list(_config.keys()):
+                    if _config[key] == "None":
+                        _config.pop(key)
                 time.sleep(1)
                 
                 _log("Configuring camera...")
@@ -107,7 +111,6 @@ try:
                     },
                     controls=_config
                 )
-                print(f"Camera config: {_config}")
                 picam2.configure(camera_config)
                 
                 # Start the session
