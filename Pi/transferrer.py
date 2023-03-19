@@ -37,7 +37,8 @@ class Transferrer():
                     image_encoded = base64.b64encode(image_file.read()).decode("utf-8")
                     self.conn.send(json.dumps({
                         "type": "b64",
-                        "data": image_encoded
+                        "data": image_encoded,
+                        "path": image,
                 }).encode("utf-8"))
     
     def get_image(self) -> str:

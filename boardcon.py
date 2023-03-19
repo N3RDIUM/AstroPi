@@ -4,6 +4,8 @@ import logging
 import socket
 import json
 import time
+import base64
+import os
 
 # Import constants
 import Pi.constants as constants
@@ -88,6 +90,13 @@ class AstroPiBoard:
         self.socket.close()
         self.thread.join()
         
+    def save_image(self, path, b64):
+        """
+        Save the received image
+        """
+        with open(path, "wb") as f:
+            f.write(base64.b64decode(b64))
+        
     # Start the socket client in a new thread
     def start_socket_client(self):
         self.set_state(constants.CONNECTING)
@@ -116,6 +125,9 @@ class AstroPiBoard:
                 for _data in data:
                     if not _data["type"] == "b64":
                         self.window.log(str(_data["data"]), _data["type"])
+                    else:
+                        self.save_image(os.path.join(self.window.save_dir, _data["path"]), _data["data"])
+                    
                     if _data["data"] == "Connected to AstroPi successfully!":
                         self.set_state(constants.CONNECTED)
                 
