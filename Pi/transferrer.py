@@ -39,7 +39,7 @@ class Transferrer():
                         "type": "b64",
                         "data": image_encoded,
                         "path": image,
-                }).encode("utf-8"))
+                    }).encode("utf-8"))
     
     def get_image(self) -> str:
         """
@@ -53,10 +53,11 @@ class Transferrer():
         """
         Listen for images to transfer.
         """
-        files = os.listdir()
-        for file in files:
-            if file.startswith("capture_") and file.split(".") in ["jpg", "jpeg", "png", "dng"] and file not in self.image_queue:
-                self.image_queue.append(file)
+        while True:
+            files = os.listdir()
+            for file in files:
+                if file.startswith("capture_") and file.split(".") in ["jpg", "jpeg", "png", "dng"] and file not in self.image_queue:
+                    self.image_queue.append(file)
                 
     def stop(self) -> None:
         self.running = False

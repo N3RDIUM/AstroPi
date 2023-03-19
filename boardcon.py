@@ -29,7 +29,7 @@ class AstroPiBoard:
             'image_count': 1,
             'interval': 0,
             
-            'ExposureTime': 666,
+            'ExposureTime': 1000000,
         }
         self.progress = {
             "image_count": 0,
@@ -89,6 +89,7 @@ class AstroPiBoard:
                 if not _data["type"] == "b64":
                     self.window.log(str(_data["data"]), _data["type"])
                 else:
+                    self.window.log(f"Received image: {os.path.join(self.window.save_dir, _data['path'])}", logging.INFO)
                     self.save_image(os.path.join(self.window.save_dir, _data["path"]), _data["data"])
                     self.window.log(f"Saved image to {os.path.join(self.window.save_dir, _data['path'])}", logging.INFO)
                 
