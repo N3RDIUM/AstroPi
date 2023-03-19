@@ -70,24 +70,26 @@ class AstroPiBoard:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.ip, constants.ASTROPI_PORT))
         self.window.log("Socket created successfully!")
-        time.sleep(2)
+        time.sleep(0.1)
         self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
         self.file_socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
+        threading.Thread(target=self._handle_file_transfer).start()
         self.window.log("File socket created successfully!")
-        time.sleep(1)
+        time.sleep(0.1)
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
-        time.sleep(1)
+        time.sleep(0.1)
         self.update__config()
         self.window.log("Synced config with board")
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
             if not _data: continue
             else:
+                print(_data)
                 _data = json.loads(_data)
                 self.window.log(str(_data["data"]), _data["type"])
                 
@@ -96,25 +98,24 @@ class AstroPiBoard:
                 
             if self.state == constants.DISCONNECTED:
                 break
-            self._handle_file_transfer()
             
     def _handle_file_transfer(self):
         """
         Handle file transfer
         """
-        # Go for 16 MB at a time
-        _data = self.file_socket.recv(1025*1024*16).decode("utf-8")
-        if not _data: return
-        else:
-            _data = base64.b64decode(_data)
-            if _data == constants.FILE_SEPARATOR:
-                self.progress["image_count"] += 1
-                self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
-                # self.window.update_progress()
-                return
+        while True:
+            _data = self.file_socket.recv(16384).decode("utf-8")
+            if not _data: return
             else:
-                with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
-                    f.write(_data)
+                _data = base64.b64decode(_data)
+                if _data == constants.FILE_SEPARATOR:
+                    self.progress["image_count"] += 1
+                    self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
+                    # self.window.update_progress()
+                    return
+                else:
+                    with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
+                        f.write(_data)
 
     def set(self, key, value):
         """
@@ -159,7 +160,6 @@ class AstroPiBoard:
             self._config['image_count'] = int(self._config['image_count'])
             self._config['interval'] = int(self._config['interval'])
             self._config['ExposureTime'] = int(self._config['ExposureTime'])
-            (self._config["ExposureTime"])
             return True
         except Exception as e:
             self.window.log(f"Error evaluating settings: {e}", logging.ERROR)

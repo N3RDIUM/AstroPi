@@ -65,9 +65,8 @@ class TransferThread:
             log("Sending file: " + path)
             with open(path, "rb") as f:
                 data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 1024*1024*16):
-                self.conn.send(data[i:i+1024*1024*16].encode("utf-8"))
-                time.sleep(1/60)
+            for i in range(0, len(data), 1024):
+                self.conn.send(data[i:i+1024].encode("utf-8"))
             log("Sent file: " + path)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             time.sleep(1/512)
