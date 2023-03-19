@@ -4,10 +4,10 @@ import json
 import constants
 import logging
 import time
-import sys
+import base64
 import time
 import threading
-from transferrer import Transferrer
+import sys
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
@@ -39,6 +39,13 @@ while True:
         time.sleep(5)
 _socket.listen(1)
 _config = {}
+
+def send_imgfile(conn, path):
+    conn.send(json.dumps({
+        "type": "b64",
+        "data": base64.b64encode(open(path, "rb").read()).decode("utf-8"),
+        "path": path
+    }).encode("utf-8"))
 
 try:
     try:
@@ -77,11 +84,8 @@ try:
                 else:
                     _log("Unknown system command: " + data["type"], logging.ERROR)
             elif data["command"] == "start":
-                _log("Starting session...")
-                transferrer = Transferrer(conn) # TODO: _config["transfer_quality"]
-                thread = threading.Thread(target=transferrer.start)
-                thread.start()
                 
+                _log("Starting session...")
                 # Remove values not advertised by libcamera
                 image_count = _config.pop("image_count")
                 interval = _config.pop("interval")
@@ -116,13 +120,13 @@ try:
                 for i in range(0, image_count):
                     _log("Capturing image " + str(i + 1) + " of " + str(image_count))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
+                    threading.Thread(target=send_imgfile, args=(conn, "capture_" + str(i) + ".jpg")).start()
                     if interval / 1000000 - 1/10 > 0:
                         time.sleep(interval / 1000000 - 1/10)
                     else:
                         continue
                 _log("Session complete! Stopping camera and transfer thread...")
                 picam2.stop()
-                transferrer.stop()
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()
