@@ -112,6 +112,11 @@ try:
                 transferrer = Transferrer(conn) # TODO: _config["transfer_quality"]
                 thread = threading.Thread(target=transferrer.start)
                 thread.start()
+                
+                # Remove image_count, interval and transfer_quality from config
+                image_count = _config.pop("image_count")
+                interval = _config.pop("interval")
+                transfer_quality = _config.pop("transfer_quality")
                 time.sleep(1)
                 
                 _log("Configuring camera...")
@@ -136,11 +141,11 @@ try:
                 time.sleep(2) # Warm up the camera
                 
                 # Go to captures directory
-                for i in range(0, _config["image_count"]):
-                    _log("Capturing image " + str(i + 1) + " of " + str(_config["image_count"]))
+                for i in range(0, image_count):
+                    _log("Capturing image " + str(i + 1) + " of " + str(image_count))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
-                    if _config["interval"] / 1000000 - 1/10 > 0:
-                        time.sleep(_config["interval"] / 1000000 - 1/10)
+                    if interval / 1000000 - 1/10 > 0:
+                        time.sleep(interval / 1000000 - 1/10)
                     else:
                         continue
                 _log("Session complete! Stopping camera and transfer thread...")
