@@ -99,14 +99,26 @@ class AstroPiBoard:
         time.sleep(1)
         self.update__config()
         while True:
-            data = self.socket.recv(1024).decode("utf-8")
+            data = [self.socket.recv(1024).decode("utf-8")]
             if not data: continue
             else:
-                self.window.log("AstroPi says: " + str(data), logging.DEBUG)
-                data = json.loads(data)
-                if data["status"] == "connected":
-                    self.set_state(constants.CONNECTED)
-            
+                decode_complete = False
+                while not decode_complete:
+                    for _data in data:
+                        try:
+                            data[data.index(_data)] = json.loads(_data)
+                            decode_complete = True
+                        except json.decoder.JSONDecodeError as e:
+                            error_char = e.doc[e.pos]
+                            data[data.index(_data)] = _data.split(error_char)[0]
+                            _data = _data.split(error_char)[1]
+                            data.append(_data)
+                for _data in data:
+                    if not _data["type"] == "b64":
+                        self.window.log(str(_data["data"]), _data["type"])
+                    if _data["data"] == "Connected to AstroPi successfully!":
+                        self.set_state(constants.CONNECTED)
+                
             if self.state == constants.DISCONNECTED:
                 break
 

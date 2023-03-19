@@ -6,12 +6,13 @@ import logging
 import time
 import sys
 import time
+import threading
 
 try:
-    from transfer_thread import TransferThread
+    from Pi.transferrer import Transferrer
 except ImportError:
     sys.path.append("./Pi/")
-    from transfer_thread import TransferThread
+    from Pi.transferrer import Transferrer
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
@@ -106,7 +107,8 @@ try:
             elif data["command"] == "start":
                 _log("Starting session...")
                 _log("Starting transfer thread...")
-                thread = TransferThread(conn, _config["transfer_quality"])
+                transferrer = Transferrer(conn, _config["transfer_quality"])
+                thread = threading.Thread(target=transferrer.start)
                 thread.start()
                 
                 _log("Configuring camera...")

@@ -3,26 +3,25 @@ import base64
 import json
 import threading
 
-class TransferThread(threading.Thread):
+class Transferrer():
     """
-    TransferThread
+    Transferrer
     This class is used to transfer images from the Pi to the client.
     """
     def __init__(self, conn, transfer_quality=0):
         """
-        Initialize the TransferThread object.
+        Initialize the Transferrer object.
 
         Here, conn is the socket connection to the client.
         Also, transfer_quality is the quality of the image to be transferred,
         where 0 is original quality, and 1 is low quality.
         """
-        super(TransferThread, self).__init__()
         self.conn = conn
         self.transfer_quality = transfer_quality
         self.running = True
         self.image_queue = []
         
-    def start(self) -> None:
+    def _start(self) -> None:
         """
         Start listening for images to transfer.
         """
@@ -35,11 +34,9 @@ class TransferThread(threading.Thread):
                 with open(image, "rb") as image_file:
                     image_encoded = base64.b64encode(image_file.read()).decode("utf-8")
                     self.conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "transfer",
+                        "type": "b64",
                         "data": image_encoded
                 }).encode("utf-8"))
-        return super().start()
     
     def get_image(self) -> str:
         """
