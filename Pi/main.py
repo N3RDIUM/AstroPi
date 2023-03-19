@@ -85,7 +85,7 @@ try:
                     "type": level,
                     "data": msg
                 }).encode("utf-8"))
-                time.sleep(1/100)
+                time.sleep(1/10)
             data = json.loads(data)
             if data["command"] == "connect":
                 _log("Connected to AstroPi successfully!")
@@ -136,9 +136,9 @@ try:
                 for i in range(0, _config["image_count"]):
                     _log("Capturing image " + str(i + 1) + " of " + str(_config["image_count"]))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
-                    if _config["interval"] / 1000000 - 1/100 > 0:
-                        _log("Waiting " + str(_config["interval"] / 1000000 - 1/100) + " seconds...")
-                        time.sleep(_config["interval"] / 1000000 - 1/100)
+                    if _config["interval"] / 1000000 - 1/10 > 0:
+                        _log("Waiting " + str(_config["interval"] / 1000000) + " seconds...")
+                        time.sleep(_config["interval"] / 1000000 - 1/10)
                     else:
                         continue
                 _log("Session complete! Stopping camera and transfer thread...")
