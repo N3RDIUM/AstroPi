@@ -89,7 +89,6 @@ class AstroPiBoard:
             _data = self.socket.recv(1024).decode("utf-8")
             if not _data: continue
             else:
-                print(_data)
                 _data = json.loads(_data)
                 self.window.log(str(_data["data"]), _data["type"])
                 
@@ -105,15 +104,14 @@ class AstroPiBoard:
         """
         while True:
             _data = self.file_socket.recv(16384).decode("utf-8")
-            if not _data: return
+            if not _data: continue
             else:
-                _data = base64.b64decode(_data)
                 if _data == constants.FILE_SEPARATOR:
                     self.progress["image_count"] += 1
                     self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
                     # self.window.update_progress()
-                    return
                 else:
+                    _data = base64.b64decode(_data)
                     with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
                         f.write(_data)
 
