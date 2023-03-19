@@ -49,7 +49,7 @@ class Transferrer():
             return self.image_queue.pop(0)
         return None
     
-    def listen(self, image: str) -> None:
+    def listen(self,) -> None:
         """
         Listen for images to transfer.
         """
