@@ -68,8 +68,8 @@ class TransferThread:
             for i in range(0, len(data), 1024):
                 self.conn.send(data[i:i+1024].encode("utf-8"))
             log("Sent file: " + path)
+            time.sleep(1/10)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
-            time.sleep(1/512)
             
 try:
     try:
