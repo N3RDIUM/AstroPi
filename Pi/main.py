@@ -54,8 +54,6 @@ class TransferThread:
     def start(self):
         self.thread = threading.Thread(target=self._start)
         self.thread.start()
-        self.status_reporter = threading.Thread(target=self._status_reporter)
-        self.status_reporter.start()
         
     def _start(self):
         time.sleep(0.1)
@@ -74,10 +72,6 @@ class TransferThread:
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
-    def _status_reporter(self):
-        log("Started status reporter")
-        while True:
-            log(len(self.filequeue))    
 try:
     try:
         conn, addr = _socket.accept()
