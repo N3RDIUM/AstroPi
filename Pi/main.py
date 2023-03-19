@@ -142,6 +142,8 @@ try:
                 # Configure the camera
                 picam2 = Picamera2()
                 print(picam2.camera_controls)
+                # Since we are taking images of the sky, set focus to infinity
+                _config["LensPosition"] = 0
                 camera_config = picam2.create_still_configuration(
                     main={
                         "size": (1920, 1080),
