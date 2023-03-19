@@ -63,63 +63,35 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-12</y>
          <width>296</width>
-         <height>669</height>
+         <height>589</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEdit">
+        <item row="25" column="0" colspan="2">
+         <widget class="QPushButton" name="PullUpdates">
           <property name="text">
-           <string/>
+           <string>Pull updates from repository</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="0" colspan="2">
-         <widget class="QLabel" name="label_7">
+        <item row="13" column="0">
+         <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>&lt;h2 align=&quot;center&quot;&gt;POWER&lt;/h2&gt;</string>
+           <string>Processor fan:</string>
           </property>
          </widget>
         </item>
-        <item row="24" column="0" colspan="2">
-         <widget class="QLabel" name="label_10">
+        <item row="10" column="0">
+         <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>&lt;h2 align=&quot;center&quot;&gt;SYSTEM&lt;/h2&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>→</string>
-          </property>
-         </widget>
-        </item>
-        <item row="28" column="0" colspan="2">
-         <widget class="QPushButton" name="pushButton_5">
-          <property name="text">
-           <string>Connect to shell...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="14" column="1">
-         <widget class="QSlider" name="horizontalSlider">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0" colspan="2">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <string>Session time:</string>
           </property>
          </widget>
         </item>
         <item row="18" column="1">
-         <widget class="QComboBox" name="comboBox_3">
+         <widget class="QComboBox" name="CameraFanState">
           <item>
            <property name="text">
             <string>ON</string>
@@ -132,8 +104,15 @@
           </item>
          </widget>
         </item>
+        <item row="19" column="1">
+         <widget class="QSlider" name="CameraFanSpeed">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="10" column="1">
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="SessionTime">
           <item>
            <property name="text">
             <string>Really short (0-5 min)</string>
@@ -161,22 +140,29 @@
           </item>
          </widget>
         </item>
-        <item row="15" column="1">
-         <widget class="QLabel" name="label_19">
-          <property name="text">
-           <string>Auto</string>
+        <item row="14" column="1">
+         <widget class="QSlider" name="ProcessorFanSpeed">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="31" column="0" colspan="2">
+        <item row="29" column="0" colspan="2">
          <widget class="QLabel" name="label_39">
           <property name="text">
            <string>&lt;p align=&quot;center&quot;&gt;Coming soon!&lt;/p&gt;</string>
           </property>
          </widget>
         </item>
+        <item row="8" column="0" colspan="2">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>&lt;h2 align=&quot;center&quot;&gt;POWER&lt;/h2&gt;</string>
+          </property>
+         </widget>
+        </item>
         <item row="26" column="0" colspan="2">
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="SystemUpdate">
           <property name="text">
            <string>System update (takes time!)</string>
           </property>
@@ -189,8 +175,85 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>&lt;h2 align=&quot;center&quot;&gt;CONNECTION&lt;/h2&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="EnterBoardIP">
+          <property name="text">
+           <string>→</string>
+          </property>
+         </widget>
+        </item>
+        <item row="27" column="0" colspan="2">
+         <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Board status:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="18" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Sensor fan:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="21" column="1">
+         <widget class="QLabel" name="CameraFanText">
+          <property name="text">
+           <string>Auto</string>
+          </property>
+         </widget>
+        </item>
+        <item row="23" column="0" colspan="2">
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="28" column="0" colspan="2">
+         <widget class="QLabel" name="label_30">
+          <property name="text">
+           <string>&lt;h2 align=&quot;center&quot;&gt;EXIF&lt;/h2&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="15" column="1">
+         <widget class="QLabel" name="ProcessorFanText">
+          <property name="text">
+           <string>Auto</string>
+          </property>
+         </widget>
+        </item>
+        <item row="24" column="0" colspan="2">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>&lt;h2 align=&quot;center&quot;&gt;SYSTEM&lt;/h2&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="2">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="13" column="1">
-         <widget class="QComboBox" name="comboBox_2">
+         <widget class="QComboBox" name="ProcessorFanState">
           <item>
            <property name="text">
             <string>ON</string>
@@ -203,94 +266,17 @@
           </item>
          </widget>
         </item>
-        <item row="21" column="1">
-         <widget class="QLabel" name="label_20">
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="BoardIP">
           <property name="text">
-           <string>Auto</string>
-          </property>
-         </widget>
-        </item>
-        <item row="27" column="0" colspan="2">
-         <widget class="QPushButton" name="pushButton_4">
-          <property name="text">
-           <string>Run all tests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="23" column="0" colspan="2">
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="25" column="0" colspan="2">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>Pull updates from repository</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Board status:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Session time:</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item row="6" column="1">
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="BoardStatus">
           <property name="text">
            <string>&lt;p style=&quot;color:red&quot;&gt;DISCONNECTED!&lt;/p&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="18" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Sensor fan:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>&lt;h2 align=&quot;center&quot;&gt;CONNECTION&lt;/h2&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="19" column="1">
-         <widget class="QSlider" name="horizontalSlider_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="13" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Processor fan:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="30" column="0" colspan="2">
-         <widget class="QLabel" name="label_30">
-          <property name="text">
-           <string>&lt;h2 align=&quot;center&quot;&gt;EXIF&lt;/h2&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="29" column="0" colspan="2">
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -324,8 +310,123 @@
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="15" column="2">
-         <widget class="QComboBox" name="comboBox_4">
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_24">
+          <property name="text">
+           <string>Exposure Time:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="3">
+         <widget class="QLabel" name="ColorCorrectionText">
+          <property name="text">
+           <string>None</string>
+          </property>
+         </widget>
+        </item>
+        <item row="19" column="2">
+         <widget class="QLineEdit" name="lineEdit_5">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="3">
+         <widget class="QLabel" name="SharponessText">
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="16" column="1" colspan="2">
+         <widget class="Line" name="line_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_26">
+          <property name="text">
+           <string>Color correction:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="19" column="0">
+         <widget class="QLabel" name="label_28">
+          <property name="text">
+           <string>Save dir:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>Interval:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="3">
+         <widget class="QLabel" name="ExposureValueText">
+          <property name="text">
+           <string>None</string>
+          </property>
+         </widget>
+        </item>
+        <item row="20" column="2">
+         <widget class="QPushButton" name="SaveDirBrowse">
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string># Images:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="NumImages"/>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="label_41">
+          <property name="text">
+           <string>Saturation:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="ImageInterval">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2">
+         <widget class="QSlider" name="ColorCorrection">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QSlider" name="Sharpness">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>&lt;h2 align=&quot;center&quot;&gt;IMAGING&lt;/h2&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="21" column="2">
+         <widget class="QComboBox" name="TransferQuality">
           <item>
            <property name="text">
             <string>Original</string>
@@ -338,86 +439,174 @@
           </item>
          </widget>
         </item>
-        <item row="15" column="0">
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_40">
+          <property name="text">
+           <string>Exposure Value:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_23">
+          <property name="text">
+           <string>Contrast:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QSlider" name="Contrast">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="3">
+         <widget class="QLabel" name="ContrastText">
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Sharpness:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="ExposureTime"/>
+        </item>
+        <item row="21" column="0">
          <widget class="QLabel" name="label_29">
           <property name="text">
            <string>Transfer quality:</string>
           </property>
          </widget>
         </item>
-        <item row="14" column="2">
-         <widget class="QPushButton" name="pushButton_7">
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="1" colspan="2">
-         <widget class="Line" name="line_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QLineEdit" name="lineEdit_4"/>
-        </item>
-        <item row="13" column="0">
-         <widget class="QLabel" name="label_28">
-          <property name="text">
-           <string>Save dir:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_24">
-          <property name="text">
-           <string>Exposure (ms):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="12" column="2">
+        <item row="18" column="2">
          <widget class="QLabel" name="label_27">
           <property name="text">
            <string>&lt;h2 align=&quot;center&quot;&gt;FILES&lt;/h2&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QLineEdit" name="lineEdit_3">
-          <property name="text">
-           <string/>
+        <item row="8" column="2">
+         <widget class="QSlider" name="ExposureValue">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" colspan="2">
-         <widget class="QLabel" name="label_13">
+        <item row="9" column="2">
+         <widget class="QSlider" name="Saturation">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="3">
+         <widget class="QLabel" name="SaturationText">
           <property name="text">
-           <string>&lt;h2 align=&quot;center&quot;&gt;IMAGING&lt;/h2&gt;</string>
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QLabel" name="label_42">
+          <property name="text">
+           <string>Color Gains:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="2">
+         <widget class="QSlider" name="ColorGains">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="3">
+         <widget class="QLabel" name="ColorGainsText">
+          <property name="text">
+           <string>None</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="0">
+         <widget class="QLabel" name="label_43">
+          <property name="text">
+           <string>Lens Position:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="2">
+         <widget class="QSlider" name="LensPosition">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="3">
+         <widget class="QLabel" name="LensPositionText">
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0">
+         <widget class="QLabel" name="label_44">
+          <property name="text">
+           <string>Brightness:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="2">
+         <widget class="QSlider" name="Brightness">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="3">
+         <widget class="QLabel" name="BrightnessText">
+          <property name="text">
+           <string>0.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="13" column="0">
+         <widget class="QLabel" name="label_45">
+          <property name="text">
+           <string>Analogue Gain:</string>
           </property>
          </widget>
         </item>
         <item row="13" column="2">
-         <widget class="QLineEdit" name="lineEdit_5">
-          <property name="text">
-           <string/>
+         <widget class="QSlider" name="AnalogueGain">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_21">
+        <item row="13" column="3">
+         <widget class="QLabel" name="BrightnessText_2">
           <property name="text">
-           <string>Interval:</string>
+           <string>None</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEdit_2"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_12">
+        <item row="3" column="3">
+         <widget class="QLabel" name="label_3">
           <property name="text">
-           <string># Images:</string>
+           <string>us</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QLabel" name="label_19">
+          <property name="text">
+           <string>us</string>
           </property>
          </widget>
         </item>
@@ -476,7 +665,7 @@
          <string>&lt;h2 align=&quot;center&quot;&gt;CAPTURE&lt;/h2&gt;</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_6">
+       <widget class="QPushButton" name="StartButton">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -525,7 +714,7 @@
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
-       <widget class="QProgressBar" name="progressBar">
+       <widget class="QProgressBar" name="ImagingProgress">
         <property name="geometry">
          <rect>
           <x>80</x>
@@ -551,7 +740,7 @@
          <string>Imaging:</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_32">
+       <widget class="QLabel" name="ETAText">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -577,7 +766,7 @@
          <string>Current</string>
         </property>
        </widget>
-       <widget class="QProgressBar" name="progressBar_2">
+       <widget class="QProgressBar" name="ImageProgress">
         <property name="geometry">
          <rect>
           <x>80</x>
@@ -590,7 +779,7 @@
          <number>0</number>
         </property>
        </widget>
-       <widget class="QLabel" name="label_34">
+       <widget class="QLabel" name="ImageProcessText">
         <property name="geometry">
          <rect>
           <x>260</x>
@@ -616,7 +805,7 @@
          <string>&lt;h2 align=&quot;center&quot;&gt;PROGRESS&lt;/h2&gt;</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_36">
+       <widget class="QLabel" name="CameraStateText">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -629,7 +818,7 @@
          <string>&lt;span style=&quot;color:green&quot;&gt;[CAPTURING]&lt;/span&gt; / [IDLE]</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_37">
+       <widget class="QLabel" name="ImagingProgressText">
         <property name="geometry">
          <rect>
           <x>260</x>

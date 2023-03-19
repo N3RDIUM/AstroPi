@@ -42,26 +42,26 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add click callbacks to the buttons
         self.toolButton.clicked.connect(self.clearLog)
         self.toolButton_2.clicked.connect(self.saveLog)
-        self.pushButton_7.clicked.connect(self.setSaveDir)
-        self.pushButton.clicked.connect(self.connect)
-        self.pushButton_2.clicked.connect(self.pullUpdates)
-        self.pushButton_3.clicked.connect(self.systemUpdate)
-        self.pushButton_6.clicked.connect(self.startSession)
+        self.SaveDirBrowse.clicked.connect(self.setSaveDir)
+        self.EnterBoardIP.clicked.connect(self.connect)
+        self.PullUpdates.clicked.connect(self.pullUpdates)
+        self.SystemUpdate.clicked.connect(self.systemUpdate)
+        self.StartButton.clicked.connect(self.startSession)
         
         # Add callbacks to sliders
-        self.horizontalSlider.valueChanged.connect(self.setProcessorFanSpeed)
-        self.horizontalSlider_2.valueChanged.connect(self.setSensorFanSpeed)
+        self.ProcessorFanSpeed.valueChanged.connect(self.setProcessorFanSpeed)
+        self.CameraFanSpeed.valueChanged.connect(self.setSensorFanSpeed)
         
         # Add callbacks to line edits
-        self.lineEdit_2.editingFinished.connect(self.setImageCount)
-        self.lineEdit_3.editingFinished.connect(self.setInterval)
-        self.lineEdit_4.editingFinished.connect(self.setExposure)
+        self.NumImages.editingFinished.connect(self.setImageCount)
+        self.ImageInterval.editingFinished.connect(self.setInterval)
+        self.ExposureTime.editingFinished.connect(self.setExposure)
         
         # Add callbacks to combo boxes
-        self.comboBox.currentIndexChanged.connect(self.setSessionTime)
-        self.comboBox_2.currentIndexChanged.connect(self.setProcessorFanState)
-        self.comboBox_3.currentIndexChanged.connect(self.setCameraFanState)
-        self.comboBox_4.currentIndexChanged.connect(self.setTransferQuality)
+        self.SessionTime.currentIndexChanged.connect(self.setSessionTime)
+        self.ProcessorFanState.currentIndexChanged.connect(self.setProcessorFanState)
+        self.CameraFanState.currentIndexChanged.connect(self.setCameraFanState)
+        self.TransferQuality.currentIndexChanged.connect(self.setTransferQuality)
         
         # Set default values to variables
         self.save_dir = None
@@ -179,11 +179,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         speed = round(speed / 99 * 100)
         if speed == 0:
-            self.label_19.setText("Auto")
+            self.ProcessorFanText.setText("Auto")
             self.log("Processor fan speed set to Auto", logging.DEBUG)
             processor_fan_speed = constants.AUTO
         else:
-            self.label_19.setText(str(speed) + "%")
+            self.ProcessorFanText.setText(str(speed) + "%")
             processor_fan_speed = speed
         if self.comms:
             self.comms.set("ProcessorFanSpeed", processor_fan_speed)
@@ -194,11 +194,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         speed = round(speed / 99 * 100)
         if speed == 0:
-            self.label_20.setText("Auto")
+            self.CameraFanText.setText("Auto")
             self.log("Sensor fan speed set to Auto", logging.DEBUG)
             sensor_fan_speed = constants.AUTO
         else:
-            self.label_20.setText(str(speed) + "%")
+            self.CameraFanText.setText(str(speed) + "%")
             sensor_fan_speed = speed
         if self.comms:
             self.comms.set("SensorFanSpeed", sensor_fan_speed)
@@ -216,7 +216,7 @@ class AstroPi(QtWidgets.QMainWindow):
         
         if os.path.isdir(dir):
             self.save_dir = dir
-            self.lineEdit_5.setText(dir)
+            self.SaveDirInput.setText(dir)
             self.log("Save directory set to: " + dir, logging.INFO)
         
         dialog.close()
@@ -227,11 +227,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         try:
             # Get the IP address
-            ip = self.lineEdit.text()
+            ip = self.BoardIP.text()
             self.comms = boardcon.AstroPiBoard(ip, self)
             self.comms.connect()
             self.log("Connected to AstroPi at " + ip, logging.INFO)
-            self.pushButton.setEnabled(False)
+            self.EnterBoardIP.setEnabled(False)
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
@@ -257,21 +257,21 @@ class AstroPi(QtWidgets.QMainWindow):
         Set the image counter
         """
         if self.comms:
-            self.comms.set("image_count", self.lineEdit_2.text())
+            self.comms.set("image_count", self.NumImages.text())
             
     def setInterval(self):
         """
         Set the interval
         """
         if self.comms:
-            self.comms.set("interval", self.lineEdit_3.text())
+            self.comms.set("interval", self.ImageInterval.text())
         
     def setExposure(self):
         """
         Set the exposure numerator
         """
         if self.comms:
-            self.comms.set("exposure", self.lineEdit_4.text())
+            self.comms.set("exposure", self.ExposureTime.text())
 
     def setSessionTime(self, time):
         if self.comms:
