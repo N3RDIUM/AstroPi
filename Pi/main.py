@@ -40,36 +40,7 @@ while True:
 _socket.listen(1)
 
 _config = { # default _config
-    'session_time': 2, # SESSION SETTINGS
-    'processor_fan_state': 0,
-    'processor_fan_speed': 0,
-    'camera_fan_state': 0,
-    'camera_fan_speed': 0,
-    'transfer_quality': 0,        
-    'image_count': '1', # CAMERA SETTINGS
-    'interval': '0', 
-    'exposure': '100000', 
-    'iso': -1, 
-    'focus': -2, 
-    'brightness': 50, 
-    'contrast': 100, 
-    'exposure_compensation': 0, 
-    'sharpness': 0, 
-    'awb_mode': 0, 
-    'drc_strength': 0, 
-    'image_denoise': 0, 
-    'exposure_mode': 0, 
-    'flash_mode': 0, 
-    'metering_mode': 0, 
-    'effect__config': '', 
-    'color_effect_u': '255',
-    'color_effect_v': '255',
-    'zoom_x': '0.0', 
-    'zoom_y': '0.0', 
-    'zoom_w': '1.0', 
-    'zoom_h': '1.0',
-    'resolution_x': '4608', # IMAGE RESOLUTIONS
-    'resolution_y': '2592',
+    "ExposureTime": 1000000
 } 
 
 try:
@@ -85,6 +56,7 @@ try:
                     "type": level,
                     "data": msg
                 }).encode("utf-8"))
+                print(f"Sent: {msg}")
                 time.sleep(1/10)
             data = json.loads(data)
             if data["command"] == "connect":
@@ -121,11 +93,14 @@ try:
                 
                 # Configure the camera
                 picam2 = Picamera2()
-                camera_config = picam2.create_still_configuration(main={
-                    "size": (1920, 1080),
-                })
+                print(picam2.camera_controls)
+                camera_config = picam2.create_still_configuration(
+                    main={
+                        "size": (1920, 1080),
+                    },
+                    controls=_config["controls"]
+                )
                 picam2.configure(camera_config)
-                picam2.camera_controls["ExposureTime"] = int(_config["exposure"])
                 
                 # Start the session
                 _log("Starting session...")

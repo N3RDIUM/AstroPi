@@ -201,12 +201,12 @@ class AstroPi(QtWidgets.QMainWindow):
         if speed == 0:
             self.label_19.setText("Auto")
             self.log("Processor fan speed set to Auto", logging.DEBUG)
-            self.processor_fan_speed = constants.AUTO
+            processor_fan_speed = constants.AUTO
         else:
             self.label_19.setText(str(speed) + "%")
-            self.processor_fan_speed = speed
+            processor_fan_speed = speed
         if self.comms:
-            self.comms.set("processor_fan_speed", self.processor_fan_speed)
+            self.comms.set("ProcessorFanSpeed", processor_fan_speed)
     
     def setSensorFanSpeed(self, speed):
         """
@@ -216,12 +216,12 @@ class AstroPi(QtWidgets.QMainWindow):
         if speed == 0:
             self.label_20.setText("Auto")
             self.log("Sensor fan speed set to Auto", logging.DEBUG)
-            self.sensor_fan_speed = constants.AUTO
+            sensor_fan_speed = constants.AUTO
         else:
             self.label_20.setText(str(speed) + "%")
-            self.sensor_fan_speed = speed
+            sensor_fan_speed = speed
         if self.comms:
-            self.comms.set("sensor_fan_speed", self.sensor_fan_speed)
+            self.comms.set("SensorFanSpeed", sensor_fan_speed)
         
     def setISO(self, iso):
         """
@@ -229,9 +229,8 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         iso = round(iso / 99 * 1500) + 100
         self.label_23.setText(str(iso))
-        self.iso = iso
         if self.comms:
-            self.comms.set("iso", self.iso)
+            self.comms.set("iso", iso)
         
     def setFocus(self, focus):
         """
@@ -239,17 +238,17 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if focus == 0:
             self.label_26.setText("Auto")
-            self.focus = constants.AUTO
+            focus = constants.AUTO
             self.log("Focus set to Auto", logging.DEBUG)
         elif focus == 99:
             self.label_26.setText("Infinity")
-            self.focus = constants.INFINITY
+            focus = constants.INFINITY
             self.log("Focus set to Infinity", logging.DEBUG)
         else:
             self.label_26.setText(str(focus))
-            self.focus = focus
+            focus = focus
         if self.comms:
-            self.comms.set("focus", self.focus)
+            self.comms.set("focus", focus)
             
     def setSaveDir(self):
         """
@@ -306,9 +305,8 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         brightness = round(brightness / 99 * 100)
         self.label_45.setText(str(brightness))
-        self.brightness = brightness
         if self.comms:
-            self.comms.set("brightness", self.brightness)
+            self.comms.set("brightness", brightness)
     
     def setContrast(self, contrast):
         """
