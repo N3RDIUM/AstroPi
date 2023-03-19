@@ -7,12 +7,7 @@ import time
 import sys
 import time
 import threading
-
-try:
-    from Pi.transferrer import Transferrer
-except ImportError:
-    sys.path.append("./Pi/")
-    from Pi.transferrer import Transferrer
+from transferrer import Transferrer
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
