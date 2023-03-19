@@ -107,6 +107,7 @@ try:
                     },
                     controls=_config
                 )
+                print(f"Camera config: {_config}")
                 picam2.configure(camera_config)
                 
                 # Start the session

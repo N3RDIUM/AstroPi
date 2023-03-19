@@ -177,6 +177,7 @@ class AstroPiBoard:
             self._config['image_count'] = int(self._config['image_count'])
             self._config['interval'] = int(self._config['interval'])
             self._config['ExposureTime'] = int(self._config['ExposureTime'])
+            print(self._config["ExposureTime"])
             return True
         except Exception as e:
             self.window.log(f"Error evaluating settings: {e}", logging.ERROR)
