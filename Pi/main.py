@@ -72,6 +72,43 @@ class TransferThread:
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
+class StreamThread:
+    """
+    Stream the output to ASTROPI_PREVIEW_PORT
+    """
+    def __init__(self, picam2):
+        self.picam2 = picam2
+        self.video_config = picam2.create_video_configuration({"size": (1280, 720)})
+        self.picam2.configure(self.video_config)
+        self.encoder = H264Encoder(1000000)
+        self.streaming = False
+        self.thread = threading.Thread(target=self.start)
+        self.thread.start()
+
+    def start(self):
+        self.streaming = True
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind(("0.0.0.0", 10001))
+            sock.listen()
+
+            self.picam2.encoder = self.encoder
+
+            conn, addr = sock.accept()
+            stream = conn.makefile("wb")
+            picam2.encoder.output = FileOutput(stream)
+            picam2.start_encoder()
+            picam2.start()
+            while self.streaming:
+                time.sleep(1/10)
+            picam2.stop()
+            picam2.stop_encoder()
+            conn.close()
+            
+    def terminate(self):
+        self.streaming = False
+        self.thread.join()
+
 try:
     try:
         conn, addr = _socket.accept()
@@ -90,6 +127,14 @@ try:
                 break
         transfer = TransferThread(fileconn)
         transfer.start()
+        from picamera2 import Picamera2 
+        from picamera2.encoders import H264Encoder
+        from picamera2.outputs import FileOutput
+        
+        # Start streaming to constants.ASTROPI_PREVIEW_PORT
+        picam2 = Picamera2()
+        stream = StreamThread(picam2)
+        
         while True:
             data = conn.recv(1024)
             if not data: continue
@@ -134,13 +179,11 @@ try:
                         _config.pop(key)
                 time.sleep(1)
                 
-                _log("Configuring camera...")
-                # We import this here because this pkg is only available on the Pi
-                # and we don't want to import it on the PC while testing
-                from picamera2 import Picamera2 
+                # Terminating the stream thread
+                stream.terminate()
                 
+                _log("Configuring camera...")
                 # Configure the camera
-                picam2 = Picamera2()
                 print(picam2.camera_controls)
                 # Since we are taking images of the sky, set focus to infinity
                 _config["LensPosition"] = 0
