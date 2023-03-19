@@ -68,7 +68,7 @@ class TransferThread:
             for i in range(0, len(data), 1024):
                 self.conn.send(data[i:i+1024].encode("utf-8"))
             log("Sent file: " + path)
-            time.sleep(1/10)
+            time.sleep(1/100)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             
 try:
@@ -163,6 +163,7 @@ try:
                         time.sleep(interval / 1000000 - 1/10)
                     else:
                         continue
+                    print(len(transfer.filequeue))
                 _log("Session complete! Stopping camera...")
                 picam2.stop()
                 time.sleep(1)
