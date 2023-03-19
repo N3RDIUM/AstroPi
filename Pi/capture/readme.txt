@@ -1,1 +1,0 @@
-This is the directory where AstroPi will store its images.

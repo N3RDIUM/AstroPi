@@ -116,6 +116,7 @@ class AstroPiBoard:
                     self.window.log(str(_data["data"]), _data["type"])
                 else:
                     self.save_image(os.path.join(self.window.save_dir, _data["path"]), _data["data"])
+                    self.window.log(f"Saved image to {os.path.join(self.window.save_dir, _data['path'])}", logging.INFO)
                 
                 if _data["data"] == "Connected to AstroPi successfully!":
                     self.set_state(constants.CONNECTED)
