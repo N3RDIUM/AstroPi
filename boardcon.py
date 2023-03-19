@@ -109,6 +109,7 @@ class AstroPiBoard:
         self.update__config()
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
+            print(_data)
             if not _data: continue
             else:
                 _data = json.loads(_data)

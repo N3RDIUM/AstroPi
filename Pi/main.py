@@ -109,10 +109,10 @@ try:
                     _log("Unknown system command: " + data["type"], logging.ERROR)
             elif data["command"] == "start":
                 _log("Starting session...")
-                _log("Starting transfer thread...")
                 transferrer = Transferrer(conn, _config["transfer_quality"])
                 thread = threading.Thread(target=transferrer.start)
                 thread.start()
+                time.sleep(1)
                 
                 _log("Configuring camera...")
                 # We import this here because this pkg is only available on the Pi
@@ -137,7 +137,6 @@ try:
                     _log("Capturing image " + str(i + 1) + " of " + str(_config["image_count"]))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
                     if _config["interval"] / 1000000 - 1/10 > 0:
-                        _log("Waiting " + str(_config["interval"] / 1000000) + " seconds...")
                         time.sleep(_config["interval"] / 1000000 - 1/10)
                     else:
                         continue
