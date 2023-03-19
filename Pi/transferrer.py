@@ -40,6 +40,8 @@ class Transferrer():
                         "data": image_encoded,
                         "path": image,
                     }).encode("utf-8"))
+                    # Now that we've sent the image, delete it
+                    os.remove(image)
     
     def get_image(self) -> str:
         """
