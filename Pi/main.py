@@ -59,7 +59,7 @@ class TransferThread:
         time.sleep(0.1)
         while True:
             if not self.filequeue:
-                time.sleep(1)
+                time.sleep(1/1000)
                 continue
             path = self.filequeue.pop(0)
             log("Sending file: " + path)
@@ -70,6 +70,7 @@ class TransferThread:
             log("Sent file: " + path)
             time.sleep(1/100)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
+            os.remove(path)
             
 try:
     try:
@@ -163,7 +164,6 @@ try:
                         time.sleep(interval / 1000000 - 1/10)
                     else:
                         continue
-                    print(len(transfer.filequeue))
                 _log("Session complete! Stopping camera...")
                 picam2.stop()
                 time.sleep(1)
