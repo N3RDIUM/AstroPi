@@ -71,7 +71,7 @@ class TransferThread:
                 time.sleep(1/60)
             log("Sent file: " + path)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
-            time.sleep(1)
+            time.sleep(1/512)
             
 try:
     try:
@@ -165,8 +165,18 @@ try:
                         time.sleep(interval / 1000000 - 1/10)
                     else:
                         continue
-                _log("Session complete! Stopping camera and transfer thread...")
+                _log("Session complete! Stopping camera...")
                 picam2.stop()
+                
+                if len(transfer.filequeue) > 0:
+                    _log("Waiting for transfer to complete...")
+                    while True:
+                        if len(transfer.filequeue) == 0:
+                            break
+                        time.sleep(1)
+                _log("Transfer complete!")
+                _log("Exiting...")
+                conn.close()
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()

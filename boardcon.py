@@ -113,8 +113,8 @@ class AstroPiBoard:
         _data = self.file_socket.recv(1024).decode("utf-8")
         if not _data: return
         else:
-            _data = base64.b64decode(_data)
-            if _data == constants.FILE_SEPARATOR.encode("utf-8"):
+            _data = base64.b64decode(_data).decode("utf-8")
+            if _data == constants.FILE_SEPARATOR:
                 self.progress["image_count"] += 1
                 self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
                 # self.window.update_progress()
@@ -122,7 +122,7 @@ class AstroPiBoard:
                 self.progress["buffer"] = ""
                 return
             else:
-                self.progress["buffer"] += _data
+                self.progress["buffer"] += _data.decode("utf-8")
 
     def set(self, key, value):
         """
