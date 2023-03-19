@@ -77,6 +77,19 @@ try:
     try:
         conn, addr = _socket.accept()
         log('Connected by: ' + str(addr))
+        file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        file_socket.bind((device_ip, constants.ASTROPI_TRANSFER_PORT))
+        file_socket.listen(1)
+        log("Waiting for transfer connection...")
+        while True:
+            fileconn, fileaddr = file_socket.accept()
+            _data = fileconn.recv(1024)
+            if not _data: continue
+            _data = json.loads(_data)
+            if _data["command"] == "connect":
+                log("Connected to transfer client successfully!")
+                break
+        transfer = TransferThread(fileconn)
         while True:
             data = conn.recv(1024)
             if not data: continue
@@ -112,20 +125,6 @@ try:
             elif data["command"] == "start":
                 
                 _log("Starting session...")
-                file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                file_socket.bind((device_ip, constants.ASTROPI_TRANSFER_PORT))
-                file_socket.listen(1)
-                _log("Waiting for transfer connection...")
-                while True:
-                    fileconn, fileaddr = file_socket.accept()
-                    _data = fileconn.recv(1024)
-                    if not _data: continue
-                    _data = json.loads(_data)
-                    if _data["command"] == "connect":
-                        _log("Connected to transfer client successfully!")
-                        break
-                transfer = TransferThread(fileconn)
-                
                 # Remove values not advertised by libcamera
                 image_count = _config.pop("image_count")
                 interval = _config.pop("interval")
