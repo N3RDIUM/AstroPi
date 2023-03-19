@@ -122,7 +122,7 @@ class AstroPiBoard:
                 self.progress["buffer"] = ""
                 return
             else:
-                self.progress["buffer"] += _data.decode("utf-8")
+                self.progress["buffer"] += _data
 
     def set(self, key, value):
         """
