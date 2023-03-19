@@ -1,9 +1,8 @@
 # imports
-from PyQt5 import QtWidgets, uic
+from PyQt6 import QtWidgets, uic
 import boardcon
 import logging
 import time
-import json
 import sys
 import os
 
@@ -232,6 +231,22 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms.connect()
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
+            
+            # Replace self.label_17 with a streaming video feed
+            # self.label_17.hide()
+            # self.stream = QWebEngineView()
+            # # Add HTML to the stream
+            # self.stream.setHtml(f"""
+            # <!DOCTYPE html>
+            # <html>
+            #     <head>
+            #         <title>Video Feed</title>
+            #     </head>
+            #     <body>
+            #         <img src="http://{ip}:{constants.ASTROPI_PREVIEW_PORT}/stream.mjpg" style="width:100%;height:100%;"/>
+            #     </body>
+            # </html>""")
+            
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
@@ -316,7 +331,7 @@ if __name__ == "__main__":
     # Show the GUI
     window = AstroPi()
     # Execute the main loop
-    app.exec_()
+    app.exec()
     # Exit the application
     if window.comms:
         window.comms.terminate()
