@@ -82,10 +82,15 @@ try:
                 thread = threading.Thread(target=transferrer.start)
                 thread.start()
                 
-                # Remove image_count, interval and transfer_quality from config
+                # Remove values not advertised by libcamera
                 image_count = _config.pop("image_count")
                 interval = _config.pop("interval")
                 transfer_quality = _config.pop("transfer_quality")
+                session_time = _config.pop("session_time")
+                processor_fan_speed = _config.pop("processor_fan_speed")
+                camera_fan_speed = _config.pop("camera_fan_speed")
+                processor_fan_state = _config.pop("processor_fan_state")
+                camera_fan_state = _config.pop("camera_fan_state")
                 time.sleep(1)
                 
                 _log("Configuring camera...")

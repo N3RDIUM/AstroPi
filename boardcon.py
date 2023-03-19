@@ -33,6 +33,11 @@ class AstroPiBoard:
             'image_count': 1,
             'interval': 0,
             'transfer_quality': 0,
+            'session_time': 0,
+            'processor_fan_state': 0,
+            'processor_fan_speed': 0,
+            'camera_fan_state': 0,
+            'camera_fan_speed': 0,
                         
         #   'Example': (min, max, default)[2], #=setting, ##=not added to UI yet
             'AwbMode': (0, 7, 0)[2], 

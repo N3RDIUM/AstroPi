@@ -271,7 +271,7 @@ class AstroPi(QtWidgets.QMainWindow):
         Set the exposure numerator
         """
         if self.comms:
-            self.comms.set("exposure", self.ExposureTime.text())
+            self.comms.set("ExposureTime", self.ExposureTime.text())
 
     def setSessionTime(self, time):
         if self.comms:
