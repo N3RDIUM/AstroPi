@@ -32,8 +32,7 @@ class AstroPiBoard:
             'ExposureTime': 1000000,
         }
         self.progress = {
-            "image_count": 0,
-            "buffer": ""
+            "image_count": 0
         }
         
     def set_state(self, state):
@@ -64,13 +63,6 @@ class AstroPiBoard:
         self.set_state(constants.DISCONNECTED)
         self.socket.close()
         self.thread.join()
-        
-    def save_image(self, path, b64):
-        """
-        Save the received image
-        """
-        with open(path, "wb") as f:
-            f.write(base64.b64decode(b64))
         
     # Start the socket client in a new thread
     def start_socket_client(self):
@@ -110,19 +102,19 @@ class AstroPiBoard:
         """
         Handle file transfer
         """
-        _data = self.file_socket.recv(1024).decode("utf-8")
+        # Go for 16 MB at a time
+        _data = self.file_socket.recv(1025*1024*16).decode("utf-8")
         if not _data: return
         else:
-            _data = base64.b64decode(_data).decode("utf-8")
+            _data = base64.b64decode(_data)
             if _data == constants.FILE_SEPARATOR:
                 self.progress["image_count"] += 1
                 self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
                 # self.window.update_progress()
-                self.save_image(os.path.join(self.window.session_path, f"image_{self.progress['image_count']}.jpg"), self.progress["buffer"])
-                self.progress["buffer"] = ""
                 return
             else:
-                self.progress["buffer"] += _data
+                with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
+                    f.write(_data)
 
     def set(self, key, value):
         """
