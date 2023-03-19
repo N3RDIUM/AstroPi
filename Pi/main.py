@@ -28,7 +28,15 @@ s.close()
 log("Device IP: " + device_ip)
 
 _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-_socket.bind((device_ip, constants.ASTROPI_PORT))
+log("Socket created successfully!")
+while True:
+    try:
+        _socket.bind((device_ip, constants.ASTROPI_PORT))
+        log("Socket bound successfully!")
+        break
+    except OSError:
+        print("Socket already in use, retrying in 5 seconds...")
+        time.sleep(5)
 _socket.listen(1)
 
 _config = { # default _config
