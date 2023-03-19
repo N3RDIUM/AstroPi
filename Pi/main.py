@@ -142,7 +142,7 @@ try:
                         continue
                 _log("Session complete! Stopping camera and transfer thread...")
                 picam2.stop()
-                thread.stop()
+                transferrer.stop()
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()

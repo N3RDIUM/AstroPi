@@ -57,3 +57,6 @@ class Transferrer():
         for file in files:
             if file.startswith("capture_") and file.split(".") in ["jpg", "jpeg", "png", "dng"] and file not in self.image_queue:
                 self.image_queue.append(file)
+                
+    def stop(self) -> None:
+        self.running = False
