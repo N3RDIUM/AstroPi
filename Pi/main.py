@@ -40,13 +40,39 @@ while True:
 _socket.listen(1)
 _config = {}
 
-def send_imgfile(conn, path):
-    conn.send(json.dumps({
-        "type": "b64",
-        "data": base64.b64encode(open(path, "rb").read()).decode("utf-8"),
-        "path": path
-    }).encode("utf-8"))
-
+class TransferThread:
+    """
+    This transfers the files over the socket
+    """
+    def __init__(self, conn):
+        self.conn = conn
+        self.filequeue = []
+        
+    def add_file(self, path):
+        self.filequeue.append(path)
+        
+    def start(self):
+        self.thread = threading.Thread(target=self._start)
+        self.thread.start()
+        
+    def _start(self):
+        time.sleep(0.1)
+        while True:
+            if not self.filequeue:
+                time.sleep(1)
+                continue
+            path = self.filequeue.pop(0)
+            log("Sending file: " + path)
+            with open(path, "rb") as f:
+                data = base64.b64encode(f.read()).decode("utf-8")
+            # Send the file in chunks of 1000 bytes
+            for i in range(0, len(data), 1000):
+                self.conn.send(data[i:i+1000].encode("utf-8"))
+                time.sleep(1/60)
+            log("Sent file: " + path)
+            self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
+            time.sleep(1)
+            
 try:
     try:
         conn, addr = _socket.accept()
@@ -86,6 +112,20 @@ try:
             elif data["command"] == "start":
                 
                 _log("Starting session...")
+                file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                file_socket.bind((device_ip, constants.ASTROPI_TRANSFER_PORT))
+                file_socket.listen(1)
+                _log("Waiting for transfer connection...")
+                while True:
+                    fileconn, fileaddr = file_socket.accept()
+                    _data = fileconn.recv(1024)
+                    if not _data: continue
+                    _data = json.loads(_data)
+                    if _data["command"] == "connect":
+                        _log("Connected to transfer client successfully!")
+                        break
+                transfer = TransferThread(fileconn)
+                
                 # Remove values not advertised by libcamera
                 image_count = _config.pop("image_count")
                 interval = _config.pop("interval")
@@ -120,7 +160,7 @@ try:
                 for i in range(0, image_count):
                     _log("Capturing image " + str(i + 1) + " of " + str(image_count))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
-                    threading.Thread(target=send_imgfile, args=(conn, "capture_" + str(i) + ".jpg")).start()
+                    transfer.add_file("capture_" + str(i) + ".jpg")
                     if interval / 1000000 - 1/10 > 0:
                         time.sleep(interval / 1000000 - 1/10)
                     else:

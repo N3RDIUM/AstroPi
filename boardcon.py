@@ -33,6 +33,7 @@ class AstroPiBoard:
         }
         self.progress = {
             "image_count": 0,
+            "buffer": ""
         }
         
     def set_state(self, state):
@@ -79,6 +80,8 @@ class AstroPiBoard:
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
+        self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
         time.sleep(1)
         self.update__config()
         while True:
@@ -86,18 +89,32 @@ class AstroPiBoard:
             if not _data: continue
             else:
                 _data = json.loads(_data)
-                if not _data["type"] == "b64":
-                    self.window.log(str(_data["data"]), _data["type"])
-                else:
-                    self.window.log(f"Received image: {os.path.join(self.window.save_dir, _data['path'])}", logging.INFO)
-                    self.save_image(os.path.join(self.window.save_dir, _data["path"]), _data["data"])
-                    self.window.log(f"Saved image to {os.path.join(self.window.save_dir, _data['path'])}", logging.INFO)
+                self.window.log(str(_data["data"]), _data["type"])
                 
                 if _data["data"] == "Connected to AstroPi successfully!":
                     self.set_state(constants.CONNECTED)
                 
             if self.state == constants.DISCONNECTED:
                 break
+            self._handle_file_transfer()
+            
+    def _handle_file_transfer(self):
+        """
+        Handle file transfer
+        """
+        _data = self.file_socket.recv(1024).decode("utf-8")
+        if not _data: return
+        else:
+            _data = base64.b64decode(_data)
+            if _data == constants.FILE_SEPARATOR.encode("utf-8"):
+                self.progress["image_count"] += 1
+                self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
+                # self.window.update_progress()
+                self.save_image(os.path.join(self.window.session_path, f"image_{self.progress['image_count']}.jpg"), self.progress["buffer"])
+                self.progress["buffer"] = ""
+                return
+            else:
+                self.progress["buffer"] += _data.decode("utf-8")
 
     def set(self, key, value):
         """
@@ -156,6 +173,10 @@ class AstroPiBoard:
             self.update__config()
             self.socket.send(json.dumps({
                 "command": "start"
+            }).encode("utf-8"))
+            time.sleep(1)
+            self.file_socket.send(json.dumps({
+                "command": "connect",
             }).encode("utf-8"))
         else:
             self.window.log("Session start failed", logging.ERROR)
