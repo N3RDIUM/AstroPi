@@ -20,6 +20,8 @@ class Transferrer():
         self.transfer_quality = transfer_quality
         self.running = True
         self.image_queue = []
+        self.listen_thread = threading.Thread(target=self.listen)
+        self.listen_thread.start()
         
     def start(self) -> None:
         """
