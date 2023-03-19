@@ -5,6 +5,13 @@ import constants
 import logging
 import time
 import sys
+import time
+
+try:
+    from transfer_thread import TransferThread
+except ImportError:
+    sys.path.append("./Pi/")
+    from transfer_thread import TransferThread
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
@@ -69,66 +76,45 @@ try:
             data = conn.recv(1024)
             if not data: continue
             log("Received: " + str(data))
+            def _log(msg, level=logging.INFO):
+                conn.send(json.dumps({
+                    "type": level,
+                    "data": msg
+                }).encode("utf-8"))
+                time.sleep(1/100)
             data = json.loads(data)
             if data["command"] == "connect":
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "success",
-                    "data": "Connected to the AstroPi successfully!"
-                }).encode("utf-8"))
+                _log("Connected to AstroPi successfully!")
             elif data["command"] == "set":
                 _config[data["key"]] = data["value"]
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "success",
-                    "data": "Set " + data["key"] + " to " + str(data["value"])
-                }).encode("utf-8"))
+                _log("Set " + data["key"] + " to " + data["value"] + " successfully!")
             elif data["command"] == "setall":
                 _config = data["config"]
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "success",
-                    "data": "Set all config values successfully!" 
-                }).encode("utf-8"))
+                _log("Set all config values successfully!")
             elif data["command"] == "get":
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "success",
-                    "data": _config[data["key"]]
-                }).encode("utf-8"))
+                _log(f"Value of {data['key']}: {_config[data['key']]}")
             elif data["command"] == "system":
                 if data["type"] == constants.PULL_UPDATES:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "success",
-                        "data": os.popen("git pull").read()
-                    }).encode("utf-8"))
+                    _log("Pulling updates... Please wait")
+                    _log(os.popen("git pull").read(), logging.DEBUG)
                 elif data["type"] == constants.SYSTEM_UPDATE:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "success",
-                        "data": os.popen("sudo apt-get update && sudo apt-get upgrade -y").read()
-                    }).encode("utf-8"))
+                    _log("Updating system... Please wait")
+                    _log(os.popen("sudo apt-get update").read(), logging.DEBUG)
+                    _log(os.popen("sudo apt-get upgrade -y").read(), logging.DEBUG)
                 else:
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "Error: Invalid system command",
-                        "data": "Invalid system command"
-                    }).encode("utf-8"))
+                    _log("Unknown system command: " + data["type"], logging.ERROR)
             elif data["command"] == "start":
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "init",
-                    "data": "Initializing camera..."
-                }).encode("utf-8"))
-                from picamera2 import Picamera2
+                _log("Starting session...")
+                _log("Starting transfer thread...")
+                thread = TransferThread(conn, _config["transfer_quality"])
+                thread.start()
+                
+                _log("Configuring camera...")
+                # We import this here because this pkg is only available on the Pi
+                # and we don't want to import it on the PC while testing
+                from picamera2 import Picamera2 
                 
                 # Configure the camera
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "init",
-                    "data": "Configuring camera..."
-                }).encode("utf-8"))
                 picam2 = Picamera2()
                 camera_config = picam2.create_still_configuration(main={
                     "size": (1920, 1080),
@@ -137,35 +123,33 @@ try:
                 picam2.camera_controls["ExposureTime"] = int(_config["exposure"])
                 
                 # Start the session
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "session",
-                    "data": "Starting session, warming up..."
-                }).encode("utf-8"))
+                _log("Starting session...")
                 picam2.start()
                 time.sleep(2) # Warm up the camera
                 
                 # Go to captures directory
                 for i in range(0, _config["image_count"]):
-                    conn.send(json.dumps({
-                        "status": "connected",
-                        "response": "session",
-                        "data": "Capturing image " + str(i + 1) + " of " + str(_config["image_count"])
-                    }).encode("utf-8"))
+                    _log("Capturing image " + str(i + 1) + " of " + str(_config["image_count"]))
                     picam2.capture_file("capture_" + str(i) + ".jpg")
-                    time.sleep(_config["interval"])
+                    if _config["interval"] / 1000000 - 1/100 > 0:
+                        _log("Waiting " + str(_config["interval"] / 1000000 - 1/100) + " seconds...")
+                        time.sleep(_config["interval"] / 1000000 - 1/100)
+                    else:
+                        continue
+                _log("Session complete! Stopping camera and transfer thread...")
                 picam2.stop()
-                
-                conn.send(json.dumps({
-                    "status": "connected",
-                    "response": "session",
-                    "data": "Done!"
-                }).encode("utf-8"))
+                thread.stop()
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()
         sys.exit(0)
 except Exception as e:
+    if conn:
+        conn.send(json.dumps({
+            "type": logging.ERROR,
+            "data": "Error: " + str(e)
+        }).encode("utf-8"))
+        conn.close()
     log("Error: " + str(e) + ". Killing server...")
     _socket.close()
     sys.exit(1)
