@@ -135,39 +135,9 @@ class AstroPiBoard:
         before starting a session
         """
         try:
-            self._config['session_time'] = int(self._config['session_time'])
-            self._config['processor_fan_state'] = int(self._config['processor_fan_state'])
-            self._config['processor_fan_speed'] = int(self._config['processor_fan_speed'])
-            self._config['camera_fan_state'] = int(self._config['camera_fan_state'])
-            self._config['camera_fan_speed'] = int(self._config['camera_fan_speed'])
-            self._config['transfer_quality'] = int(self._config['transfer_quality'])
-            
             self._config['image_count'] = int(self._config['image_count'])
             self._config['interval'] = int(self._config['interval'])
             self._config['exposure'] = int(self._config['exposure'])
-            self._config['iso'] = int(self._config['iso'])
-            self._config['focus'] = int(self._config['focus'])
-            self._config['brightness'] = int(self._config['brightness'])
-            self._config['contrast'] = int(self._config['contrast'])
-            self._config['exposure_compensation'] = int(self._config['exposure_compensation'])
-            self._config['sharpness'] = int(self._config['sharpness'])
-            self._config['awb_mode'] = int(self._config['awb_mode'])
-            self._config['drc_strength'] = int(self._config['drc_strength'])
-            self._config['image_denoise'] = int(self._config['image_denoise'])
-            self._config['exposure_mode'] = int(self._config['exposure_mode'])
-            self._config['flash_mode'] = int(self._config['flash_mode'])
-            self._config['metering_mode'] = int(self._config['metering_mode'])
-            self._config['color_effect_u'] = int(self._config['color_effect_u'])
-            self._config['color_effect_v'] = int(self._config['color_effect_v'])
-            self._config['zoom_x'] = float(self._config['zoom_x'])
-            self._config['zoom_y'] = float(self._config['zoom_y'])
-            self._config['zoom_w'] = float(self._config['zoom_w'])
-            self._config['zoom_h'] = float(self._config['zoom_h'])
-            
-            self._config['resolution_x'] = int(self._config['resolution_x'])
-            self._config['resolution_y'] = int(self._config['resolution_y'])
-            
-            # self._config["effect__config"] = json.loads(self._config["effect__config"])
             return True
         except Exception as e:
             self.window.log(f"Error evaluating settings: {e}", logging.ERROR)

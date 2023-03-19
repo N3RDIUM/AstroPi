@@ -81,7 +81,7 @@ try:
                     _log("Unknown system command: " + data["type"], logging.ERROR)
             elif data["command"] == "start":
                 _log("Starting session...")
-                transferrer = Transferrer(conn, _config["transfer_quality"])
+                transferrer = Transferrer(conn) # TODO: _config["transfer_quality"]
                 thread = threading.Thread(target=transferrer.start)
                 thread.start()
                 time.sleep(1)
