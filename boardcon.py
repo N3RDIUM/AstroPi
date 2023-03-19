@@ -80,9 +80,9 @@ class AstroPiBoard:
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
+        time.sleep(1)
         self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
-        time.sleep(1)
         self.update__config()
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
