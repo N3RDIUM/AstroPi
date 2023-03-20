@@ -329,7 +329,7 @@ class AstroPi(QtWidgets.QMainWindow):
         correction = (correction / 99 * 32) - 16
         self.ColorCorrectionText.setText(str(round(correction, 2)))
         if self.comms:
-            self.comms.set("ColorCorrectionMatrix", correction)
+            self.comms.set("ColourCorrectionMatrix", correction)
             
     def setExposureValue(self, value):
         """
