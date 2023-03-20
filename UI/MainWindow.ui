@@ -63,7 +63,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-12</y>
+         <y>0</y>
          <width>296</width>
          <height>589</height>
         </rect>
@@ -332,7 +332,7 @@
          </widget>
         </item>
         <item row="5" column="3">
-         <widget class="QLabel" name="SharponessText">
+         <widget class="QLabel" name="SharpnessText">
           <property name="text">
            <string>1.0</string>
           </property>
@@ -550,7 +550,7 @@
         <item row="11" column="3">
          <widget class="QLabel" name="LensPositionText">
           <property name="text">
-           <string>1.0</string>
+           <string>0.0</string>
           </property>
          </widget>
         </item>

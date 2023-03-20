@@ -178,3 +178,9 @@ class AstroPiBoard:
             }).encode("utf-8"))
         else:
             self.window.log("Session start failed", logging.ERROR)
+            
+    def removeConfig(self, key):
+        """
+        Remove a config from the board
+        """
+        self._config.pop(key)

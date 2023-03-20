@@ -50,6 +50,15 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add callbacks to sliders
         self.ProcessorFanSpeed.valueChanged.connect(self.setProcessorFanSpeed)
         self.CameraFanSpeed.valueChanged.connect(self.setSensorFanSpeed)
+        self.Sharpness.valueChanged.connect(self.setSharpness)
+        self.Contrast.valueChanged.connect(self.setContrast)
+        self.ColorCorrection.valueChanged.connect(self.setColorCorrection)
+        self.ExposureValue.valueChanged.connect(self.setExposureValue)
+        self.Saturation.valueChanged.connect(self.setSaturation)
+        self.ColorGains.valueChanged.connect(self.setColorGains)
+        self.LensPosition.valueChanged.connect(self.setLensPosition)
+        self.Brightness.valueChanged.connect(self.setBrightness)
+        self.AnalogueGain.valueChanged.connect(self.setAnalogueGain)
         
         # Add callbacks to line edits
         self.NumImages.editingFinished.connect(self.setImageCount)
@@ -65,6 +74,13 @@ class AstroPi(QtWidgets.QMainWindow):
         # Set default values to variables
         self.save_dir = None
         self.comms = None
+        
+        # Set the default values of the widgets
+        self.ExposureTime.setText(str(1000000))
+        self.ImageInterval.setText(str(0))
+        self.NumImages.setText(str(1))
+        self.Sharpness.setValue(int(99/32))
+        self.Contrast.setValue(int(99/32))
         
     def resizeEvent(self, event):
         """
@@ -287,6 +303,104 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if self.comms:
             self.comms.set("ExposureTime", self.ExposureTime.text())
+    
+    def setSharpness(self, sharpness):
+        """
+        Set the sharpness
+        """
+        sharpness = (sharpness / 99 * 32)
+        self.SharpnessText.setText(str(round(sharpness, 2)))
+        if self.comms:
+            self.comms.set("Sharpness", sharpness)
+    
+    def setContrast(self, contrast):
+        """
+        Set the contrast
+        """
+        contrast = (contrast / 99 * 32)
+        self.ContrastText.setText(str(round(contrast, 2)))
+        if self.comms:
+            self.comms.set("Contrast", contrast)
+            
+    def setColorCorrection(self, correction):
+        """
+        Set the color correction
+        """
+        correction = (correction / 99 * 32) - 16
+        self.ColorCorrectionText.setText(str(round(correction, 2)))
+        if self.comms:
+            self.comms.set("ColorCorrectionMatrix", correction)
+            
+    def setExposureValue(self, value):
+        """
+        Set the exposure value.
+        """
+        value = (value / 99 * 16) - 8
+        self.ExposureValueText.setText(str(round(value, 2)))
+        if self.comms:
+            self.comms.set("ExposureValue", value)
+    
+    def setSaturation(self, saturation):
+        """
+        Set the saturation
+        """
+        saturation = (saturation / 99 * 32)
+        self.SaturationText.setText(str(round(saturation, 2)))
+        if self.comms:
+            self.comms.set("Saturation", saturation)
+            
+    def setColorGains(self, gains):
+        """
+        Set color gains
+        """
+        if gains==0:
+            self.ColorGainsText.setText("None")
+            self.log("Color gains set to None", logging.DEBUG)
+            gains = None
+            if self.comms:
+                self.comms.removeConfig("ColorGains")
+        else:
+            gains = (gains / 99 * 32)
+            self.ColorGainsText.setText(str(round(gains, 2)))
+            if self.comms:
+                self.comms.set("ColorGains", gains)
+                
+    def setLensPosition(self, position):
+        """
+        Set the lens position
+        """
+        position = (position / 99 * 32)
+        if position==0:
+            self.LensPositionText.setText("Inf")
+            self.log("Lens position set to Infinity", logging.DEBUG)
+        else:
+            self.LensPositionText.setText(str(round(position, 2)))
+        if self.comms:
+            self.comms.set("LensPosition", position)    
+            
+    def setBrightness(self, brightness):
+        """
+        Set the brightness
+        """
+        brightness = (brightness / 99 * 2) - 1
+        self.BrightnessText.setText(str(round(brightness, 2)))
+        if self.comms:
+            self.comms.set("Brightness", brightness)
+            
+    def setAnalogueGain(self, gain):
+        """
+        Set the analogue gain
+        """
+        gain = (gain / 99 * 15) + 1
+        if gain==1:
+            self.AnalogueGainText.setText("None")
+            self.log("Analogue gain set to None", logging.DEBUG)
+            if self.comms:
+                self.comms.removeConfig("AnalogueGain")
+        else:   
+            self.AnalogueGainText.setText(str(round(gain, 2)))
+            if self.comms:
+                self.comms.set("AnalogueGain", gain)
 
     def setSessionTime(self, time):
         if self.comms:
