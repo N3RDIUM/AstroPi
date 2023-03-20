@@ -25,6 +25,7 @@ Coming soon!
 - AHT10 temperature sensor (for the camera)
 - An extra fan (for cooling the camera)
 - A laptop or desktop computer
+- Loooooong Ethernet cable
 
 ## Build your AstroPi
 Please follow the instructions in my blog post [here](astropi.n3rdium.dev/setup) to set up your AstroPi.
