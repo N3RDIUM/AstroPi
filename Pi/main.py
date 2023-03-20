@@ -68,7 +68,7 @@ class TransferThread:
             for i in range(0, len(data), 4096):
                 self.conn.send(data[i:i+4096].encode("utf-8"))
             log("Sent file: " + path)
-            time.sleep(1)
+            time.sleep(0.1)
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
