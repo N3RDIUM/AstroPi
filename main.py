@@ -1,5 +1,5 @@
 # imports
-from PyQt6 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic
 import boardcon
 import logging
 import time
