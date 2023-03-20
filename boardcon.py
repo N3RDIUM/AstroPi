@@ -77,8 +77,8 @@ class AstroPiBoard:
             "command": "connect",
         }).encode("utf-8"))
         threading.Thread(target=self._handle_file_transfer).start()
-        self.window.log("File socket created successfully!")
-        time.sleep(1)
+        self.window.log("File socket created successfully! Waiting 5 seconds for camera to initialize...")
+        time.sleep(5)
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
