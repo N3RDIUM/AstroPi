@@ -70,7 +70,7 @@ class AstroPiBoard:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.ip, constants.ASTROPI_PORT))
         self.window.log("Socket created successfully!")
-        time.sleep(0.1)
+        time.sleep(1)
         self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
         self.file_socket.send(json.dumps({
@@ -78,11 +78,11 @@ class AstroPiBoard:
         }).encode("utf-8"))
         threading.Thread(target=self._handle_file_transfer).start()
         self.window.log("File socket created successfully!")
-        time.sleep(0.1)
+        time.sleep(1)
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
-        time.sleep(0.1)
+        time.sleep(1)
         self.update__config()
         self.window.log("Synced config with board")
         while True:
