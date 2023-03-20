@@ -133,7 +133,7 @@ try:
         
         # Start streaming to constants.ASTROPI_PREVIEW_PORT
         picam2 = Picamera2()
-        stream = StreamThread(picam2)
+        # stream = StreamThread(picam2)
         
         while True:
             data = conn.recv(1024)
@@ -178,9 +178,6 @@ try:
                     if _config[key] == "None":
                         _config.pop(key)
                 time.sleep(1)
-                
-                # Terminating the stream thread
-                stream.terminate()
                 
                 _log("Configuring camera...")
                 # Configure the camera

@@ -52,10 +52,8 @@ class AstroPi(QtWidgets.QMainWindow):
         self.CameraFanSpeed.valueChanged.connect(self.setSensorFanSpeed)
         self.Sharpness.valueChanged.connect(self.setSharpness)
         self.Contrast.valueChanged.connect(self.setContrast)
-        self.ColorCorrection.valueChanged.connect(self.setColorCorrection)
         self.ExposureValue.valueChanged.connect(self.setExposureValue)
         self.Saturation.valueChanged.connect(self.setSaturation)
-        self.ColorGains.valueChanged.connect(self.setColorGains)
         self.LensPosition.valueChanged.connect(self.setLensPosition)
         self.Brightness.valueChanged.connect(self.setBrightness)
         self.AnalogueGain.valueChanged.connect(self.setAnalogueGain)
@@ -322,15 +320,6 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("Contrast", contrast)
             
-    def setColorCorrection(self, correction):
-        """
-        Set the color correction
-        """
-        correction = (correction / 99 * 32) - 16
-        self.ColorCorrectionText.setText(str(round(correction, 2)))
-        if self.comms:
-            self.comms.set("ColourCorrectionMatrix", correction)
-            
     def setExposureValue(self, value):
         """
         Set the exposure value.
@@ -348,22 +337,6 @@ class AstroPi(QtWidgets.QMainWindow):
         self.SaturationText.setText(str(round(saturation, 2)))
         if self.comms:
             self.comms.set("Saturation", saturation)
-            
-    def setColorGains(self, gains):
-        """
-        Set color gains
-        """
-        if gains==0:
-            self.ColorGainsText.setText("None")
-            self.log("Color gains set to None", logging.DEBUG)
-            gains = None
-            if self.comms:
-                self.comms.removeConfig("ColourGains")
-        else:
-            gains = (gains / 99 * 32)
-            self.ColorGainsText.setText(str(round(gains, 2)))
-            if self.comms:
-                self.comms.set("ColourGains", gains)
                 
     def setLensPosition(self, position):
         """
