@@ -13,9 +13,9 @@ This project has been tested on a Raspberry Pi 3b+ and PiCamera v3. It is not gu
 Coming soon!
 
 ## Features
-- [ ] Control the camera remotely
-- [ ] Live preview via a web browser
-- [ ] Manual focus, ISO, and exposure control
+- [x] Control the camera remotely
+- [ ] Live preview via a web browser widget
+- [x] Manual focus, ISO, and exposure control
 - [ ] Monitor the temperature of the camera
 
 ## Materials
