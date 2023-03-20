@@ -180,10 +180,7 @@ try:
                 time.sleep(1)
                 
                 _log("Configuring camera...")
-                # Configure the camera
-                print(picam2.camera_controls)
                 # Since we are taking images of the sky, set focus to infinity
-                _config["LensPosition"] = 0
                 camera_config = picam2.create_still_configuration(
                     main={
                         "size": (1920, 1080),
@@ -191,6 +188,7 @@ try:
                     controls=_config
                 )
                 picam2.configure(camera_config)
+                print(_config)
                 
                 # Start the session
                 _log("Starting session...")
