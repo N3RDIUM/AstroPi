@@ -180,7 +180,7 @@ try:
                 time.sleep(1)
                 
                 # Terminating the stream thread
-                # stream.terminate()
+                stream.terminate()
                 
                 _log("Configuring camera...")
                 # Configure the camera
