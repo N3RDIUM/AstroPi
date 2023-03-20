@@ -89,7 +89,7 @@ class StreamThread:
         self.streaming = True
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.bind(("0.0.0.0", 10001))
+            sock.bind((device_ip, constants.ASTROPI_PREVIEW_PORT))
             sock.listen()
 
             self.picam2.encoder = self.encoder
