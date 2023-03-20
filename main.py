@@ -1,5 +1,7 @@
 # imports
 from PyQt5 import QtWidgets, uic
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtCore import QUrl
 import boardcon
 import logging
 import time
@@ -36,7 +38,6 @@ class AstroPi(QtWidgets.QMainWindow):
                                     background-repeat: no-repeat; 
                                     background-position: center; 
                                     background-color: black;""")
-        # self.setStyleSheet("background-color: black;")
         
         # Add click callbacks to the buttons
         self.toolButton.clicked.connect(self.clearLog)
@@ -94,7 +95,12 @@ class AstroPi(QtWidgets.QMainWindow):
         new_width = width - 330
         
         # Set the size and location of the widgets
-        self.label_17.resize(new_width, height - 160)
+        try:
+            if self.comms is not None:
+                self.stream.resize(new_width, height - 160)
+                self.stream.move(0, 0)
+        except AttributeError:
+            self.label_17.resize(new_width, height - 160)
         self.tabWidget.resize(330, height)
         self.tabWidget.move(new_width, 0)
         self.textEdit.resize(new_width, 90)
@@ -246,21 +252,20 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
             
-            # Replace self.label_17 with a streaming video feed
-            # self.label_17.hide()
-            # self.stream = QWebEngineView()
-            # # Add HTML to the stream
-            # self.stream.setHtml(f"""
-            # <!DOCTYPE html>
-            # <html>
-            #     <head>
-            #         <title>Video Feed</title>
-            #     </head>
-            #     <body>
-            #         <img src="http://{ip}:{constants.ASTROPI_PREVIEW_PORT}/stream.mjpg" style="width:100%;height:100%;"/>
-            #     </body>
-            # </html>""")
-            
+            # Instead of label_17, show the stream
+            self.label_17.hide()
+            self.stream = QWebEngineView()
+            self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
+            # Get the bounding box of the label
+            x = self.label_17.x()
+            y = self.label_17.y()
+            w = self.label_17.width()
+            h = self.label_17.height()
+            # Set the bounding box of the stream
+            self.stream.setGeometry(x, y, w, h)
+            # Show the stream
+            self.stream.show()
+        
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
