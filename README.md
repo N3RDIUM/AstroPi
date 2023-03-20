@@ -43,6 +43,7 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Write the contributing guidelines
 - [ ] Create a demo video
 - [ ] Create some sample images
+- [ ] Design the camera and cooling fan housing for 3d prints
 ##  CODE
 - [ ] Create a startup script for the raspberry pi which runs git pull and starts the server
 - [ ] Stream to socket, get live preview
