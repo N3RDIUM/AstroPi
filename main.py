@@ -358,12 +358,12 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("Color gains set to None", logging.DEBUG)
             gains = None
             if self.comms:
-                self.comms.removeConfig("ColorGains")
+                self.comms.removeConfig("ColourGains")
         else:
             gains = (gains / 99 * 32)
             self.ColorGainsText.setText(str(round(gains, 2)))
             if self.comms:
-                self.comms.set("ColorGains", gains)
+                self.comms.set("ColourGains", gains)
                 
     def setLensPosition(self, position):
         """
