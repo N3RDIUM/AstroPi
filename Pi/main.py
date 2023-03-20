@@ -8,6 +8,10 @@ import base64
 import time
 import threading
 import sys
+import io
+import socketserver
+from http import server
+from threading import Condition
 
 # If the log file already exists, delete it
 if os.path.exists("PiLog.txt"):
@@ -39,6 +43,17 @@ while True:
         time.sleep(5)
 _socket.listen(1)
 _config = {}
+PAGE = """\
+<html>
+<head>
+<title>picamera2 MJPEG streaming demo</title>
+</head>
+<body>
+<h1>Picamera2 MJPEG Streaming Demo</h1>
+<img src="stream.mjpg" width="640" height="480" />
+</body>
+</html>
+"""
 
 class TransferThread:
     """
@@ -72,42 +87,61 @@ class TransferThread:
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
-class StreamThread:
-    """
-    Stream the output to ASTROPI_PREVIEW_PORT
-    """
-    def __init__(self, picam2):
-        self.picam2 = picam2
-        self.video_config = picam2.create_video_configuration({"size": (1280, 720)})
-        self.picam2.configure(self.video_config)
-        self.encoder = H264Encoder(1000000)
-        self.streaming = False
-        self.thread = threading.Thread(target=self.start)
-        self.thread.start()
+class StreamingOutput(io.BufferedIOBase):
+    def __init__(self):
+        self.frame = None
+        self.condition = Condition()
 
-    def start(self):
-        self.streaming = True
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.bind((device_ip, constants.ASTROPI_PREVIEW_PORT))
-            sock.listen()
+    def write(self, buf):
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
 
-            self.picam2.encoder = self.encoder
 
-            conn, addr = sock.accept()
-            stream = conn.makefile("wb")
-            picam2.encoder.output = FileOutput(stream)
-            picam2.start_encoder()
-            picam2.start()
-            while self.streaming:
-                time.sleep(1/10)
-            picam2.stop()
-            picam2.stop_encoder()
-            conn.close()
-            
-    def terminate(self):
-        self.streaming = False
-        self.thread.join()
+class StreamingHandler(server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(301)
+            self.send_header('Location', '/index.html')
+            self.end_headers()
+        elif self.path == '/index.html':
+            content = PAGE.encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Length', len(content))
+            self.end_headers()
+            self.wfile.write(content)
+        elif self.path == '/stream.mjpg':
+            self.send_response(200)
+            self.send_header('Age', 0)
+            self.send_header('Cache-Control', 'no-cache, private')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
+            self.end_headers()
+            try:
+                while True:
+                    with output.condition:
+                        output.condition.wait()
+                        frame = output.frame
+                    self.wfile.write(b'--FRAME\r\n')
+                    self.send_header('Content-Type', 'image/jpeg')
+                    self.send_header('Content-Length', len(frame))
+                    self.end_headers()
+                    self.wfile.write(frame)
+                    self.wfile.write(b'\r\n')
+            except Exception as e:
+                logging.warning(
+                    'Removed streaming client %s: %s',
+                    self.client_address, str(e))
+        else:
+            self.send_error(404)
+            self.end_headers()
+
+
+class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
 
 try:
     try:
@@ -127,13 +161,17 @@ try:
                 break
         transfer = TransferThread(fileconn)
         transfer.start()
-        from picamera2 import Picamera2 
-        from picamera2.encoders import H264Encoder
+        from picamera2 import Picamera2
+        from picamera2.encoders import JpegEncoder
         from picamera2.outputs import FileOutput
         
         # Start streaming to constants.ASTROPI_PREVIEW_PORT
         picam2 = Picamera2()
-        stream = StreamThread(picam2)
+        output = StreamingOutput()
+        picam2.start_recording(JpegEncoder(), FileOutput(output))
+        stream = StreamingServer((device_ip, constants.ASTROPI_PREVIEW_PORT), StreamingHandler)
+        stream_thread = threading.Thread(target=stream.serve_forever)
+        stream_thread.start()
         
         while True:
             data = conn.recv(1024)
@@ -180,7 +218,12 @@ try:
                 time.sleep(1)
                 
                 # Stop the preview stream
-                stream.terminate()
+                _log("Stopping preview stream...")
+                picam2.stop_recording()
+                stream.shutdown()
+                stream.server_close()
+                stream_thread.join()
+                time.sleep(1)
                 
                 _log("Configuring camera...")
                 # Since we are taking images of the sky, set focus to infinity
