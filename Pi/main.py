@@ -46,11 +46,10 @@ _config = {}
 PAGE = """\
 <html>
 <head>
-<title>picamera2 MJPEG streaming demo</title>
+<title>PiCamera2 MJPEG Stream Server</title>
 </head>
-<body>
-<h1>Picamera2 MJPEG Streaming Demo</h1>
-<img src="stream.mjpg" width="100%" height="100%" />
+<body style="marigin:0;padding:0;">
+<img src="stream.mjpg" style="object-fit: cover; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"/>
 </body>
 </html>
 """

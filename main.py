@@ -34,7 +34,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.show() # Show the GUI
         
         # Set the background image of the window as the AstroPi logo
-        self.label_17.setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
+        self.preview.setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
                                     background-repeat: no-repeat; 
                                     background-position: center; 
                                     background-color: black;""")
@@ -231,17 +231,11 @@ class AstroPi(QtWidgets.QMainWindow):
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
             
-            # Instead of label_17, show the stream
-            self.label_17.hide()
+            # Instead of preview, show the stream.
             self.stream = QWebEngineView()
             self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
-            # Get the bounding box of the label
-            x = self.label_17.x()
-            y = self.label_17.y()
-            w = self.label_17.width()
-            h = self.label_17.height()
-            # Set the bounding box of the stream
-            self.stream.setGeometry(x, y, w, h)
+            self.preview.removeWidget(self.preview.currentWidget())
+            self.preview.addWidget(self.stream)
         
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
