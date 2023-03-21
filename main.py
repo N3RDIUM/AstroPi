@@ -57,7 +57,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.Saturation.valueChanged.connect(self.setSaturation)
         self.LensPosition.valueChanged.connect(self.setLensPosition)
         self.Brightness.valueChanged.connect(self.setBrightness)
-        self.AnalogueGain.valueChanged.connect(self.setAnalogueGain)
+        self.ISO.valueChanged.connect(self.setISO)
         
         # Add callbacks to line edits
         self.NumImages.editingFinished.connect(self.setImageCount)
@@ -69,6 +69,13 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ProcessorFanState.currentIndexChanged.connect(self.setProcessorFanState)
         self.CameraFanState.currentIndexChanged.connect(self.setCameraFanState)
         self.TransferQuality.currentIndexChanged.connect(self.setTransferQuality)
+        self.NoiseReductionMode.currentIndexChanged.connect(self.setNoiseReductionMode)
+        self.AWB.currentIndexChanged.connect(self.setAWBState)
+        self.AWBMode.currentIndexChanged.connect(self.setAWBMode)
+        self.AE.currentIndexChanged.connect(self.setAEState)
+        self.AEMode.currentIndexChanged.connect(self.setAEMode)
+        self.AEMeterMode.currentIndexChanged.connect(self.setAEMeteringMode)
+        self.AEConstraint.currentIndexChanged.connect(self.setAEConstraint)
         
         # Set default values to variables
         self.save_dir = None
@@ -80,6 +87,10 @@ class AstroPi(QtWidgets.QMainWindow):
         self.NumImages.setText(str(1))
         self.Sharpness.setValue(int(99/32))
         self.Contrast.setValue(int(99/32))
+        self.ExposureValue.setValue(50)
+        self.Saturation.setValue(int(99/32))
+        self.LensPosition.setValue(int(99/32))
+        self.Brightness.setValue(50)
         
     def log(self, text, level=logging.INFO):
         """
@@ -316,18 +327,18 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("Brightness", brightness)
             
-    def setAnalogueGain(self, gain):
+    def setISO(self, gain):
         """
         Set the analogue gain
         """
         gain = (gain / 99 * 15) + 1
         if gain==1:
-            self.AnalogueGainText.setText("None")
-            self.log("Analogue gain set to None", logging.DEBUG)
+            self.ISOText.setText("Auto")
+            self.log("ISO set to Auto", logging.DEBUG)
             if self.comms:
                 self.comms.removeConfig("AnalogueGain")
         else:   
-            self.AnalogueGainText.setText(str(round(gain, 2)))
+            self.ISOText.setText(str(round(gain*100)))
             if self.comms:
                 self.comms.set("AnalogueGain", gain)
 
@@ -355,6 +366,63 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if self.comms:
             self.comms.set("transfer_quality", quality)
+    
+    def setNoiseReductionMode(self, mode):
+        """
+        Set the noise reduction mode
+        """
+        if self.comms:
+            self.comms.set("NoiseReductionMode", mode)
+            
+    def setAWBState(self, state):
+        """
+        Set the AWB state
+        """
+        if state == 0:
+            if self.comms:
+                self.comms.removeConfig("AwbEnable")
+        else:
+            if self.comms:
+                self.comms.set("AwbEnable", state)
+                
+    def setAWBMode(self, mode):
+        """
+        Set the AWB mode
+        """
+        if self.comms:
+            self.comms.set("AwbMode", mode)
+        
+    def setAEState(self, state):
+        """
+        Set the AE state
+        """
+        if state == 0:
+            if self.comms:
+                self.comms.removeConfig("AeEnable")
+        else:
+            if self.comms:
+                self.comms.set("AeEnable", state)
+                
+    def setAEMode(self, mode):
+        """
+        Set the AE mode
+        """
+        if self.comms:
+            self.comms.set("AeExposureMode", mode)
+            
+    def setAEMeteringMode(self, mode):
+        """
+        Set the AE metering mode
+        """
+        if self.comms:
+            self.comms.set("AeMeteringMode", mode)
+            
+    def setAEConstraint(self, constraint):
+        """
+        Set the AE constraint
+        """
+        if self.comms:
+            self.comms.set("AeConstraintMode", constraint)
             
     def startSession(self):
         """
