@@ -90,8 +90,8 @@ class AstroPiBoard:
             _data = _data.split(constants.JSON_SEPARATOR)
             for data in _data:
                 data = json.loads(data)
-                self.window.log(str(_data["data"]), _data["type"])
-                if _data["data"] == "Connected to AstroPi successfully!":
+                self.window.log(str(data["data"]), data["type"])
+                if data["data"] == "Connected to AstroPi successfully!":
                     self.set_state(constants.CONNECTED)
                 if self.state == constants.DISCONNECTED:
                     break
