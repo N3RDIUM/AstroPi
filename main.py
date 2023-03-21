@@ -92,6 +92,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.LensPosition.setValue(int(99/32))
         self.Brightness.setValue(50)
         
+        # Initialize a temporary object for config
+        self.comms = boardcon.BoardComms(None, self)
+        
     def log(self, text, level=logging.INFO):
         """
         Log text to the textEdit
@@ -226,8 +229,10 @@ class AstroPi(QtWidgets.QMainWindow):
         try:
             # Get the IP address
             ip = self.BoardIP.text()
+            _tempconfig = self.comms._config.copy()
             self.comms = boardcon.AstroPiBoard(ip, self)
             self.comms.connect()
+            self.comms._config = _tempconfig
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
             
