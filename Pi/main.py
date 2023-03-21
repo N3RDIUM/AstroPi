@@ -236,7 +236,7 @@ try:
                     # Since we are taking images of the sky, set focus to infinity
                     camera_config = picam2.create_still_configuration(
                         main={
-                            "size": (1920, 1080),
+                            "size": (4608, 2592),
                         },
                         controls=_config
                     )
