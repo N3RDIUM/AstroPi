@@ -81,38 +81,6 @@ class AstroPi(QtWidgets.QMainWindow):
         self.Sharpness.setValue(int(99/32))
         self.Contrast.setValue(int(99/32))
         
-    def resizeEvent(self, event):
-        """
-        On resize event
-        """
-        # Get the new size of the window
-        size = self.size()
-        # Get the current width and height of the window
-        width = size.width()
-        height = size.height()
-        
-        # Get the new width of the window
-        new_width = width - 330
-        
-        # Set the size and location of the widgets
-        try:
-            if self.comms is not None:
-                self.stream.resize(new_width, height - 160)
-                self.stream.move(0, 0)
-        except AttributeError:
-            self.label_17.resize(new_width, height - 160)
-        self.tabWidget.resize(330, height)
-        self.tabWidget.move(new_width, 0)
-        self.textEdit.resize(new_width, 90)
-        self.textEdit.move(0, height - 150)
-        self.toolButton.move(new_width - 64, height - 150)
-        self.toolButton.resize(32, 32)
-        self.toolButton_2.move(new_width - 64, height - 118)
-        self.toolButton_2.resize(32, 32)
-        
-        # Log the new size of the window
-        self.log("Window resized to: " + str(width) + "x" + str(height), logging.DEBUG)
-        
     def log(self, text, level=logging.INFO):
         """
         Log text to the textEdit
@@ -263,28 +231,11 @@ class AstroPi(QtWidgets.QMainWindow):
             h = self.label_17.height()
             # Set the bounding box of the stream
             self.stream.setGeometry(x, y, w, h)
-            # Show the stream
-            self.stream.show()
         
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
             self.comms.kill_server()
-            
-    # # On window close
-    # def closeEvent(self, event):
-    #     """
-    #     On window close
-    #     """
-    #     # Close the connection to the AstroPi
-    #     if self.comms:
-    #         self.comms.terminate()
-    #     # Close the log file
-    #     logging.shutdown()
-    #     # Close the window
-    #     event.accept()
-    #     # Exit the program
-    #     sys.exit()
       
     def setImageCount(self):
         """
