@@ -178,7 +178,7 @@ try:
             _data = _data.decode("utf-8").split(constants.JSON_SEPARATOR)
             for data in _data:
                 if not data: continue
-                else: data = json.loads(_data)
+                else: data = json.loads(data)
                 log("Received: " + str(data))
                 def _log(msg, level=logging.INFO):
                     conn.send(json.dumps({
