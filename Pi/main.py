@@ -166,6 +166,7 @@ try:
         
         # Start streaming to constants.ASTROPI_PREVIEW_PORT
         picam2 = Picamera2()
+        config = picam2.create_preview_configuration()
         output = StreamingOutput()
         picam2.start_recording(JpegEncoder(), FileOutput(output))
         stream = StreamingServer((device_ip, constants.ASTROPI_PREVIEW_PORT), StreamingHandler)
@@ -196,7 +197,9 @@ try:
                     _log("Connected to AstroPi successfully!")
                 elif data["command"] == "set":
                     _config[data["key"]] = data["value"]
-                    _log("Set " + data["key"] + " to " + data["value"] + " successfully!")
+                    config[data["key"]] = data["value"] if data["value"] else None
+                    if config[data["key"]] is None:
+                        del config[data["key"]]
                 elif data["command"] == "setall":
                     _config = data["config"]
                     _log("Set all config values successfully!")

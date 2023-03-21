@@ -124,7 +124,14 @@ class AstroPiBoard:
         Set a value on the board
         """
         self._config[key] = value
-    
+        if self.state == constants.CONNECTED:
+            if key not in ["image_count", "interval"]:
+                self.socket.send(json.dumps({
+                    "command": "set",
+                    "key": key,
+                    "value": value
+                }).encode("utf-8"))
+        
     def update__config(self):
         """
         Update the _config on the board
