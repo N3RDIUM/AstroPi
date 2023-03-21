@@ -13,5 +13,5 @@ SYSTEM_UPDATE = 4
 PULL_UPDATES = 5
 AUTO = -1
 INFINITY = -2
-# File separator is something that is not included in base64
 FILE_SEPARATOR = "<NEWFILE>"
+JSON_SEPARATOR = "<NEWJSON>"

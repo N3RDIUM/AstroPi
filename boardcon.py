@@ -70,34 +70,32 @@ class AstroPiBoard:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.ip, constants.ASTROPI_PORT))
         self.window.log("Socket created successfully!")
-        time.sleep(1)
+        self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
         self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.file_socket.connect((self.ip, constants.ASTROPI_TRANSFER_PORT))
         self.file_socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
         threading.Thread(target=self._handle_file_transfer).start()
-        self.window.log("File socket created successfully! Waiting 5 seconds for camera to initialize...")
-        time.sleep(5)
+        self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
         self.socket.send(json.dumps({
             "command": "connect",
         }).encode("utf-8"))
-        time.sleep(1)
+        self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
         self.update__config()
         self.window.log("Synced config with board")
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
             if not _data: continue
-            else:
-                _data = json.loads(_data)
+            _data = _data.split(constants.JSON_SEPARATOR)
+            for data in _data:
+                data = json.loads(data)
                 self.window.log(str(_data["data"]), _data["type"])
-                
                 if _data["data"] == "Connected to AstroPi successfully!":
                     self.set_state(constants.CONNECTED)
+                if self.state == constants.DISCONNECTED:
+                    break
                 
-            if self.state == constants.DISCONNECTED:
-                break
-            
     def _handle_file_transfer(self):
         """
         Handle file transfer
@@ -172,7 +170,7 @@ class AstroPiBoard:
             self.socket.send(json.dumps({
                 "command": "start"
             }).encode("utf-8"))
-            time.sleep(1)
+            self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
             self.file_socket.send(json.dumps({
                 "command": "connect",
             }).encode("utf-8"))

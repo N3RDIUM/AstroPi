@@ -173,96 +173,95 @@ try:
         stream_thread.start()
         
         while True:
-            data = conn.recv(1024)
-            if not data: continue
-            log("Received: " + str(data))
-            def _log(msg, level=logging.INFO):
-                conn.send(json.dumps({
-                    "type": level,
-                    "data": msg
-                }).encode("utf-8"))
-                print(f"Sent: {msg}")
-                time.sleep(1/10)
-            data = json.loads(data)
-            if data["command"] == "connect":
-                _log("Connected to AstroPi successfully!")
-            elif data["command"] == "set":
-                _config[data["key"]] = data["value"]
-                _log("Set " + data["key"] + " to " + data["value"] + " successfully!")
-            elif data["command"] == "setall":
-                _config = data["config"]
-                _log("Set all config values successfully!")
-            elif data["command"] == "get":
-                _log(f"Value of {data['key']}: {_config[data['key']]}")
-            elif data["command"] == "system":
-                if data["type"] == constants.PULL_UPDATES:
-                    _log("Pulling updates... Please wait")
-                    _log(os.popen("git pull").read(), logging.DEBUG)
-                elif data["type"] == constants.SYSTEM_UPDATE:
-                    _log("Updating system... Please wait")
-                    _log(os.popen("sudo apt-get update").read(), logging.DEBUG)
-                    _log(os.popen("sudo apt-get upgrade -y").read(), logging.DEBUG)
-                else:
-                    _log("Unknown system command: " + data["type"], logging.ERROR)
-            elif data["command"] == "start":
-                
-                _log("Starting session...")
-                # Remove values not advertised by libcamera
-                image_count = _config.pop("image_count")
-                interval = _config.pop("interval")
-                # Also remove all "None" values
-                for key in list(_config.keys()):
-                    if _config[key] == "None":
-                        _config.pop(key)
-                time.sleep(1)
-                
-                # Stop the preview stream
-                _log("Stopping preview stream...")
-                picam2.stop_recording()
-                stream.shutdown()
-                stream.server_close()
-                stream_thread.join()
-                time.sleep(1)
-                
-                _log("Configuring camera...")
-                # Since we are taking images of the sky, set focus to infinity
-                camera_config = picam2.create_still_configuration(
-                    main={
-                        "size": (1920, 1080),
-                    },
-                    controls=_config
-                )
-                picam2.configure(camera_config)
-                print(_config)
-                
-                # Start the session
-                _log("Starting session...")
-                picam2.start()
-                time.sleep(2) # Warm up the camera
-                
-                # Go to captures directory
-                for i in range(0, image_count):
-                    _log("Capturing image " + str(i + 1) + " of " + str(image_count))
-                    picam2.capture_file("capture_" + str(i) + ".jpg")
-                    transfer.add_file("capture_" + str(i) + ".jpg")
-                    if interval / 1000000 - 1/10 > 0:
-                        time.sleep(interval / 1000000 - 1/10)
+            _data = conn.recv(1024)
+            if not _data: continue
+            _data = _data.decode("utf-8").split(constants.JSON_SEPARATOR)
+            for data in _data:
+                if not data: continue
+                else: data = json.loads(_data)
+                log("Received: " + str(data))
+                def _log(msg, level=logging.INFO):
+                    conn.send(json.dumps({
+                        "type": level,
+                        "data": msg
+                    }).encode("utf-8"))
+                    print(f"Sent: {msg}")
+                    conn.send(constants.JSON_SEPARATOR.encode("utf-8"))
+                data = json.loads(data)
+                if data["command"] == "connect":
+                    _log("Connected to AstroPi successfully!")
+                elif data["command"] == "set":
+                    _config[data["key"]] = data["value"]
+                    _log("Set " + data["key"] + " to " + data["value"] + " successfully!")
+                elif data["command"] == "setall":
+                    _config = data["config"]
+                    _log("Set all config values successfully!")
+                elif data["command"] == "get":
+                    _log(f"Value of {data['key']}: {_config[data['key']]}")
+                elif data["command"] == "system":
+                    if data["type"] == constants.PULL_UPDATES:
+                        _log("Pulling updates... Please wait")
+                        _log(os.popen("git pull").read(), logging.DEBUG)
+                    elif data["type"] == constants.SYSTEM_UPDATE:
+                        _log("Updating system... Please wait")
+                        _log(os.popen("sudo apt-get update").read(), logging.DEBUG)
+                        _log(os.popen("sudo apt-get upgrade -y").read(), logging.DEBUG)
                     else:
-                        continue
-                _log("Session complete! Stopping camera...")
-                picam2.stop()
-                time.sleep(1)
-                
-                if len(transfer.filequeue) > 0:
-                    _log("Waiting for transfer to complete...")
-                    while True:
-                        if len(transfer.filequeue) == 0:
-                            break
-                        time.sleep(1)
-                _log("Transfer complete!")
-                time.sleep(1)
-                _log("Exiting...")
-                conn.close()
+                        _log("Unknown system command: " + data["type"], logging.ERROR)
+                elif data["command"] == "start":
+                    
+                    _log("Starting session...")
+                    # Remove values not advertised by libcamera
+                    image_count = _config.pop("image_count")
+                    interval = _config.pop("interval")
+                    # Also remove all "None" values
+                    for key in list(_config.keys()):
+                        if _config[key] == "None":
+                            _config.pop(key)
+                    
+                    # Stop the preview stream
+                    _log("Stopping preview stream...")
+                    picam2.stop_recording()
+                    stream.shutdown()
+                    stream.server_close()
+                    stream_thread.join()
+                    
+                    _log("Configuring camera...")
+                    # Since we are taking images of the sky, set focus to infinity
+                    camera_config = picam2.create_still_configuration(
+                        main={
+                            "size": (1920, 1080),
+                        },
+                        controls=_config
+                    )
+                    picam2.configure(camera_config)
+                    print(_config)
+                    
+                    # Start the session
+                    _log("Starting session...")
+                    picam2.start()
+                    time.sleep(2) # Warm up the camera
+                    
+                    # Go to captures directory
+                    for i in range(0, image_count):
+                        _log("Capturing image " + str(i + 1) + " of " + str(image_count))
+                        picam2.capture_file("capture_" + str(i) + ".jpg")
+                        transfer.add_file("capture_" + str(i) + ".jpg")
+                        if interval / 1000000 - 1/10 > 0:
+                            time.sleep(interval / 1000000 - 1/10)
+                        else:
+                            continue
+                    _log("Session complete! Stopping camera...")
+                    picam2.stop()
+                    
+                    if len(transfer.filequeue) > 0:
+                        _log("Waiting for transfer to complete...")
+                        while True:
+                            if len(transfer.filequeue) == 0:
+                                break
+                    _log("Transfer complete!")
+                    _log("Exiting...")
+                    conn.close()
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()
