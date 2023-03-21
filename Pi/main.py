@@ -166,7 +166,8 @@ try:
         
         # Start streaming to constants.ASTROPI_PREVIEW_PORT
         picam2 = Picamera2()
-        config = picam2.create_preview_configuration()
+        config = picam2.create_video_configuration()
+        print(config)
         output = StreamingOutput()
         picam2.configure(config)
         picam2.start_recording(JpegEncoder(), FileOutput(output))
