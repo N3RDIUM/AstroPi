@@ -199,12 +199,6 @@ try:
                     _log("Connected to AstroPi successfully!")
                 elif data["command"] == "set":
                     _config[data["key"]] = data["value"]
-                    config[data["key"]] = data["value"] if data["value"] else None
-                    if config[data["key"]] is None:
-                        del config[data["key"]]
-                    picam2.stop_recording()
-                    picam2.configure(config)
-                    picam2.start_recording(JpegEncoder(), FileOutput(output))
                 elif data["command"] == "setall":
                     _config = data["config"]
                     _log("Set all config values successfully!")
