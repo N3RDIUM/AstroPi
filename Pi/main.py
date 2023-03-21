@@ -178,7 +178,12 @@ try:
             _data = _data.decode("utf-8").split(constants.JSON_SEPARATOR)
             for data in _data:
                 if not data: continue
-                else: data = json.loads(data)
+                else: 
+                    try:
+                        data = json.loads(data)
+                    except json.decoder.JSONDecodeError:
+                        log("Received invalid JSON: " + data)
+                        continue
                 log("Received: " + str(data))
                 def _log(msg, level=logging.INFO):
                     conn.send(json.dumps({

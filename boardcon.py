@@ -89,7 +89,13 @@ class AstroPiBoard:
             if not _data: continue
             _data = _data.split(constants.JSON_SEPARATOR)
             for data in _data:
-                data = json.loads(data)
+                if not data: continue
+                else: 
+                    try:
+                        data = json.loads(data)
+                    except json.decoder.JSONDecodeError:
+                        self.window.log("Received invalid JSON: " + data, logging.ERROR)
+                        continue
                 self.window.log(str(data["data"]), data["type"])
                 if data["data"] == "Connected to AstroPi successfully!":
                     self.set_state(constants.CONNECTED)
