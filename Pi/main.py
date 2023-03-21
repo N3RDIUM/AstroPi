@@ -187,7 +187,6 @@ try:
                     }).encode("utf-8"))
                     print(f"Sent: {msg}")
                     conn.send(constants.JSON_SEPARATOR.encode("utf-8"))
-                data = json.loads(data)
                 if data["command"] == "connect":
                     _log("Connected to AstroPi successfully!")
                 elif data["command"] == "set":
