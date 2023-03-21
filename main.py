@@ -93,7 +93,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.Brightness.setValue(50)
         
         # Initialize a temporary object for config
-        self.comms = boardcon.BoardComms(None, self)
+        self.comms = boardcon.AstroPiBoard(None, self)
         
     def log(self, text, level=logging.INFO):
         """
