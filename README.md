@@ -14,7 +14,7 @@ Coming soon!
 
 ## Features
 - [x] Control the camera remotely
-- [ ] Live preview via a web browser widget
+- [x] Live preview via a web browser widget
 - [x] Manual focus, ISO, and exposure control
 - [ ] Monitor the temperature of the camera
 
