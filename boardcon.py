@@ -34,6 +34,7 @@ class AstroPiBoard:
         self.progress = {
             "image_count": 0
         }
+        self.eta_seconds = 0
         
     def set_state(self, state):
         """
@@ -106,6 +107,7 @@ class AstroPiBoard:
         """
         Handle file transfer
         """
+        self.startEtaThread()
         while True:
             _data = self.file_socket.recv(16384).decode("utf-8")
             if not _data: continue
@@ -113,17 +115,42 @@ class AstroPiBoard:
                 if _data == constants.FILE_SEPARATOR:
                     self.progress["image_count"] += 1
                     self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
-                    # self.window.update_progress()
+                    self.window.updateProgress(int((self.progress["image_count"]/self._config["image_count"])*100))
+                    self.window.updateProgressText(f"{self.progress['image_count']}/{self._config['image_count']}")
                 else:
-                    _data = base64.b64decode(_data)
-                    with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
-                        f.write(_data)
+                    try:
+                        _data = base64.b64decode(_data)
+                        with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"), "ab") as f:
+                            f.write(_data)
+                    except Exception as e:
+                        self.window.log(f"Received invalid base64 data: {e}", logging.ERROR)
+                        continue
+    def startEtaThread(self):
+        """
+        Start the ETA thread
+        """
+        self.eta_thread = threading.Thread(target=self._etaThread)
+        self.eta_thread.start()
+    
+    def _etaThread(self):
+        """
+        ETA Thread
+        """
+        while not self.eta_seconds < 0:
+            time.sleep(1)
+            self.eta_seconds -= 1
+            self.window.updateEta(self.eta_seconds)
 
     def set(self, key, value):
         """
         Set a value on the board
         """
         self._config[key] = value
+        self.window.updateTable()
+        self.eta_seconds = (int(self._config["image_count"]) * int(self._config["ExposureTime"]) + ((int(self._config["image_count"]) - 1) * int(self._config["interval"]))) / 1000000
+        self.window.updateEta(self.eta_seconds)
+        self.window.updateProgress(0)
+        self.window.updateProgressText(f"{self.progress['image_count']}/{self._config['image_count']}")
         
     def update__config(self):
         """

@@ -1,5 +1,5 @@
 # imports
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl
 import boardcon
@@ -49,15 +49,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.StartButton.clicked.connect(self.startSession)
         
         # Add callbacks to sliders
-        self.ProcessorFanSpeed.valueChanged.connect(self.setProcessorFanSpeed)
-        self.CameraFanSpeed.valueChanged.connect(self.setSensorFanSpeed)
-        self.Sharpness.valueChanged.connect(self.setSharpness)
-        self.Contrast.valueChanged.connect(self.setContrast)
         self.ExposureValue.valueChanged.connect(self.setExposureValue)
-        self.Saturation.valueChanged.connect(self.setSaturation)
         self.LensPosition.valueChanged.connect(self.setLensPosition)
-        self.Brightness.valueChanged.connect(self.setBrightness)
-        self.ISO.valueChanged.connect(self.setISO)
+        self.Gain.valueChanged.connect(self.setGain)
         
         # Add callbacks to line edits
         self.NumImages.editingFinished.connect(self.setImageCount)
@@ -65,17 +59,8 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureTime.editingFinished.connect(self.setExposure)
         
         # Add callbacks to combo boxes
-        self.SessionTime.currentIndexChanged.connect(self.setSessionTime)
-        self.ProcessorFanState.currentIndexChanged.connect(self.setProcessorFanState)
-        self.CameraFanState.currentIndexChanged.connect(self.setCameraFanState)
         self.TransferQuality.currentIndexChanged.connect(self.setTransferQuality)
         self.NoiseReductionMode.currentIndexChanged.connect(self.setNoiseReductionMode)
-        self.AWB.currentIndexChanged.connect(self.setAWBState)
-        self.AWBMode.currentIndexChanged.connect(self.setAWBMode)
-        self.AE.currentIndexChanged.connect(self.setAEState)
-        self.AEMode.currentIndexChanged.connect(self.setAEMode)
-        self.AEMeterMode.currentIndexChanged.connect(self.setAEMeteringMode)
-        self.AEConstraint.currentIndexChanged.connect(self.setAEConstraint)
         
         # Set default values to variables
         self.save_dir = None
@@ -85,15 +70,14 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureTime.setText(str(1000000))
         self.ImageInterval.setText(str(0))
         self.NumImages.setText(str(1))
-        self.Sharpness.setValue(int(99/32))
-        self.Contrast.setValue(int(99/32))
         self.ExposureValue.setValue(50)
-        self.Saturation.setValue(int(99/32))
         self.LensPosition.setValue(int(99/32))
-        self.Brightness.setValue(50)
         
         # Initialize a temporary object for config
         self.comms = boardcon.AstroPiBoard(None, self)
+        
+        # Start updates
+        self.startUpdate()
         
     def log(self, text, level=logging.INFO):
         """
@@ -174,36 +158,6 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             self.log("No connection to the camera", logging.WARNING)
             
-    def setProcessorFanSpeed(self, speed):
-        """
-        Set the processor fan speed
-        """
-        speed = round(speed / 99 * 100)
-        if speed == 0:
-            self.ProcessorFanText.setText("Auto")
-            self.log("Processor fan speed set to Auto", logging.DEBUG)
-            processor_fan_speed = constants.AUTO
-        else:
-            self.ProcessorFanText.setText(str(speed) + "%")
-            processor_fan_speed = speed
-        if self.comms:
-            self.comms.set("ProcessorFanSpeed", processor_fan_speed)
-    
-    def setSensorFanSpeed(self, speed):
-        """
-        Set the sensor fan speed
-        """
-        speed = round(speed / 99 * 100)
-        if speed == 0:
-            self.CameraFanText.setText("Auto")
-            self.log("Sensor fan speed set to Auto", logging.DEBUG)
-            sensor_fan_speed = constants.AUTO
-        else:
-            self.CameraFanText.setText(str(speed) + "%")
-            sensor_fan_speed = speed
-        if self.comms:
-            self.comms.set("SensorFanSpeed", sensor_fan_speed)
-            
     def setSaveDir(self):
         """
         Open a file dialog to select a directory to save images to
@@ -235,17 +189,68 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms._config = _tempconfig
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
-            
-            # Instead of preview, show the stream.
-            self.stream = QWebEngineView()
-            self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
-            self.preview.removeWidget(self.preview.currentWidget())
-            self.preview.addWidget(self.stream)
-        
+            time.sleep(2)
+            self.showPreview()        
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
             self.comms.kill_server()
+    
+    def showPreview(self):
+        """
+        Show the preview instead of the "No output" text
+        """
+        time.sleep(2)
+        self.stream = QWebEngineView()
+        self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
+        self.preview.removeWidget(self.preview.currentWidget())
+        self.preview.addWidget(self.stream)
+        
+    def updateTable(self):
+        """
+        Update the table with the current values
+        """
+        _config = self.comms._config
+        self.SettingsReview.setRowCount(len(_config))
+        self.SettingsReview.setColumnCount(2)
+        self.SettingsReview.setHorizontalHeaderLabels(["Setting", "Value"])
+        for n, key in enumerate(sorted(_config.keys())):
+            _key = key.replace("_", " ").title()
+            self.SettingsReview.setItem(n, 0, QtWidgets.QTableWidgetItem(_key))
+            self.SettingsReview.setItem(n, 1, QtWidgets.QTableWidgetItem(str(_config[key])))
+            
+    # Define signals
+    progressSignal = QtCore.pyqtSignal(int)
+    progressTextSignal = QtCore.pyqtSignal(str)
+    cameraStatusSignal = QtCore.pyqtSignal(str)
+    ETASignal = QtCore.pyqtSignal(str)
+        
+    def updateProgress(self, value):
+        """
+        Update the progress bar
+        """
+        self.progressSignal.emit(value)
+        
+    def updateProgressText(self, text):
+        """
+        Update the progress bar text
+        """
+        self.progressTextSignal.emit(text)
+        
+    def updateEta(self, eta):
+        """
+        Update the ETA
+        """
+        self.ETASignal.emit(f"ETA: {eta} seconds")
+            
+    def startUpdate(self):
+        """
+        Start automatically updating the progress and ETA
+        """
+        # Connect signals
+        self.progressSignal.connect(self.ImagingProgress.setValue)
+        self.progressTextSignal.connect(self.ImagingProgressText.setText)
+        self.ETASignal.connect(self.ETAText.setText)
       
     def setImageCount(self):
         """
@@ -267,24 +272,6 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if self.comms:
             self.comms.set("ExposureTime", self.ExposureTime.text())
-    
-    def setSharpness(self, sharpness):
-        """
-        Set the sharpness
-        """
-        sharpness = (sharpness / 99 * 32)
-        self.SharpnessText.setText(str(round(sharpness, 2)))
-        if self.comms:
-            self.comms.set("Sharpness", sharpness)
-    
-    def setContrast(self, contrast):
-        """
-        Set the contrast
-        """
-        contrast = (contrast / 99 * 32)
-        self.ContrastText.setText(str(round(contrast, 2)))
-        if self.comms:
-            self.comms.set("Contrast", contrast)
             
     def setExposureValue(self, value):
         """
@@ -294,16 +281,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureValueText.setText(str(round(value, 2)))
         if self.comms:
             self.comms.set("ExposureValue", value)
-    
-    def setSaturation(self, saturation):
-        """
-        Set the saturation
-        """
-        saturation = (saturation / 99 * 32)
-        self.SaturationText.setText(str(round(saturation, 2)))
-        if self.comms:
-            self.comms.set("Saturation", saturation)
-                
+            
     def setLensPosition(self, position):
         """
         Set the lens position
@@ -315,49 +293,22 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             self.LensPositionText.setText(str(round(position, 2)))
         if self.comms:
-            self.comms.set("LensPosition", position)    
+            self.comms.set("LensPosition", position)
             
-    def setBrightness(self, brightness):
-        """
-        Set the brightness
-        """
-        brightness = (brightness / 99 * 2) - 1
-        self.BrightnessText.setText(str(round(brightness, 2)))
-        if self.comms:
-            self.comms.set("Brightness", brightness)
-            
-    def setISO(self, gain):
+    def setGain(self, gain):
         """
         Set the analogue gain
         """
         gain = (gain / 99 * 15) + 1
         if gain==1:
-            self.ISOText.setText("Auto")
-            self.log("ISO set to Auto", logging.DEBUG)
+            self.GainText.setText("Auto")
+            self.log("Gain set to Auto", logging.DEBUG)
             if self.comms:
                 self.comms.removeConfig("AnalogueGain")
         else:   
-            self.ISOText.setText(str(round(gain*100)))
+            self.GainText.setText(str(round(gain, 2)))
             if self.comms:
                 self.comms.set("AnalogueGain", gain)
-
-    def setSessionTime(self, time):
-        if self.comms:
-            self.comms.set("session_time", time)
-
-    def setProcessorFanState(self, state):
-        """
-        Set the processor fan state
-        """
-        if self.comms:
-            self.comms.set("processor_fan_state", state)
-            
-    def setCameraFanState(self, state):
-        """
-        Set the camera fan state
-        """
-        if self.comms:
-            self.comms.set("camera_fan_state", state)
             
     def setTransferQuality(self, quality):
         """
@@ -372,56 +323,6 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         if self.comms:
             self.comms.set("NoiseReductionMode", mode)
-            
-    def setAWBState(self, state):
-        """
-        Set the AWB state
-        """
-        if state == 0:
-            if self.comms:
-                self.comms.removeConfig("AwbEnable")
-        else:
-            if self.comms:
-                self.comms.set("AwbEnable", state)
-                
-    def setAWBMode(self, mode):
-        """
-        Set the AWB mode
-        """
-        if self.comms:
-            self.comms.set("AwbMode", mode)
-        
-    def setAEState(self, state):
-        """
-        Set the AE state
-        """
-        if state == 0:
-            if self.comms:
-                self.comms.removeConfig("AeEnable")
-        else:
-            if self.comms:
-                self.comms.set("AeEnable", state)
-                
-    def setAEMode(self, mode):
-        """
-        Set the AE mode
-        """
-        if self.comms:
-            self.comms.set("AeExposureMode", mode)
-            
-    def setAEMeteringMode(self, mode):
-        """
-        Set the AE metering mode
-        """
-        if self.comms:
-            self.comms.set("AeMeteringMode", mode)
-            
-    def setAEConstraint(self, constraint):
-        """
-        Set the AE constraint
-        """
-        if self.comms:
-            self.comms.set("AeConstraintMode", constraint)
             
     def startSession(self):
         """
