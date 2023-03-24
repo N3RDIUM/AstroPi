@@ -24,6 +24,6 @@ print("[PiCamera2] Starting capture...")
 captured = 0
 while True:
     # Capture DNG image
-    picam2.capture_file(capture_config, f"{captured}.dng", name="raw")
+    picam2.capture_file(capture_config, f"{captured}.dng")
     captured += 1
     print(f"[PiCamera2] Captured RAW {captured}.dng")
