@@ -16,7 +16,6 @@ capture_config = picam2.create_still_configuration(
 )
 
 print("[PiCamera2] Starting camera, warming up...")
-picam2.configure('raw')
 picam2.start()
 time.sleep(2)
 
@@ -25,11 +24,11 @@ print("[PiCamera2] Starting capture...")
 captured = 0
 while True:
     # Capture DNG image
-    r = picam2.capture_request()
+    r = picam2.switch_mode_capture_request(capture_config)
     r.save_dng(f"{captured}.dng")
     captured += 1
     print(f"[PiCamera2] Captured RAW {captured}.dng")
     r.release()
+    # Restart camera
     picam2.stop()
-    picam2.configure(capture_config)
     picam2.start()
