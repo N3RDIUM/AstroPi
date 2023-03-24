@@ -22,6 +22,8 @@ time.sleep(2)
 # Start capturing images. FOREVER!
 print("[PiCamera2] Starting capture...")
 captured = 0
+picam2.start()
+picam2.configure('raw')
 while True:
     # Capture DNG image
     r = picam2.capture_request()
