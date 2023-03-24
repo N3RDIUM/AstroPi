@@ -22,7 +22,6 @@ Coming soon!
 - Raspberry Pi 3b+
 - PiCamera v3
 - Raspberry Pi 3b+ case (with fan slot)
-- AHT10 temperature sensor (for the camera)
 - An extra fan (for cooling the camera)
 - A laptop or desktop computer
 - Loooooong Ethernet cable
