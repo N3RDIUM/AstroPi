@@ -14,6 +14,8 @@ capture_config = picam2.create_still_configuration(
         'AnalogueGain': 8.0,
     }
 )
+preview_config = picam2.create_preview_configuration()
+picam2.configure(preview_config)
 
 print("[PiCamera2] Starting camera, warming up...")
 picam2.start()
@@ -23,9 +25,13 @@ time.sleep(2)
 print("[PiCamera2] Starting capture...")
 captured = 0
 while True:
-    # Capture DNG image
-    r = picam2.capture_request(capture_config)
+    picam2.stop()
+    picam2.configure(capture_config)
+    picam2.start()
+    r = picam2.capture_request()
     r.save_dng(f"{captured}.dng")
-    captured += 1
-    print(f"[PiCamera2] Captured RAW {captured}.dng")
     r.release()
+    print(f"[PiCamera2] Captured RAW image {captured}.dng")
+    picam2.stop()
+    picam2.configure(preview_config)
+    picam2.start()
