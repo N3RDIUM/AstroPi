@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl
 import boardcon
+import threading
 import logging
 import time
 import sys
@@ -189,14 +190,21 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms._config = _tempconfig
             self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
-            time.sleep(2)
-            self.showPreview()        
+            self.showPreview()
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
             self.comms.kill_server()
     
     def showPreview(self):
+        """
+        Start the thread which shows the preview
+        """
+        self.preview_thread = threading.Thread(target=self._showPreview)
+        self.preview_thread.setDaemon(True)
+        self.preview_thread.start()
+        
+    def _showPreview(self):
         """
         Show the preview instead of the "No output" text
         """
