@@ -1,6 +1,8 @@
+print("[PiCamera2] Starting camera test...")
 import time
 from picamera2 import Picamera2
 
+print("[PiCamera2] Configuring camera...")
 picam2 = Picamera2()
 capture_config = picam2.create_still_configuration(
     raw={
@@ -13,12 +15,15 @@ capture_config = picam2.create_still_configuration(
     }
 )
 
+print("[PiCamera2] Starting camera, warming up...")
 picam2.start()
 time.sleep(2)
 
 # Start capturing images. FOREVER!
+print("[PiCamera2] Starting capture...")
 captured = 0
 while True:
     buffers, metadata = picam2.capture_buffers(capture_config, ["raw"])
     picam2.helpers.save_dng(buffers[0], metadata, capture_config["raw"], f"{captured}.dng")
     captured += 1
+    print(f"[PiCamera2] Captured RAW {captured}.dng")
