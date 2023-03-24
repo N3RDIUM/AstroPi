@@ -35,3 +35,4 @@ while True:
     picam2.stop()
     picam2.configure(preview_config)
     picam2.start()
+    captured += 1
