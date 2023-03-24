@@ -31,4 +31,5 @@ while True:
     r.release()
     # Restart camera
     picam2.stop()
+    picam2.configure(capture_config)
     picam2.start()
