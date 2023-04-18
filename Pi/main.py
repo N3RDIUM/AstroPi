@@ -138,7 +138,7 @@ class PreviewThread:
                 pass
             self.server.handle_request()
             self.capturing = True
-            self.camera.capture("current.jpg")
+            self.camera.capture_file("current.jpg")
             self.capturing = False
 
 try:
