@@ -199,6 +199,10 @@ try:
                     _log("Connected to AstroPi successfully!")
                 elif data["command"] == "set":
                     _config[data["key"]] = data["value"]
+                    picam2.stop_recording()
+                    picam2.configure(picam2.create_video_configuration({"size": picam2.sensor_resolution}, controls=_config))
+                    picam2.start_recording(JpegEncoder(), FileOutput(output))
+                    _log("Set config value successfully!")
                 elif data["command"] == "setall":
                     _config = data["config"]
                     _log("Set all config values successfully!")
@@ -236,7 +240,7 @@ try:
                     # Since we are taking images of the sky, set focus to infinity
                     camera_config = picam2.create_still_configuration(
                         main={
-                            "size": (4608, 2592),
+                            "size": picam2.sensor_resolution,
                         },
                         controls=_config
                     )

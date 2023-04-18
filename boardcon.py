@@ -158,6 +158,7 @@ class AstroPiBoard:
         self.window.updateEta(self.eta_seconds)
         self.window.updateProgress(0)
         self.window.updateProgressText(f"{self.progress['image_count']}/{self._config['image_count']}")
+        self.update_config_value(key, value)
         
     def update__config(self):
         """
@@ -166,6 +167,16 @@ class AstroPiBoard:
         self.socket.send(json.dumps({
             "command": "setall",
             "config": self._config
+        }).encode("utf-8"))
+        
+    def update_config_value(self, key, value):
+        """
+        Update a value on the board
+        """
+        self.socket.send(json.dumps({
+            "command": "set",
+            "key": key,
+            "value": value
         }).encode("utf-8"))
             
     def set_param(self, key, value):
