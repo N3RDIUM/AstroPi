@@ -200,7 +200,10 @@ try:
                 elif data["command"] == "set":
                     _config[data["key"]] = data["value"]
                     picam2.stop_recording()
-                    time.sleep(2)
+                    # Reset the camera to apply the new settings
+                    picam2.close()
+                    picam2 = Picamera2()
+                    time.sleep(0.1)
                     picam2.configure(picam2.create_video_configuration({"size": picam2.sensor_resolution}, controls=_config))
                     picam2.start_recording(JpegEncoder(), FileOutput(output))
                     _log("Set config value successfully!")
