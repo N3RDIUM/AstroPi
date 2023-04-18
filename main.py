@@ -49,9 +49,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.StartButton.clicked.connect(self.startSession)
         
         # Add callbacks to sliders
-        self.ExposureValue.valueChanged.connect(self.setExposureValue)
-        self.LensPosition.valueChanged.connect(self.setLensPosition)
-        self.Gain.valueChanged.connect(self.setGain)
+        self.ExposureValue.sliderReleased.connect(self.setExposureValue)
+        self.LensPosition.sliderReleased.connect(self.setLensPosition)
+        self.Gain.sliderReleased.connect(self.setGain)
         
         # Add callbacks to line edits
         self.NumImages.editingFinished.connect(self.setImageCount)
@@ -273,20 +273,21 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("ExposureTime", self.ExposureTime.text())
             
-    def setExposureValue(self, value):
+    def setExposureValue(self):
         """
         Set the exposure value.
         """
+        value = self.ExposureValue.value()
         value = (value / 99 * 16) - 8
         self.ExposureValueText.setText(str(round(value, 2)))
         if self.comms:
             self.comms.set("ExposureValue", value)
             
-    def setLensPosition(self, position):
+    def setLensPosition(self):
         """
         Set the lens position
         """
-        position = (position / 99 * 32)
+        position = self.LensPosition.value()
         if position==0:
             self.LensPositionText.setText("Inf")
             self.log("Lens position set to Infinity", logging.DEBUG)
@@ -295,10 +296,11 @@ class AstroPi(QtWidgets.QMainWindow):
         if self.comms:
             self.comms.set("LensPosition", position)
             
-    def setGain(self, gain):
+    def setGain(self):
         """
         Set the analogue gain
         """
+        gain = self.Gain.value()
         gain = (gain / 99 * 15) + 1
         if gain==1:
             self.GainText.setText("Auto")
