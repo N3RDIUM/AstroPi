@@ -25,6 +25,7 @@ class AstroPiBoard:
         self.ip = board_ip
         self.window.log(f"Board IP: {self.ip}", logging.DEBUG)
         self.set_state(constants.DISCONNECTED)
+        self.set_imaging_state(constants.IDLE)
         self._config = { 
             'image_count': 1,
             'interval': 0,
@@ -49,6 +50,12 @@ class AstroPiBoard:
             self.window.BoardStatus.setText(constants.CONNECTING_TEXT)
         else:
             self.window.BoardStatus.setText(constants.UNKNOWN_TEXT)
+    
+    def set_imaging_state(self, state):
+        """
+        Set the camera's status.
+        """
+        self.imaging_state = state
             
     def connect(self):
         """

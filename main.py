@@ -200,11 +200,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Show the preview instead of the "No output" text
         """
-        time.sleep(2)
         self.stream = QWebEngineView()
         self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
         self.preview.removeWidget(self.preview.currentWidget())
         self.preview.addWidget(self.stream)
+        self.comms.set_imaging_state(constants.PREVIEW)
         
     def updateTable(self):
         """
@@ -328,6 +328,7 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Start the session!
         """
+        self.comms.set_imaging_state(constants.IMAGING)
         if not self.comms:
             self.log("No comms. Please connect your AstroPi.", logging.ERROR)
             return

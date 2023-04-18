@@ -43,16 +43,6 @@ while True:
         time.sleep(5)
 _socket.listen(1)
 _config = {}
-PAGE = """\
-<html>
-<head>
-<title>PiCamera2 MJPEG Stream Server</title>
-</head>
-<body style="marigin:0;padding:0;">
-<img src="stream.mjpg" style="object-fit: cover; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"/>
-</body>
-</html>
-"""
 
 class TransferThread:
     """
@@ -86,61 +76,70 @@ class TransferThread:
             self.conn.send(constants.FILE_SEPARATOR.encode("utf-8"))
             os.remove(path)
             
-class StreamingOutput(io.BufferedIOBase):
-    def __init__(self):
-        self.frame = None
-        self.condition = Condition()
+class PreviewThread:
+    """
+    PreviewThread
+    
+    This class is used to stream the preview to the client
+    It captures images 
+    """
+    def __init__(self, camera):
+        self.camera = camera
+        self.start_sockserver()
+        self.thread = threading.Thread(target=self._start)
+        self.pause_for_config = False
+        self.capturing = False
+        
+    def start_sockserver(self):
+        PAGE = """\
+        <html>
+        <head>
+        <title>PiCamera2 MJPEG Stream Server</title>
+        </head>
+        <body style="marigin:0;padding:0;">
+        <img src="current.jpg" style="object-fit: cover; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"/>
+        </body>
+        </html>
+        """
 
-    def write(self, buf):
-        with self.condition:
-            self.frame = buf
-            self.condition.notify_all()
-
-
-class StreamingHandler(server.BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(301)
-            self.send_header('Location', '/index.html')
-            self.end_headers()
-        elif self.path == '/index.html':
-            content = PAGE.encode('utf-8')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.send_header('Content-Length', len(content))
-            self.end_headers()
-            self.wfile.write(content)
-        elif self.path == '/stream.mjpg':
-            self.send_response(200)
-            self.send_header('Age', 0)
-            self.send_header('Cache-Control', 'no-cache, private')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
-            self.end_headers()
-            try:
-                while True:
-                    with output.condition:
-                        output.condition.wait()
-                        frame = output.frame
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
+        class StreamingHandler(server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                if self.path == '/':
+                    self.send_response(301)
+                    self.send_header('Location', '/index.html')
                     self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
-            except Exception as e:
-                logging.warning(
-                    'Removed streaming client %s: %s',
-                    self.client_address, str(e))
-        else:
-            self.send_error(404)
-            self.end_headers()
-
-
-class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
-    allow_reuse_address = True
-    daemon_threads = True
-
+                elif self.path == '/index.html':
+                    content = PAGE.encode('utf-8')
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'text/html')
+                    self.send_header('Content-Length', len(content))
+                    self.end_headers()
+                    self.wfile.write(content)
+                elif self.path == '/current.jpg':
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'image/jpeg')
+                    self.send_header('Content-Length', len(self.camera.last_image))
+                    self.end_headers()
+                    self.wfile.write(self.camera.last_image)
+                else:
+                    self.send_error(404)
+                    self.end_headers()
+        class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
+            allow_reuse_address = True
+            daemon_threads = True
+        self.server = StreamingServer((device_ip, constants.ASTROPI_PREVIEW_PORT), StreamingHandler)
+        
+    def start(self):
+        self.thread.start()
+    
+    def _start(self):
+        while True:
+            while self.pause_for_config:
+                pass
+            self.server.handle_request()
+            self.capturing = True
+            self.camera.capture("current.jpg")
+            self.capturing = False
 
 try:
     try:
@@ -161,19 +160,11 @@ try:
         transfer = TransferThread(fileconn)
         transfer.start()
         from picamera2 import Picamera2
-        from picamera2.encoders import JpegEncoder
-        from picamera2.outputs import FileOutput
         
         # Start streaming to constants.ASTROPI_PREVIEW_PORT
         picam2 = Picamera2()
-        config = picam2.create_video_configuration()
-        print(config)
-        output = StreamingOutput()
-        picam2.configure(config)
-        picam2.start_recording(JpegEncoder(), FileOutput(output))
-        stream = StreamingServer((device_ip, constants.ASTROPI_PREVIEW_PORT), StreamingHandler)
-        stream_thread = threading.Thread(target=stream.serve_forever)
-        stream_thread.start()
+        thread = PreviewThread(picam2)
+        thread.start()
         
         while True:
             _data = conn.recv(1024)
@@ -228,9 +219,6 @@ try:
                     # Stop the preview stream
                     _log("Stopping preview stream...")
                     picam2.stop_recording()
-                    stream.shutdown()
-                    stream.server_close()
-                    stream_thread.join()
                     
                     _log("Configuring camera...")
                     # Since we are taking images of the sky, set focus to infinity
@@ -260,14 +248,8 @@ try:
                     _log("Session complete! Stopping camera...")
                     picam2.stop()
                     
-                    if len(transfer.filequeue) > 0:
-                        _log("Waiting for transfer to complete...")
-                        while True:
-                            if len(transfer.filequeue) == 0:
-                                break
-                    _log("Transfer complete!")
-                    _log("Exiting...")
-                    conn.close()
+                    # Start the preview stream again
+                    
     except KeyboardInterrupt:
         log("KeyboardInterrupt")
         _socket.close()
