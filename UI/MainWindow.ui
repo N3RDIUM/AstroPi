@@ -25,6 +25,13 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
+    <item row="1" column="1">
+     <widget class="QToolButton" name="toolButton">
+      <property name="text">
+       <string>x</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="2" rowspan="3">
      <widget class="QTabWidget" name="Settings">
       <property name="enabled">
@@ -75,39 +82,11 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>314</width>
-             <height>758</height>
+             <width>356</width>
+             <height>760</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="16" column="0" colspan="2">
-             <widget class="QPushButton" name="PullUpdates">
-              <property name="text">
-               <string>Pull updates from repository</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="BoardIP">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Board status:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="17" column="0" colspan="2">
-             <widget class="QPushButton" name="SystemUpdate">
-              <property name="text">
-               <string>System update (takes time!)</string>
-              </property>
-             </widget>
-            </item>
+           <layout class="QFormLayout" name="formLayout_3">
             <item row="0" column="0" colspan="2">
              <widget class="QLabel" name="label_6">
               <property name="sizePolicy">
@@ -121,61 +100,35 @@
               </property>
              </widget>
             </item>
-            <item row="15" column="0" colspan="2">
-             <widget class="QLabel" name="label_10">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>&lt;h2 align=&quot;center&quot;&gt;SYSTEM&lt;/h2&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
                <string>Board IP:</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0" colspan="2">
-             <widget class="Line" name="line">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="BoardIP">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="2" column="1">
              <widget class="QPushButton" name="EnterBoardIP">
               <property name="text">
                <string>→</string>
               </property>
              </widget>
             </item>
-            <item row="19" column="0" colspan="2">
-             <widget class="QLabel" name="label_30">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label">
               <property name="text">
-               <string>&lt;h2 align=&quot;center&quot;&gt;EXIF&lt;/h2&gt;</string>
+               <string>Board status:</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="0" colspan="2">
-             <widget class="Line" name="line_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
+            <item row="3" column="1">
              <widget class="QLabel" name="BoardStatus">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -188,10 +141,57 @@
               </property>
              </widget>
             </item>
-            <item row="20" column="0" colspan="2">
-             <widget class="QLabel" name="label_39">
+            <item row="4" column="0" colspan="2">
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="2">
+             <widget class="QLabel" name="label_10">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string>&lt;p align=&quot;center&quot;&gt;Coming soon!&lt;/p&gt;</string>
+               <string>&lt;h2 align=&quot;center&quot;&gt;SYSTEM&lt;/h2&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0" colspan="2">
+             <widget class="QPushButton" name="PullUpdates">
+              <property name="text">
+               <string>Pull updates from repository</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0" colspan="2">
+             <widget class="QPushButton" name="SystemUpdate">
+              <property name="text">
+               <string>System update (takes time!)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0" colspan="2">
+             <widget class="Line" name="line_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0" colspan="2">
+             <widget class="QLabel" name="label_30">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>&lt;h2 align=&quot;center&quot;&gt;EXIF&lt;/h2&gt;</string>
               </property>
              </widget>
             </item>
@@ -223,12 +223,204 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>314</width>
-             <height>438</height>
+             <width>374</width>
+             <height>746</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout_2">
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="9" column="1">
+             <widget class="QSlider" name="Gain">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="ExposureTime"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="ResolutionX"/>
+            </item>
+            <item row="7" column="1">
+             <widget class="QSlider" name="LensPosition">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="2">
+             <widget class="QLabel" name="LensPositionText">
+              <property name="text">
+               <string>0.0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0" colspan="2">
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="1">
+             <widget class="QLineEdit" name="SaveDirInput">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="QSlider" name="ExposureValue">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="20" column="1">
+             <widget class="QComboBox" name="TransferQuality">
+              <item>
+               <property name="text">
+                <string>Original</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Low (Fast transfer)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
             <item row="11" column="2">
+             <widget class="QLabel" name="ExposureValueText">
+              <property name="text">
+               <string>0.0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="text">
+               <string>Noise Red. Mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="20" column="0">
+             <widget class="QLabel" name="label_29">
+              <property name="text">
+               <string>Transfer quality:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="text">
+               <string>Interval:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_45">
+              <property name="text">
+               <string>Gain:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="1">
+             <widget class="QLabel" name="label_27">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>&lt;h2 align=&quot;center&quot;&gt;FILES&lt;/h2&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_40">
+              <property name="text">
+               <string>Exposure Value:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_13">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>&lt;h2 align=&quot;center&quot;&gt;IMAGING&lt;/h2&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="2">
+             <widget class="QLabel" name="GainText">
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Resolution:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="NumImages"/>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="ImageInterval">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string># Images:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="1">
+             <widget class="QPushButton" name="SaveDirBrowse">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="ResolutionY"/>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_43">
+              <property name="text">
+               <string>Lens Position:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>Save dir:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_24">
+              <property name="text">
+               <string>Exposure Time:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="1">
              <widget class="QComboBox" name="NoiseReductionMode">
               <item>
                <property name="text">
@@ -247,203 +439,17 @@
               </item>
              </widget>
             </item>
-            <item row="3" column="2">
-             <widget class="QLineEdit" name="ImageInterval">
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_5">
               <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="2">
-             <widget class="QSlider" name="ExposureValue">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="3">
-             <widget class="QLabel" name="GainText">
-              <property name="text">
-               <string>Auto</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
-             <widget class="QLineEdit" name="ExposureTime"/>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLabel" name="label_19">
-              <property name="text">
-               <string>us</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="3">
-             <widget class="QLabel" name="ExposureValueText">
-              <property name="text">
-               <string>0.0</string>
-              </property>
-             </widget>
-            </item>
-            <item row="30" column="2">
-             <widget class="QComboBox" name="TransferQuality">
-              <item>
-               <property name="text">
-                <string>Original</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Low (Fast transfer)</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="29" column="2">
-             <widget class="QPushButton" name="SaveDirBrowse">
-              <property name="text">
-               <string>Browse</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_24">
-              <property name="text">
-               <string>Exposure Time:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="Line" name="line_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_21">
-              <property name="text">
-               <string>Interval:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="25" column="1" colspan="2">
-             <widget class="Line" name="line_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="28" column="2">
-             <widget class="QLineEdit" name="SaveDirInput">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_40">
-              <property name="text">
-               <string>Exposure Value:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_45">
-              <property name="text">
-               <string>Gain:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="30" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Transfer quality:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_22">
-              <property name="text">
-               <string>Noise Red. Mode:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string># Images:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>us</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label_13">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>&lt;h2 align=&quot;center&quot;&gt;IMAGING&lt;/h2&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="2">
-             <widget class="QSlider" name="Gain">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="27" column="2" colspan="2">
-             <widget class="QLabel" name="label_27">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>&lt;h2 align=&quot;center&quot;&gt;FILES&lt;/h2&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="28" column="0">
-             <widget class="QLabel" name="label_28">
-              <property name="text">
-               <string>Save dir:</string>
+               <string>X</string>
               </property>
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QLineEdit" name="NumImages"/>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_43">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Lens Position:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="3">
-             <widget class="QLabel" name="LensPositionText">
-              <property name="text">
-               <string>0.0</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
-             <widget class="QSlider" name="LensPosition">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <string>Y</string>
               </property>
              </widget>
             </item>
@@ -475,71 +481,71 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>314</width>
-             <height>758</height>
+             <width>356</width>
+             <height>760</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="4" column="2">
-             <widget class="QLabel" name="label_35">
-              <property name="text">
-               <string>&lt;h2 align=&quot;center&quot;&gt;PROGRESS&lt;/h2&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" colspan="3">
-             <widget class="Line" name="line_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLabel" name="label_31">
-              <property name="text">
-               <string>Imaging:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="5">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
              <widget class="QLabel" name="label_15">
               <property name="text">
                <string>&lt;h2 align=&quot;center&quot;&gt;CAPTURE&lt;/h2&gt;</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="2">
-             <widget class="QProgressBar" name="ImagingProgress">
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLabel" name="ImagingProgressText">
-              <property name="text">
-               <string>0/0</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1" colspan="3">
-             <widget class="QLabel" name="ETAText">
-              <property name="text">
-               <string>ETA: 0 seconds</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" colspan="3">
+            <item>
              <widget class="QTableWidget" name="SettingsReview"/>
             </item>
-            <item row="2" column="1" colspan="2">
+            <item>
              <widget class="QLabel" name="label_11">
               <property name="text">
                <string>&lt;strong&gt;Please review your settings.&lt;/strong&gt;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0" colspan="5">
+            <item>
+             <widget class="Line" name="line_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_35">
+              <property name="text">
+               <string>&lt;h2 align=&quot;center&quot;&gt;PROGRESS&lt;/h2&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="ImagingProgress">
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_31">
+              <property name="text">
+               <string>Imaging:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="ImagingProgressText">
+              <property name="text">
+               <string>0/0</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="ETAText">
+              <property name="text">
+               <string>ETA: 0 seconds</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="StartButton">
               <property name="text">
                <string>START!</string>
@@ -561,13 +567,6 @@
       </widget>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QToolButton" name="toolButton">
-      <property name="text">
-       <string>x</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0" rowspan="2">
      <widget class="QTextEdit" name="textEdit">
       <property name="sizePolicy">
@@ -578,13 +577,6 @@
       </property>
       <property name="readOnly">
        <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QToolButton" name="toolButton_2">
-      <property name="text">
-       <string>↓</string>
       </property>
      </widget>
     </item>
@@ -616,6 +608,13 @@
       </widget>
      </widget>
     </item>
+    <item row="2" column="1">
+     <widget class="QToolButton" name="toolButton_2">
+      <property name="text">
+       <string>↓</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -624,7 +623,7 @@
      <x>0</x>
      <y>0</y>
      <width>1382</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

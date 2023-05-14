@@ -44,39 +44,45 @@ class AstroPiBoard:
         self.state = state
         if state == constants.DISCONNECTED:
             self.window.BoardStatus.setText(constants.DISCONNECTED_TEXT)
+            self.window.EnterBoardIP.setEnabled(True)
         elif state == constants.CONNECTED:
             self.window.BoardStatus.setText(constants.CONNECTED_TEXT)
+            self.window.EnterBoardIP.setEnabled(False)
         elif state == constants.CONNECTING:
             self.window.BoardStatus.setText(constants.CONNECTING_TEXT)
+            self.window.EnterBoardIP.setEnabled(False)
         else:
             self.window.BoardStatus.setText(constants.UNKNOWN_TEXT)
+            self.window.EnterBoardIP.setEnabled(False)
     
     def set_imaging_state(self, state):
         """
         Set the camera's status.
         """
         self.imaging_state = state
-            
-    def connect(self):
-        """
-        Connect to the board
-        """        
-        self.thread = threading.Thread(target=self.start_socket_client)
-        self.thread.start()
         
     def terminate(self):
         """
         Terminate the connection to the board
         """
         self.set_state(constants.DISCONNECTED)
-        self.socket.close()
-        self.thread.join()
+        if "socket" in dir(self):
+            self.socket.close()
+        if "thread" in dir(self):
+            self.thread.join()
+        self.window.log("Terminating connection to board...")
         
     # Start the socket client in a new thread
-    def start_socket_client(self):
+    def connect(self):
         self.set_state(constants.CONNECTING)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.ip, constants.ASTROPI_PORT))
+        try:
+            self.socket.connect((self.ip, constants.ASTROPI_PORT))
+        except Exception as e:
+            self.set_state(constants.DISCONNECTED)
+            self.window.log("Failed to connect to board: " + str(e), logging.ERROR)
+            self.window.EnterBoardIP.setEnabled(True)
+            return
         self.window.log("Socket created successfully!")
         self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
         self.file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -92,6 +98,12 @@ class AstroPiBoard:
         self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
         self.update__config()
         self.window.log("Synced config with board")
+        self.socket_thread = threading.Thread(target=self._handle_socket)
+        self.socket_thread.start()
+        
+    
+    def _handle_socket(self):
+        self.set_state(constants.CONNECTED)
         while True:
             _data = self.socket.recv(1024).decode("utf-8")
             if not _data: continue
@@ -124,6 +136,8 @@ class AstroPiBoard:
                     self.window.log(f"Received image {self.progress['image_count']}", logging.INFO)
                     self.window.updateProgress(int((self.progress["image_count"]/self._config["image_count"])*100))
                     self.window.updateProgressText(f"{self.progress['image_count']}/{self._config['image_count']}")
+                    self.window.updateEta(self.eta_seconds)
+                    self.window.updatePreview(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.jpg"))
                 else:
                     try:
                         _data = base64.b64decode(_data)

@@ -1,7 +1,6 @@
 # imports
 from PyQt5 import QtWidgets, uic, QtCore
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QPixmap
 import boardcon
 import logging
 import time
@@ -39,6 +38,8 @@ class AstroPi(QtWidgets.QMainWindow):
                                     background-position: center; 
                                     background-color: black;""")
         
+        # Make sure QTextCursor is registered using qRegisterMetaType
+                
         # Add click callbacks to the buttons
         self.toolButton.clicked.connect(self.clearLog)
         self.toolButton_2.clicked.connect(self.saveLog)
@@ -57,6 +58,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.NumImages.editingFinished.connect(self.setImageCount)
         self.ImageInterval.editingFinished.connect(self.setInterval)
         self.ExposureTime.editingFinished.connect(self.setExposure)
+        self.ResolutionX.editingFinished.connect(self.setResolutionX)
+        self.ResolutionY.editingFinished.connect(self.setResolutionY)
+        self.BoardIP.editingFinished.connect(lambda: self.EnterBoardIP.setEnabled(True))
         
         # Add callbacks to combo boxes
         self.TransferQuality.currentIndexChanged.connect(self.setTransferQuality)
@@ -187,24 +191,34 @@ class AstroPi(QtWidgets.QMainWindow):
             self.comms = boardcon.AstroPiBoard(ip, self)
             self.comms.connect()
             self.comms._config = _tempconfig
-            self.log("Connected to AstroPi at " + ip, logging.INFO)
             self.EnterBoardIP.setEnabled(False)
-            time.sleep(2)
             self.showPreview()
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
-            self.comms.kill_server()
+            self.EnterBoardIP.setEnabled(False)
     
     def showPreview(self):
         """
         Show the preview instead of the "No output" text
         """
-        self.stream = QWebEngineView()
-        self.stream.setUrl(QUrl(f"http://{self.comms.ip}:{constants.ASTROPI_PREVIEW_PORT}/"))
+        # Create an image widget
+        self.image = QtWidgets.QLabel()
+        self.image.setScaledContents(True)
         self.preview.removeWidget(self.preview.currentWidget())
-        self.preview.addWidget(self.stream)
+        self.preview.addWidget(self.image)
         self.comms.set_imaging_state(constants.PREVIEW)
+        
+    def updatePreview(self, imagepath):
+        """
+        Show the preview image
+        """
+        try:
+            # Load the image
+            image = QPixmap(imagepath)
+            self.image.setPixmap(image)
+        except Exception as e:
+            self.log("Error updating preview: " + str(e), logging.ERROR)
         
     def updateTable(self):
         """
@@ -251,6 +265,17 @@ class AstroPi(QtWidgets.QMainWindow):
         self.progressSignal.connect(self.ImagingProgress.setValue)
         self.progressTextSignal.connect(self.ImagingProgressText.setText)
         self.ETASignal.connect(self.ETAText.setText)
+        
+    def setResolutionX(self):
+        """
+        Set the X resolution
+        """
+        if self.comms:
+            self.comms.set("resolution_x", self.ResolutionX.text())
+    
+    def setResolutionY(self):
+        if self.comms:
+            self.comms.set("resolution_y", self.ResolutionY.text())
       
     def setImageCount(self):
         """
