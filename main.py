@@ -60,7 +60,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureTime.editingFinished.connect(self.setExposure)
         self.ResolutionX.editingFinished.connect(self.setResolutionX)
         self.ResolutionY.editingFinished.connect(self.setResolutionY)
-        self.BoardIP.editingFinished.connect(lambda: self.EnterBoardIP.setEnabled(True))
+        self.BoardIP.editingFinished.connect(lambda: self.BoardIPChanged)
         
         # Add callbacks to combo boxes
         self.TransferQuality.currentIndexChanged.connect(self.setTransferQuality)
@@ -83,6 +83,9 @@ class AstroPi(QtWidgets.QMainWindow):
         # Start updates
         self.startUpdate()
         
+    def BoardIPChanged(self):
+        if not "socket" in dir(self.comms): self.EnterBoardIP.setEnabled(True)
+        
     def log(self, text, level=logging.INFO):
         """
         Log text to the textEdit
@@ -101,7 +104,7 @@ class AstroPi(QtWidgets.QMainWindow):
         else:
             color = "blue"
         # Write text to the textEdit
-        self.textEdit.append(f"<font color=\"{color}\">{timestamp} [{logging.getLevelName(level)}] " + text + "</font>")
+        self.textEdit.append(f"\r<font color=\"{color}\">{timestamp} [{logging.getLevelName(level)}] " + text + "</font>")
         # Write text to the log file
         if level == logging.INFO:
             logging.info(text)
@@ -112,8 +115,6 @@ class AstroPi(QtWidgets.QMainWindow):
         elif level == logging.DEBUG:
             logging.debug(text)
         print(f"{timestamp} [{logging.getLevelName(level)}] " + text)
-        # TODO: Add toggle button to enable/disable auto-scrolling
-        self.textEdit.verticalScrollBar().setValue(self.textEdit.verticalScrollBar().maximum())
         
     def clearLog(self):
         """
@@ -196,7 +197,7 @@ class AstroPi(QtWidgets.QMainWindow):
         except Exception as e:
             self.log("Error connecting to AstroPi: " + str(e), logging.ERROR)
             self.comms.set_state(constants.DISCONNECTED)
-            self.EnterBoardIP.setEnabled(False)
+            self.EnterBoardIP.setEnabled(True)
     
     def showPreview(self):
         """

@@ -77,11 +77,11 @@ class AstroPiBoard:
         self.set_state(constants.CONNECTING)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
+            self.socket.settimeout(1.5)
             self.socket.connect((self.ip, constants.ASTROPI_PORT))
         except Exception as e:
             self.set_state(constants.DISCONNECTED)
             self.window.log("Failed to connect to board: " + str(e), logging.ERROR)
-            self.window.EnterBoardIP.setEnabled(True)
             return
         self.window.log("Socket created successfully!")
         self.socket.send(constants.JSON_SEPARATOR.encode("utf-8"))
