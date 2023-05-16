@@ -76,6 +76,29 @@ class AstroPi(QtWidgets.QMainWindow):
         self.setWindowTitle("AstroPi")
         self.setWindowIcon(QtGui.QIcon('./assets/AstroPi.ico'))
         
+        # Add text edit callbacks
+        for textEdit in self.textEdits:
+            textEdit.editingFinished.connect(self.textEditCallback)
+        
+        # Add button callbacks
+        for button in self.buttons:
+            button.clicked.connect(self.buttonCallback)
+            
+        # Add callbacks for the slider
+        self.ISO.valueChanged.connect(self.ISOCallback)
+        
+        # Disable all tabs except the first one
+        self.Tabs.setTabEnabled(1, False)
+        self.Tabs.setTabEnabled(2, False)
+        self.Tabs.setTabEnabled(3, False)
+        
+    def textEditCallback(self, event):
+        pass
+    def buttonCallback(self, event):
+        pass
+    def ISOCallback(self, event):
+        pass
+        
     def log(self, message, level):
         """
         Log a message to the log window
