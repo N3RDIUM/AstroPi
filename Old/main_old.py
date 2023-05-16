@@ -1,7 +1,7 @@
 # imports
 from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtGui import QPixmap
-import boardcon
+import Old.boardcon as boardcon
 import logging
 import time
 import sys
