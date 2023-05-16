@@ -26,14 +26,7 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Setup the GUI
         """
-        # Set the Style Sheets
-        self.setStyleSheet("background-color: #222222; color: white;")
-        
-        self.Preview.currentWidget().setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
-                                    background-repeat: no-repeat; 
-                                    background-position: center; 
-                                    background-color: black;""")
-        
+        # Log the welcome message
         self.log("""<pre><font color="turquoise">
   /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha
  /$$__  $$            | $$                        | $$__  $$|__/ | 
@@ -45,13 +38,24 @@ class AstroPi(QtWidgets.QMainWindow):
 |__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | CLEAR SKIES!</font></pre>
 """, "log")
         
+        # Set the Style Sheets
+        self.setStyleSheet("background-color: #222222; color: white;")
+        self.Preview.currentWidget().setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
+                                    background-repeat: no-repeat; 
+                                    background-position: center; 
+                                    background-color: black;""")
+        self.ISO.setStyleSheet("color: #006087;")
+        self.SettingsReview.setStyleSheet("background-color: #001d87; color: white;")
+        self.Console.setStyleSheet("background-color: #303547; color: white;")
+        
         self.textEdits = [
             self.BoardIP, 
             self.ResolutionX, 
             self.ResolutionY, 
             self.ImageCount, 
             self.Interval, 
-            self.ExposureTime
+            self.ExposureTime,
+            self.FileTransferPath,
         ]
         for textEdit in self.textEdits:
             textEdit.setStyleSheet("background-color: #006087; color: white;")
@@ -67,10 +71,10 @@ class AstroPi(QtWidgets.QMainWindow):
         ]
         for button in self.buttons:
             button.setStyleSheet("background-color: #260087; color: white;")
-        
-        self.SettingsReview.setStyleSheet("background-color: #333333; color: white;")
-        
-        
+            
+        # Set the window title and icon
+        self.setWindowTitle("AstroPi")
+        self.setWindowIcon(QtGui.QIcon('./assets/AstroPi.ico'))
         
     def log(self, message, level):
         """
