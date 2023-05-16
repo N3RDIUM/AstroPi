@@ -79,10 +79,6 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add text edit callbacks
         for textEdit in self.textEdits:
             textEdit.editingFinished.connect(self.textEditCallback)
-        
-        # Add button callbacks
-        for button in self.buttons:
-            button.clicked.connect(self.buttonCallback)
             
         # Add callbacks for the slider
         self.ISO.valueChanged.connect(self.ISOCallback)
@@ -117,11 +113,9 @@ class AstroPi(QtWidgets.QMainWindow):
         for button in self.buttons:
             button.setEnabled(True)
         
-    def textEditCallback(self, event):
+    def textEditCallback(self):
         pass
-    def buttonCallback(self, event):
-        pass
-    def ISOCallback(self, event):
+    def ISOCallback(self):
         pass
         
     def log(self, message, level):
