@@ -1,7 +1,7 @@
 import os
 import socket
 import json
-import Pi.constants as constants
+import Pi_V2.constants as constants
 import logging
 import time
 import base64

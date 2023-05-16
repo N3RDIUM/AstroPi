@@ -8,7 +8,7 @@ import sys
 import os
 
 # Import constants
-import Pi.constants as constants
+import Pi_V2.constants as constants
 
 # If the log file already exists, delete it
 if os.path.exists("log.txt"):

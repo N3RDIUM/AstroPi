@@ -8,7 +8,7 @@ import base64
 import os
 
 # Import constants
-import Pi.constants as constants
+import Pi_V2.constants as constants
 
 class AstroPiBoard:
     """
