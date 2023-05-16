@@ -61,31 +61,31 @@
         <item row="0" column="0">
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="ConnectionTitle">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;CONNECTION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="BoardIPText">
             <property name="text">
              <string>Board IP</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="BoardIP"/>
           </item>
           <item row="2" column="0" colspan="2">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="BoardStatus">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Board Status&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;DISCONNECTED&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="ConnectButton">
             <property name="text">
              <string>Connect</string>
             </property>
@@ -112,28 +112,28 @@
            </spacer>
           </item>
           <item row="6" column="0" colspan="2">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="MaintainanceTitle">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;MAINTAINANCE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="7" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="SysUpdateButton">
             <property name="text">
              <string>Perform System Update</string>
             </property>
            </widget>
           </item>
           <item row="8" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="PullUpdatesButton">
             <property name="text">
              <string>Pull Updates from Repository</string>
             </property>
            </widget>
           </item>
           <item row="9" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="ConnectViaSSHButton">
             <property name="text">
              <string>Connect via SSH...</string>
             </property>
@@ -151,71 +151,77 @@
         <item row="0" column="0">
          <layout class="QFormLayout" name="formLayout_2">
           <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="ImagesTitle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;IMAGES&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="ResolutionXText">
             <property name="text">
              <string>Resolution X:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="ResolutionX"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="ResolutionYText">
             <property name="text">
              <string>Resolution Y:</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_3"/>
+           <widget class="QLineEdit" name="ResolutionY"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="ExposureTimeText">
             <property name="text">
              <string>Exposure Time [uS]:</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEdit_4"/>
+           <widget class="QLineEdit" name="ExposureTime"/>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="IntervalText">
             <property name="text">
              <string>Interval [uS]:</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit_5"/>
+           <widget class="QLineEdit" name="Interval"/>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="ImageCountText">
             <property name="text">
              <string>Image Count:</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLineEdit" name="lineEdit_6"/>
+           <widget class="QLineEdit" name="ImageCount"/>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="ISOText">
             <property name="text">
              <string>ISO [CURRVAL]:</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="ISO">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -228,40 +234,33 @@
             </property>
            </widget>
           </item>
-          <item row="10" column="0">
-           <widget class="QLabel" name="label_13">
+          <item row="8" column="0" colspan="2">
+           <widget class="QLabel" name="FileTransferTitle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;FILE TRANSFER&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="FileTransferPathText">
             <property name="text">
              <string>Path:</string>
             </property>
            </widget>
           </item>
-          <item row="10" column="1">
-           <widget class="QLineEdit" name="lineEdit_7"/>
+          <item row="9" column="1">
+           <widget class="QLineEdit" name="FileTransferPath"/>
           </item>
-          <item row="11" column="1">
-           <widget class="QPushButton" name="pushButton_5">
+          <item row="10" column="1">
+           <widget class="QPushButton" name="FileTransferPathBrowse">
             <property name="text">
              <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0" colspan="2">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="9" column="0" colspan="2">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;FILE TRANSFER&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -277,14 +276,14 @@
         <item row="0" column="0">
          <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="SettingsReviewTitle">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;SETTINGS REVIEW&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="QTableWidget" name="tableWidget"/>
+           <widget class="QTableWidget" name="SettingsReview"/>
           </item>
          </layout>
         </item>
@@ -298,21 +297,21 @@
         <item row="0" column="0">
          <layout class="QFormLayout" name="formLayout_4">
           <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_15">
+           <widget class="QLabel" name="StartSessionTitle">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;START SESSION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_6">
+           <widget class="QPushButton" name="SessionAbortButton">
             <property name="text">
              <string>!ABORT</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_7">
+           <widget class="QPushButton" name="StartImagingButton">
             <property name="text">
              <string>START IMAGING</string>
             </property>
@@ -326,58 +325,72 @@
            </widget>
           </item>
           <item row="3" column="0" colspan="2">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="CameraStatusTitle">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;CAMERA STATUS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_17">
+           <widget class="QLabel" name="SessionEtaText">
             <property name="text">
              <string>Eta</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLabel" name="label_18">
+           <widget class="QLabel" name="SessionProgressEta">
             <property name="text">
              <string>0 seconds</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_19">
+          <item row="6" column="0">
+           <widget class="QLabel" name="SessionImageText">
             <property name="text">
              <string>Image</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_20">
+          <item row="6" column="1">
+           <widget class="QLabel" name="SessionProgressImage">
             <property name="text">
              <string>Current/Total</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="0" colspan="2">
-           <widget class="QProgressBar" name="progressBar">
+          <item row="8" column="0" colspan="2">
+           <widget class="QProgressBar" name="SessionProgressBar">
             <property name="value">
-             <number>24</number>
+             <number>0</number>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_21">
+          <item row="7" column="0">
+           <widget class="QLabel" name="SessionTransferredText">
             <property name="text">
              <string>Transferred</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_22">
+          <item row="7" column="1">
+           <widget class="QLabel" name="SessionProgressTransfer">
             <property name="text">
              <string>Current/CurrQueueLen</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="SessionCurrentText">
+            <property name="text">
+             <string>Current</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="SessionProgressCurrent">
+            <property name="text">
+             <string>0/0us</string>
             </property>
            </widget>
           </item>
