@@ -35,16 +35,15 @@ class AstroPi(QtWidgets.QMainWindow):
                                     background-color: black;""")
         
         self.log("""<pre><font color="turquoise">
-  /$$$$$$              /$$                         /$$$$$$$  /$$
- /$$__  $$            | $$                        | $$__  $$|__/
-| $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$
-| $$$$$$$$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$$$$$$/| $$
-| $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$
-| $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$
-| $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$
-|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/</font></pre><br>
-<h2><font color="turquoise">AstroPi v0.1-alpha</font></h2><br>
-Welcome to AstroPi v0.1-alpha! This is a very early version of the software, so expect bugs and missing features.""", "log")
+  /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha
+ /$$__  $$            | $$                        | $$__  $$|__/ | 
+| $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ | Welcome to AstroPi v0.1-alpha! 
+| $$$$$$$$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$$$$$$/| $$ | This is a very early version of the software,
+| $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$ | so expect bugs and missing features.
+| $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$ | If you find any bugs, 
+| $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ | please report them on the GitHub page.
+|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | CLEAR SKIES!</font></pre>
+""", "log")
         
         self.textEdits = [
             self.BoardIP, 
@@ -55,7 +54,19 @@ Welcome to AstroPi v0.1-alpha! This is a very early version of the software, so 
             self.ExposureTime
         ]
         for textEdit in self.textEdits:
-            textEdit.setStyleSheet("background-color: #333333; color: white;")
+            textEdit.setStyleSheet("background-color: #006087; color: white;")
+            
+        self.buttons = [
+            self.ConnectButton,
+            self.SysUpdateButton,
+            self.PullUpdatesButton,
+            self.ConnectViaSSHButton,
+            self.FileTransferPathBrowse,
+            self.SessionAbortButton,
+            self.StartImagingButton,
+        ]
+        for button in self.buttons:
+            button.setStyleSheet("background-color: #260087; color: white;")
         
         self.SettingsReview.setStyleSheet("background-color: #333333; color: white;")
         
