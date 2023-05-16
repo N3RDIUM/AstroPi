@@ -92,6 +92,31 @@ class AstroPi(QtWidgets.QMainWindow):
         self.Tabs.setTabEnabled(2, False)
         self.Tabs.setTabEnabled(3, False)
         
+        # Disable all buttons except the connect button
+        for button in self.buttons:
+            if button != self.ConnectButton:
+                button.setEnabled(False)
+                
+    def enableConfigTabs(self):
+        """
+        Enable the configuration tabs
+        """
+        self.Tabs.setTabEnabled(1, True)
+        self.Tabs.setTabEnabled(2, True)
+        
+    def enableImagingTab(self):
+        """
+        Enable the imaging tab
+        """
+        self.Tabs.setTabEnabled(3, True)
+        
+    def unlockButtons(self):
+        """
+        Unlock all buttons
+        """
+        for button in self.buttons:
+            button.setEnabled(True)
+        
     def textEditCallback(self, event):
         pass
     def buttonCallback(self, event):
