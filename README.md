@@ -50,3 +50,4 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Create setup for mac (maybe?)
 - [ ] Create a mobile app (for travellers)
 - [ ] Create a web app (for remote control)
+- [ ] Custom image filenames
