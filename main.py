@@ -139,6 +139,7 @@ class AstroPi(QtWidgets.QMainWindow):
         if level == "critical":
             message = "<b>" + message + "</b>"
         self.Console.append("<pre><div style=\'color:" + color + "; margin:0px;\'>" + message + "</div></pre>")
+        self.Console.moveCursor(QtGui.QTextCursor.End)
         
     def setBoardStatus(self, status):
         self.BoardStatus.setText("Board Status: " + status)

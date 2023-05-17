@@ -10,6 +10,8 @@ def log(msg, level=logging.INFO, conn=None):
     """
     Log a message to the log file and print it to the console
     """
+    if type(msg) is bytes:
+        msg = msg.decode("utf-8")
     if conn is not None:
         conn.sendall(json.dumps({"type": "log", "data": msg, "level": "log"}).encode("utf-8"))
         return
