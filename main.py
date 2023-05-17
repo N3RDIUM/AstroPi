@@ -23,14 +23,14 @@ class AstroPi(QtWidgets.QMainWindow):
         # Log the welcome message
         self.log("""<div style=\'color:turquoise;\'>
  __________________________________________________________________________________________________________________
-|   /$$$$$$              /$$                         /$$$$$$$  /$$ | <b>AstroPi v0.1-alpha</b>                            |
-|  /$$__  $$            | $$                        | $$__  $$|__/ | Welcome to AstroPi v0.1-alpha!                |
-| | $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ | This is a very early version of the software, |
-| | $$$$$$$$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$$$$$$/| $$ | so expect bugs and missing features.          |
-| | $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$ | If you find any bugs,                         |
-| | $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$ | please report them on GitHub Issues:          |
-| | $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ | https://github.com/n3rdium/AstroPi/issues     |
-| |__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | <i>CLEAR SKIES!</i>                                  |
+|<strong>   /$$$$$$              /$$                         /$$$$$$$  /$$ </strong>| <b>AstroPi v0.1-alpha</b>                            |
+|<strong>  /$$__  $$            | $$                        | $$__  $$|__/ </strong>| Welcome to AstroPi v0.1-alpha!                |
+|<strong> | $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ </strong>| This is a very early version of the software, |
+|<strong> | $$$$$$$$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$$$$$$/| $$ </strong>| so expect bugs and missing features.          |
+|<strong> | $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$ </strong>| If you find any bugs,                         |
+|<strong> | $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$ </strong>| please report them on GitHub Issues:          |
+|<strong> | $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ </strong>| https://github.com/n3rdium/AstroPi/issues     |
+|<strong> |__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ </strong>| <i>CLEAR SKIES!</i>                                  |
 |__________________________________________________________________________________________________________________|
 </font> """, "log")
         
