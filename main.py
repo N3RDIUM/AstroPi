@@ -95,7 +95,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureTime.setText("0")
         self.FileTransferPath.setText(os.getcwd())
         self.ISO.setValue(100)
-        self.ISOText.setText("ISO [1600]")
+        self.ISOText.setText("ISO [1600]:")
         
     def connect(self):
         """
