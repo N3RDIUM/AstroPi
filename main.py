@@ -1,14 +1,7 @@
 # Imports
-from PyQt5 import QtWidgets, uic, QtGui, QtCore
-
-# Constants
-COLORS = {
-    "log": "white",
-    "info": "blue",
-    "warning": "yellow",
-    "error": "red",
-    "critical": "red"
-}
+from PyQt5 import QtWidgets, uic, QtGui
+from boardcon import BoardCon
+import config
 
 class AstroPi(QtWidgets.QMainWindow):
     """
@@ -27,7 +20,7 @@ class AstroPi(QtWidgets.QMainWindow):
         Setup the GUI
         """
         # Log the welcome message
-        self.log("""<pre><font color="turquoise">
+        self.log("""<div style=\'color:turquoise;\'>
   /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha
  /$$__  $$            | $$                        | $$__  $$|__/ | 
 | $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ | Welcome to AstroPi v0.1-alpha! 
@@ -35,7 +28,7 @@ class AstroPi(QtWidgets.QMainWindow):
 | $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$ | so expect bugs and missing features.
 | $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$ | If you find any bugs, 
 | $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ | please report them on the GitHub page.
-|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | CLEAR SKIES!</font></pre>
+|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | CLEAR SKIES!</font>
 """, "log")
         
         # Set the Style Sheets
@@ -47,6 +40,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ISO.setStyleSheet("color: #006087;")
         self.SettingsReview.setStyleSheet("background-color: #001d87; color: white;")
         self.Console.setStyleSheet("background-color: #303547; color: white;")
+        
+        # Reduce paragraph spacing in the log
+        self.Console.document().setDocumentMargin(0)
         
         self.textEdits = [
             self.BoardIP, 
@@ -76,13 +72,6 @@ class AstroPi(QtWidgets.QMainWindow):
         self.setWindowTitle("AstroPi")
         self.setWindowIcon(QtGui.QIcon('./assets/AstroPi.ico'))
         
-        # Add text edit callbacks
-        for textEdit in self.textEdits:
-            textEdit.editingFinished.connect(self.textEditCallback)
-            
-        # Add callbacks for the slider
-        self.ISO.valueChanged.connect(self.ISOCallback)
-        
         # Disable all tabs except the first one
         self.Tabs.setTabEnabled(1, False)
         self.Tabs.setTabEnabled(2, False)
@@ -92,6 +81,18 @@ class AstroPi(QtWidgets.QMainWindow):
         for button in self.buttons:
             if button != self.ConnectButton:
                 button.setEnabled(False)
+                
+        # Add button callbacks
+        self.ConnectButton.clicked.connect(self.connect)
+        
+    def connect(self):
+        """
+        Attempt to establish a connection to the AstroPi board
+        """
+        try:
+            self.comms = BoardCon(self.BoardIP.text(), self)
+        except:
+            return
                 
     def enableConfigTabs(self):
         """
@@ -113,20 +114,32 @@ class AstroPi(QtWidgets.QMainWindow):
         for button in self.buttons:
             button.setEnabled(True)
         
-    def textEditCallback(self):
-        pass
-    def ISOCallback(self):
-        pass
-        
     def log(self, message, level):
         """
         Log a message to the log window
         """
-        color = COLORS[level]
+        color = config.COLORS[level]
         if level == "critical":
             message = "<b>" + message + "</b>"
-        self.Console.append("<font color='" + color + "'>" + message + "</font>&nbsp;")
+        self.Console.append("<pre><div style=\'color:" + color + "; margin:0px;\'>" + message + "</div></pre>")
         
+    def setBoardStatus(self, status):
+        self.BoardStatus.setText("Board Status: " + status)
+        QtWidgets.QApplication.processEvents()
+        
+    def alertPopup(self, title, message, type):
+        """
+        Create an alert popup
+        """
+        if type == "info":
+            QtWidgets.QMessageBox.information(self, title, message)
+        elif type == "warning":
+            QtWidgets.QMessageBox.warning(self, title, message)
+        elif type == "error":
+            QtWidgets.QMessageBox.critical(self, title, message)
+        else:
+            QtWidgets.QMessageBox.information(self, title, message)
+
 # Run the program
 if __name__ == '__main__':
     import sys
