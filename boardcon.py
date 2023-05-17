@@ -1,5 +1,5 @@
 import os
-import subprocess
+from PyQt5 import QtWidgets
 import time
 import json
 import config
@@ -165,3 +165,12 @@ class BoardCon:
         except Exception as e:
             self.parent.log("Error: " + str(e), "error")
             self.parent.alertPopup("AstroPi", "Error validating settings: " + str(e), "error")
+            
+        _config = self.config
+        self.parent.SettingsReview.setRowCount(len(_config))
+        self.parent.SettingsReview.setColumnCount(2)
+        self.parent.SettingsReview.setHorizontalHeaderLabels(["Setting", "Value"])
+        for n, key in enumerate(sorted(_config.keys())):
+            _key = key.replace("_", " ").title()
+            self.parent.SettingsReview.setItem(n, 0, QtWidgets.QTableWidgetItem(_key))
+            self.parent.SettingsReview.setItem(n, 1, QtWidgets.QTableWidgetItem(str(_config[key])))

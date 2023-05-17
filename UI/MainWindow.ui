@@ -285,6 +285,13 @@
           <item row="1" column="0" colspan="2">
            <widget class="QTableWidget" name="SettingsReview"/>
           </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QPushButton" name="ConfirmButton">
+            <property name="text">
+             <string>CONFIRM</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>

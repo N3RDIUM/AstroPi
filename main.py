@@ -65,6 +65,7 @@ class AstroPi(QtWidgets.QMainWindow):
             self.PullUpdatesButton,
             self.ConnectViaSSHButton,
             self.FileTransferPathBrowse,
+            self.ConfirmButton,
             self.SessionAbortButton,
             self.StartImagingButton,
         ]
@@ -87,6 +88,7 @@ class AstroPi(QtWidgets.QMainWindow):
                 
         # Add button callbacks
         self.ConnectButton.clicked.connect(self.connect)
+        self.ConfirmButton.clicked.connect(self.enableImagingTab)
         
         # Set default values to text inputs
         self.BoardIP.setText("192.168.0.")
