@@ -91,4 +91,6 @@ while True:
             elif command == "pullUpdates":
                 log(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT), conn=conn)
         except Exception as e:
-            print(f"Error: {e}")
+            log(f"Error: {e}", level="error", conn=conn)
+            
+        
