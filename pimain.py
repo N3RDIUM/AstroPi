@@ -1,5 +1,3 @@
-import io
-import os
 import time
 import json
 import socket
@@ -7,7 +5,6 @@ import config
 import logging
 import threading
 import subprocess
-from contextlib import redirect_stdout
 
 def log(msg, level=logging.INFO, conn=None):
     """
@@ -66,37 +63,32 @@ threading.Thread(target=filetransfer.start).start()
 
 while True:
     # Receive data and decode it
-    f = io.StringIO()
-    with redirect_stdout(f):
+    try:
+        data = conn.recv(1024).decode("utf-8")
+    except TimeoutError:
+        continue
+    strlen = 0
+    strlenend = 0
+    _data = []
+    # Split the data into a list of JSON objects
+    while True:
         try:
-            data = conn.recv(1024).decode("utf-8")
-        except TimeoutError:
+            strlenend += 1
+            _data.append(json.loads(data[strlen:strlenend]))
+            strlen = strlenend
+            strlenend = strlenend + 1
+        except json.decoder.JSONDecodeError:
             continue
-        strlen = 0
-        strlenend = 0
-        _data = []
-        # Split the data into a list of JSON objects
-        while True:
-            try:
-                strlenend += 1
-                _data.append(json.loads(data[strlen:strlenend]))
-                strlen = strlenend
-                strlenend = strlenend + 1
-            except json.decoder.JSONDecodeError:
-                continue
-            finally:
-                if strlenend > len(data):
-                    break
-        data = _data
-        for d in data:
-            command = d["command"]
-            try:
-                if command == "updateSystem":
-                    print(subprocess.check_output(["sudo", "apt", "update", "-y", "&", "sudo", "apt", "upgrade", "-y"], stderr=subprocess.STDOUT))
-                elif command == "pullUpdates":
-                    print(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT))
-            except Exception as e:
-                print(f"Error: {e}")
-    if f.getvalue() != "":
-        print
-        conn.sendall(json.dumps({"type": "log", "data": f.getvalue(), "level": "log"}).encode("utf-8"))
+        finally:
+            if strlenend > len(data):
+                break
+    data = _data
+    for d in data:
+        command = d["command"]
+        try:
+            if command == "updateSystem":
+                log(subprocess.check_output(["sudo", "apt", "update", "-y", "&", "sudo", "apt", "upgrade", "-y"], stderr=subprocess.STDOUT), conn=conn)
+            elif command == "pullUpdates":
+                log(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT), conn=conn)
+        except Exception as e:
+            print(f"Error: {e}")
