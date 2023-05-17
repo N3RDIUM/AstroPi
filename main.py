@@ -2,6 +2,7 @@
 from PyQt5 import QtWidgets, uic, QtGui
 from boardcon import BoardCon
 import config
+import os
 
 class AstroPi(QtWidgets.QMainWindow):
     """
@@ -45,11 +46,11 @@ class AstroPi(QtWidgets.QMainWindow):
         self.Console.document().setDocumentMargin(0)
         
         self.textEdits = [
-            self.BoardIP, 
-            self.ResolutionX, 
-            self.ResolutionY, 
-            self.ImageCount, 
-            self.Interval, 
+            self.BoardIP,
+            self.ResolutionX,
+            self.ResolutionY,
+            self.ImageCount,
+            self.Interval,
             self.ExposureTime,
             self.FileTransferPath,
         ]
@@ -85,17 +86,49 @@ class AstroPi(QtWidgets.QMainWindow):
         # Add button callbacks
         self.ConnectButton.clicked.connect(self.connect)
         
+        # Set default values to text inputs
+        self.BoardIP.setText("192.168.0.")
+        self.ResolutionX.setText("4056")
+        self.ResolutionY.setText("3040")
+        self.ImageCount.setText("10")
+        self.Interval.setText("0")
+        self.ExposureTime.setText("0")
+        self.FileTransferPath.setText(os.getcwd())
+        self.ISO.setValue(100)
+        self.ISOText.setText("ISO [1600]")
+        
     def connect(self):
         """
         Attempt to establish a connection to the AstroPi board
         """
         try:
             self.comms = BoardCon(self.BoardIP.text(), self)
+            # Now that we have the comms set up, add the button callbacks
             self.SysUpdateButton.clicked.connect(self.comms.updateSystem)
             self.PullUpdatesButton.clicked.connect(self.comms.pullUpdates)
             self.ConnectViaSSHButton.clicked.connect(self.comms.connectViaSSH)
+            self.FileTransferPathBrowse.clicked.connect(self.setSaveDir)
+            self.SessionAbortButton.clicked.connect(self.comms.abortSession)
+            self.StartImagingButton.clicked.connect(self.comms.startImaging)
+            # Add the callback for the text input
+            self.FileTransferPath.textChanged.connect(self._setSaveDir)
+            for ti in self.textEdits[1:-1]:
+                ti.editingFinished.connect(self.comms.updateSettings)
+            # Add callback for the ISO slider AFTER the slider is left
+            self.ISO.sliderReleased.connect(self.updateISO)
         except:
             return
+    
+    def updateISO(self):
+        """
+        Update the ISO value in the settings
+        """
+        ISO = int(self.ISO.value() / 100 * 1600)
+        if ISO == 1584:
+            ISO = 1600
+        self.ISOText.setText(f"ISO [{str(ISO)}]:")
+        self.comms.config["ISO"] = ISO
+        self.comms.updateSettings()
 
     def enableConfigTabs(self):
         """
@@ -109,6 +142,34 @@ class AstroPi(QtWidgets.QMainWindow):
         Enable the imaging tab
         """
         self.Tabs.setTabEnabled(3, True)
+        
+    def setSaveDir(self):
+        """
+        Open a file dialog to select a directory to save images to
+        """
+        dialog = QtWidgets.QFileDialog()
+        dialog.create()
+        dir = dialog.getExistingDirectory()
+
+        while dialog.isVisible():
+            QtWidgets.QApplication.processEvents()
+        
+        if os.path.isdir(dir):
+            self.comms.fileSavePath = dir
+            self.FileTransferPath.setText(dir)
+            self.log("Save directory set to: " + dir, "info")
+        
+        dialog.close()
+        
+    def _setSaveDir(self, dir):
+        """
+        This function is for the text input
+        """
+        if os.path.isdir(dir):
+            self.comms.fileSavePath = dir
+            self.log("Save directory set to: " + dir, "info")
+        else:
+            self.alertPopup("Invalid directory", "The directory you entered is invalid.", "error")
         
     def retrieveSSHUsername(self):
         """

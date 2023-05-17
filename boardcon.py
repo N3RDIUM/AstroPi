@@ -22,7 +22,7 @@ class BoardCon:
             'ImageCount': 1,
             'Interval': 0,
             'ExposureTime': 1000000,
-            'ISO': 100,
+            'ISO': 1600,
             'ResolutionX': 4056,
             'ResolutionY': 3040,
         }
@@ -130,8 +130,10 @@ class BoardCon:
                 
     def updateSystem(self):
         self.socket.send(json.dumps({"command": "updateSystem"}).encode('utf-8'))
+        
     def pullUpdates(self):
         self.socket.send(json.dumps({"command": "pullUpdates"}).encode('utf-8'))
+        
     def connectViaSSH(self):
         uname = self.parent.retrieveSSHUsername()
         # Start the SSH connection in a new terminal window
@@ -139,3 +141,27 @@ class BoardCon:
             os.system(f"start cmd /k \"ssh {uname}@{self.ip}\"")
         else:
             os.system(f"gnome-terminal -- ssh {uname}@{self.ip}")
+    
+    def abortSession(self):
+        self.socket.send(json.dumps({"command": "abortSession"}).encode('utf-8'))
+        
+    def startImaging(self):
+        self.socket.send(json.dumps({"command": "startImaging"}).encode('utf-8'))
+        
+    def updateSettings(self):
+        try:
+            self.config = {
+                'ImageCount': int(self.parent.ImageCount.text()),
+                'Interval': int(self.parent.Interval.text()),
+                'ExposureTime': int(self.parent.ExposureTime.text()),
+                'ISO': self.config["ISO"],
+                'ResolutionX': int(self.parent.ResolutionX.text()),
+                'ResolutionY': int(self.parent.ResolutionY.text())
+            }
+            self.socket.send(json.dumps({
+                "command": "updateSettings",
+                "settings": self.config
+            }).encode('utf-8'))
+        except Exception as e:
+            self.parent.log("Error: " + str(e), "error")
+            self.parent.alertPopup("AstroPi", "Error validating settings: " + str(e), "error")

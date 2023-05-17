@@ -62,6 +62,7 @@ conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!",
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
 filetransfer = FileTransferThread()
 threading.Thread(target=filetransfer.start).start()
+settings = {}
 
 while True:
     # Receive data and decode it
@@ -92,7 +93,14 @@ while True:
                 log(subprocess.check_output(["sudo", "apt", "update", "-y", "&", "sudo", "apt", "upgrade", "-y"], stderr=subprocess.STDOUT), conn=conn)
             elif command == "pullUpdates":
                 log(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT), conn=conn)
+            elif command == "updateSettings":
+                settings = d["settings"]
+                print("New config:")
+                for key in settings:
+                    print(f"\t{key}: {settings[key]}")
+            elif command == "startImaging":
+                log("Starting imaging...", conn=conn)
+            elif command == "abortSession":
+                log("Aborting session...", "warning", conn=conn)
         except Exception as e:
             log(f"Error: {e}", level="error", conn=conn)
-            
-        
