@@ -91,9 +91,12 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         try:
             self.comms = BoardCon(self.BoardIP.text(), self)
+            self.SysUpdateButton.clicked.connect(self.comms.updateSystem)
+            self.PullUpdatesButton.clicked.connect(self.comms.pullUpdates)
+            self.ConnectViaSSHButton.clicked.connect(self.comms.connectViaSSH)
         except:
             return
-                
+
     def enableConfigTabs(self):
         """
         Enable the configuration tabs
@@ -106,6 +109,20 @@ class AstroPi(QtWidgets.QMainWindow):
         Enable the imaging tab
         """
         self.Tabs.setTabEnabled(3, True)
+        
+    def retrieveSSHUsername(self):
+        """
+        Ask the user for SSH username in a popup
+        """
+        popup = QtWidgets.QInputDialog()
+        popup.setAcceptDrops(True)
+        popup.setModal(True)
+        popup.setWindowTitle("SSH Username")
+        popup.setLabelText("Please enter the SSH username for the AstroPi board:")
+        popup.setTextValue("pi")
+        popup.resize(400, 200)
+        popup.exec_()
+        return popup.textValue()
         
     def unlockButtons(self):
         """

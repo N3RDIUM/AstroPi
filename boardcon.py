@@ -1,3 +1,5 @@
+import os
+import subprocess
 import time
 import json
 import config
@@ -83,7 +85,7 @@ class BoardCon:
             # Handle the data
             for d in data:
                 if d["type"] == "log":
-                    self.parent.log(d["data"], d["level"])
+                    self.parent.log(str(d["data"]), d["level"])
                 elif d["type"] == "connection":
                     self.verified = True
                     self.fileTransferSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -124,4 +126,16 @@ class BoardCon:
         """
         Send the configuration to the board
         """
-        self.socket.send(json.dumps(config).encode('utf-8'))
+        self.socket.send(json.dumps({"command": "setConfig", "config": config}).encode('utf-8'))
+                
+    def updateSystem(self):
+        self.socket.send(json.dumps({"command": "updateSystem"}).encode('utf-8'))
+    def pullUpdates(self):
+        self.socket.send(json.dumps({"command": "pullUpdates"}).encode('utf-8'))
+    def connectViaSSH(self):
+        uname = self.parent.retrieveSSHUsername()
+        # Start the SSH connection in a new terminal window
+        if os.name == "nt":
+            os.system(f"start cmd /k \"ssh {uname}@{self.ip}\"")
+        else:
+            os.system(f"gnome-terminal -- ssh {uname}@{self.ip}")
