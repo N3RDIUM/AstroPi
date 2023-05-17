@@ -22,14 +22,14 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         # Log the welcome message
         self.log("""<div style=\'color:turquoise;\'>
-  /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha
+  /$$$$$$              /$$                         /$$$$$$$  /$$ | <b>AstroPi v0.1-alpha</b>
  /$$__  $$            | $$                        | $$__  $$|__/ | Welcome to AstroPi v0.1-alpha! 
 | $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ | This is a very early version of the software,
 | $$$$$$$$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$$$$$$/| $$ | so expect bugs and missing features.
 | $$__  $$|  $$$$$$   | $$    | $$  \__/| $$  \ $$| $$____/ | $$ | If you find any bugs, 
 | $$  | $$ \____  $$  | $$ /$$| $$      | $$  | $$| $$      | $$ | please report them on GitHub Issues:
 | $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ | https://github.com/n3rdium/AstroPi/issues
-|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | CLEAR SKIES!</font>
+|__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ | <i>CLEAR SKIES!</i></font>
 """, "log")
         
         # Set the Style Sheets
