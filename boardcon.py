@@ -30,6 +30,7 @@ class BoardCon:
         }
         self.fileSavePath = "./"
         self.files_written = 0
+        self.std = False
         
         # Attempt to connect to the board
         try:
@@ -122,10 +123,13 @@ class BoardCon:
         """
         Save the contents of a buffer to a file
         """
-        with open(f"{self.fileSavePath}/{self.files_written}.dng", "wb") as f:
-            f.write(buffer.encode("utf-8"))
+        path = f"{self.fileSavePath}/temp.dng"
+        if self.std:
+            path = f"{self.fileSavePath}/{self.files_written}.dng"
             self.files_written += 1
-            
+        with open(path, "wb") as f:
+            f.write(buffer.encode("utf-8"))
+
     def send_config(self, config):
         """
         Send the configuration to the board

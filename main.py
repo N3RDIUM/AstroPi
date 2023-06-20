@@ -101,6 +101,9 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ISO.setValue(100)
         self.ISOText.setText("ISO [1600]:")
         
+        # Set the default values for checkboxes
+        self.SaveToDisk.setChecked(False)
+        
     def connect(self):
         """
         Attempt to establish a connection to the AstroPi board
@@ -122,6 +125,18 @@ class AstroPi(QtWidgets.QMainWindow):
             self.ISO.sliderReleased.connect(self.updateISO)
         except:
             return
+        
+    def addImagePreview(self, path):
+        """
+        Add an image preview to the preview tab
+        """
+        # If there are already two images, remove the first one
+        if self.Preview.count() == 2:
+            self.Preview.removeWidget(self.Preview.currentWidget())
+        # Add the new image
+        self.Preview.addWidget(QtGui.QImage(fileName=path))
+        # Set the new image as the current image
+        self.Preview.setCurrentIndex(1)
     
     def updateISO(self):
         """
@@ -133,6 +148,12 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ISOText.setText(f"ISO [{str(ISO)}]:")
         self.comms.config["ISO"] = ISO
         self.comms.updateSettings()
+        
+    def updateSTD(self):
+        """
+        Update the save to disk setting in the config
+        """
+        self.comms.std = self.SaveToDisk.isChecked()
 
     def enableConfigTabs(self):
         """
@@ -146,6 +167,8 @@ class AstroPi(QtWidgets.QMainWindow):
         Enable the imaging tab
         """
         self.Tabs.setTabEnabled(3, True)
+        # Callback for the save to disk checkbox
+        self.SaveToDisk.stateChanged.connect(self.updateSTD)
         
     def setSaveDir(self):
         """
