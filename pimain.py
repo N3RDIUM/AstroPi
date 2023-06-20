@@ -68,7 +68,7 @@ while True:
     # Receive data and decode it
     try:
         data = conn.recv(1024).decode("utf-8")
-    except TimeoutError:
+    except socket.timeout:
         continue
     strlen = 0
     strlenend = 0
