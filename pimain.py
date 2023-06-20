@@ -119,8 +119,7 @@ while True:
                 log("Starting imaging...", "success", conn=conn)
                 camera = Picamera2()
                 camera_config = camera.configure(camera_config=camera.create_still_configuration(
-                    main={"resolution": (settings["ResolutionX"], settings["ResolutionY"])},
-                    raw={"resolution": (settings["ResolutionX"], settings["ResolutionY"])}
+                    main={}, raw={}
                 ))
                 with camera.controls as ctrl:
                     ctrl.AnalogueGain = settings["AnalogueGain"]
