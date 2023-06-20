@@ -163,7 +163,7 @@ class BoardCon:
                 'ImageCount': int(self.parent.ImageCount.text()),
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
-                'AnalogueGain': self.config["ISO"] / 100,
+                'AnalogueGain': self.config["AnalogueGain"] / 100,
                 'ResolutionX': int(self.parent.ResolutionX.text()),
                 'ResolutionY': int(self.parent.ResolutionY.text())
             }
