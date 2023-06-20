@@ -79,10 +79,7 @@ camera = Picamera2()
 conn.sendall(json.dumps({
     "type": "camdetails", 
     "data": {
-        "maxres": camera.sensor_resolution,
-        "controls": camera.controls,
-        "sensor-modes": camera.sensor_modes,
-        "options": camera.options
+        "maxres": camera.sensor_resolution
     }
 }).encode("utf-8"))
 if not os.path.exists("images"):
