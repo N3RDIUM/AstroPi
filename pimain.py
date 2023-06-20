@@ -1,10 +1,13 @@
+import os
 import time
 import json
 import socket
 import config
+import base64
 import logging
 import threading
 import subprocess
+from picamera2 import *
 
 def log(msg, level=logging.INFO, conn=None):
     """
@@ -53,6 +56,18 @@ class FileTransferThread:
     def start(self):
         conn, addr = self.filesocket.accept()
         self.connection = (conn, addr)
+        
+        while True:
+            files = os.listdir("images")
+            _files = [] # Filter for DNG files
+            for f in files:
+                if f.endswith(".dng"):
+                    _files.append(f)
+            files = _files
+            # Send the files to the client
+            for f in files:
+                with open("images/" + f, "rb") as f:
+                    conn.sendall(base64.encode(f.read()).encode("utf-8") + "|||".encode("utf-8"))
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
@@ -60,6 +75,18 @@ conn.settimeout(2)
 log(f"Connection from {addr[0]}:{addr[1]}")
 conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!", "level": "info"}).encode("utf-8"))
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
+camera = Picamera2()
+conn.sendall(json.dumps({
+    "type": "camdetails", 
+    "data": {
+        "maxres": camera.sensor_resolution,
+        "controls": camera.controls,
+        "sensor-modes": camera.sensor_modes,
+        "options": camera.options
+    }
+}).encode("utf-8"))
+if not os.path.exists("images"):
+    os.mkdir("images")
 filetransfer = FileTransferThread()
 threading.Thread(target=filetransfer.start).start()
 settings = {}
@@ -99,8 +126,25 @@ while True:
                 for key in settings:
                     print(f"\t{key}: {settings[key]}")
             elif command == "startImaging":
-                log("Starting imaging...", conn=conn)
+                log("Starting imaging...", "success", conn=conn)
+                camera = Picamera2()
+                camera_config = camera.configure(camera_config=camera.create_still_configuration(
+                    main={"resolution": (settings["ResolutionX"], settings["ResolutionY"])},
+                    raw={"resolution": (settings["ResolutionX"], settings["ResolutionY"])}
+                ))
+                with camera.controls as ctrl:
+                    ctrl.AnalogueGain = settings["AnalogueGain"]
+                    ctrl.ExposureTime = settings["ExposureTime"]
+                log(f"Config success!\nCamera config: {camera_config}", conn=conn)
+                # Warm up the camera
+                time.sleep(2)
+                log("Camera warmed up! Starting imaging session...", conn=conn)
+                # Start the imaging session
+                for imageID in range(settings["ImageCount"]):
+                    time.sleep(settings["Interval"]/1000000)
+                    log(f"Capturing image {imageID+1} of {settings['ImageCount']}...", conn=conn)
+                    camera.capture_file(f"images/{imageID}.dng", name="raw")
             elif command == "abortSession":
-                log("Aborting session...", "warning", conn=conn)
+                log("<p color=\"yellow\">Aborting session...</p>", "warning", conn=conn)
         except Exception as e:
             log(f"Error: {e}", level="error", conn=conn)

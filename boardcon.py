@@ -5,6 +5,7 @@ import json
 import config
 import socket
 import threading
+import base64
 
 class BoardCon:
     """
@@ -18,11 +19,12 @@ class BoardCon:
         """
         self.ip = ip
         self.parent = parent
+        self.camdetails = {}
         self.config = {
             'ImageCount': 1,
             'Interval': 0,
             'ExposureTime': 1000000,
-            'ISO': 1600,
+            'AnalogueGain': 1.0,
             'ResolutionX': 4056,
             'ResolutionY': 3040,
         }
@@ -92,6 +94,8 @@ class BoardCon:
                     self.fileTransferSocket.connect((self.ip, config.FILE_TRANSFER_PORT))
                     self.fileTransferHandler = threading.Thread(target=self.handle_ft)
                     self.fileTransferHandler.start()
+                elif d["type"] == "camdetails":
+                    self.camdetails = d["data"]
                     
     def handle_ft(self):
         """
@@ -107,12 +111,12 @@ class BoardCon:
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
-                    buffer += data[0]
+                    buffer += base64.decode(data[0])
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
                     buffer = ""
-                    buffer += data[1]
+                    buffer += base64.decode(data[1])
                 else: # If there is only one element in the list, then the delimiter was not found
-                    buffer = data[0]
+                    buffer = base64.decode(data[0])
     
     def handle_buffer(self, buffer):
         """
@@ -140,6 +144,7 @@ class BoardCon:
         if os.name == "nt":
             os.system(f"start cmd /k \"ssh {uname}@{self.ip}\"")
         else:
+            self.parent.log("SSH connection started in a new terminal window.\nPlease make sure you have GNOME Terminal installed.", "green")
             os.system(f"gnome-terminal -- ssh {uname}@{self.ip}")
     
     def abortSession(self):
@@ -154,7 +159,7 @@ class BoardCon:
                 'ImageCount': int(self.parent.ImageCount.text()),
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
-                'ISO': self.config["ISO"],
+                'AnalogueGain': self.config["ISO"] / 100,
                 'ResolutionX': int(self.parent.ResolutionX.text()),
                 'ResolutionY': int(self.parent.ResolutionY.text())
             }
