@@ -75,13 +75,6 @@ conn.settimeout(2)
 log(f"Connection from {addr[0]}:{addr[1]}")
 conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!", "level": "info"}).encode("utf-8"))
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
-camera = Picamera2()
-conn.sendall(json.dumps({
-    "type": "camdetails", 
-    "data": {
-        "maxres": camera.sensor_resolution
-    }
-}).encode("utf-8"))
 if not os.path.exists("images"):
     os.mkdir("images")
 filetransfer = FileTransferThread()
