@@ -223,7 +223,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Log a message to the log window
         """
-        color = config.COLORS[level]
+        try:
+            color = config.COLORS[level]
+        except Exception as e:
+            color = "white"
+            print(e)
         if level == "critical":
             message = "<b>" + message + "</b>"
         self.Console.append("<pre><div style=\'color:" + color + "; margin:0px;\'>" + message + "</div></pre>")
