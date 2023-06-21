@@ -152,6 +152,7 @@ while True:
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
+                    filetransfer.add_file(f"images/{imageID}.dng")
                     if abort: 
                         abort=False
                         break # TODO: Add abort thread
