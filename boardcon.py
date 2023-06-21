@@ -6,6 +6,8 @@ import config
 import socket
 import threading
 import base64
+import imageio
+import rawpy
 
 class BoardCon:
     """
@@ -129,6 +131,13 @@ class BoardCon:
             self.files_written += 1
         with open(path, "wb") as f:
             f.write(buffer.encode("utf-8"))
+        with rawpy.imread(path) as raw:
+            rgb = raw.postprocess()
+        imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
+        self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
+                                    background-repeat: no-repeat; 
+                                    background-position: center; 
+                                    background-color: black;""")
 
     def send_config(self, config):
         """
