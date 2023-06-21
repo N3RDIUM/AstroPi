@@ -43,15 +43,28 @@ class FileTransferThread:
     """
     This transfers the files over the socket
     """
-    def __init__(self, conn, client):
-        self.conn = conn
+    def __init__(self, client):
         self.client = client
         self.filequeue = []
+        self.filesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        log("File transfer socket created successfully!")
+        while True:
+            try:
+                self.filesocket.bind((device_ip, config.FILE_TRANSFER_PORT))
+                log("File transfer socket bound successfully!")
+                break
+            except OSError:
+                print("File transfer socket already in use, retrying in 5 seconds...")
+                time.sleep(5)
+        self.filesocket.listen(1)
         
     def add_file(self, path):
         self.filequeue.append(path)
         
     def start(self):
+        conn, addr = self.filesocket.accept()
+        self.connection = (conn, addr)
+        self.conn = conn
         self.thread = threading.Thread(target=self._start)
         self.thread.start()
         
