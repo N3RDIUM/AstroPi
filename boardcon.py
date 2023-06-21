@@ -116,12 +116,12 @@ class BoardCon:
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
-                    buffer += base64.decode(data[0])
+                    buffer += base64.b64decode(data[0])
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
                     buffer = ""
-                    buffer += base64.decode(data[1])
+                    buffer += base64.b64decode(data[1])
                 else: # If there is only one element in the list, then the delimiter was not found
-                    buffer = base64.decode(data[0])
+                    buffer = base64.b64decode(data[0])
     
     def handle_buffer(self, buffer):
         """
