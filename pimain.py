@@ -60,20 +60,25 @@ class FileTransferThread:
         while True:
             try:
                 files = os.listdir("images")
+                print(files)
                 _files = [] # Filter for DNG files
                 for f in files:
                     if f.endswith(".dng"):
                         _files.append(f)
                 files = _files
+                print(files)
                 # Send the files to the client
                 out = base64.encode(f.read()).encode("utf-8")
+                print(len(out))
                 sep = "|||".encode("utf-8")
+                print(sep)
                 chunks = []
                 for i in range(0, len(out), 16384):
                     if i == 0:
                         chunks.append(out[:16384])
                     else:
                         chunks.append(out[i:i+16384])
+                print(len(chunks))
                 for chunk in chunks:
                     self.connection.send(chunk)
                 self.connection.send(sep)
@@ -91,6 +96,7 @@ if not os.path.exists("images"):
 filetransfer = FileTransferThread()
 threading.Thread(target=filetransfer.start).start()
 settings = {}
+abort=False
 
 while True:
     # Receive data and decode it
@@ -142,9 +148,39 @@ while True:
                 log("Camera warmed up! Starting imaging session...", conn=conn)
                 # Start the imaging session
                 for imageID in range(settings["ImageCount"]):
+                    # Receive data and decode it [For session abort]
+                    try:
+                        data = conn.recv(1024).decode("utf-8")
+                    except socket.timeout:
+                        continue
+                    strlen = 0
+                    strlenend = 0
+                    _data = []
+                    # Split the data into a list of JSON objects
+                    while True:
+                        try:
+                            strlenend += 1
+                            _data.append(json.loads(data[strlen:strlenend]))
+                            strlen = strlenend
+                            strlenend = strlenend + 1
+                        except json.decoder.JSONDecodeError:
+                            continue
+                        finally:
+                            if strlenend > len(data):
+                                break
+                    data = _data
+                    for dat in data:
+                        if dat['command'] == "abortSession":
+                            log("<p color=\"yellow\">Aborting session!</p>", "warning", conn=conn)
+                            camera.stop()
+                            abort=True
+                            break
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
+                    if abort: 
+                        abort=False
+                        break
             elif command == "abortSession":
                 log("<p color=\"yellow\">Aborting session...</p>", "warning", conn=conn)
         except Exception as e:
