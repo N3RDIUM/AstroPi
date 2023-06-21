@@ -16,9 +16,10 @@ def log(msg, level=logging.INFO, conn=None):
     if type(msg) is bytes:
         msg = msg.decode("utf-8")
     if conn is not None:
-        conn.sendall(json.dumps({"type": "log", "data": msg, "level": "log"}).encode("utf-8"))
+        conn.sendall(json.dumps({"type": "log", "data": msg, "level": level}).encode("utf-8"))
         return
-    logging.log(level, msg)
+    else:
+        logging.log(level, msg)
     print(msg)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

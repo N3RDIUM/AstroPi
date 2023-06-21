@@ -112,7 +112,7 @@ class BoardCon:
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
                 nbytes = len(data)
-                self.parent.log(f"[IMAGE_TRANSFER] Received bytes: {nbytes}", "debug")
+                self.parent.log(f"[IMAGE_TRANSFER] Received bytes: {nbytes}", "info")
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
