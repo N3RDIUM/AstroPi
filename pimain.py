@@ -58,24 +58,27 @@ class FileTransferThread:
         self.connection = (conn, addr)
         
         while True:
-            files = os.listdir("images")
-            _files = [] # Filter for DNG files
-            for f in files:
-                if f.endswith(".dng"):
-                    _files.append(f)
-            files = _files
-            # Send the files to the client
-            out = base64.encode(f.read()).encode("utf-8")
-            sep = "|||".encode("utf-8")
-            chunks = []
-            for i in range(0, len(out), 16384):
-                if i == 0:
-                    chunks.append(out[:16384])
-                else:
-                    chunks.append(out[i:i+16384])
-            for chunk in chunks:
-                self.connection.sendall(chunk)
-            self.connection.sendall(sep)
+            try:
+                files = os.listdir("images")
+                _files = [] # Filter for DNG files
+                for f in files:
+                    if f.endswith(".dng"):
+                        _files.append(f)
+                files = _files
+                # Send the files to the client
+                out = base64.encode(f.read()).encode("utf-8")
+                sep = "|||".encode("utf-8")
+                chunks = []
+                for i in range(0, len(out), 16384):
+                    if i == 0:
+                        chunks.append(out[:16384])
+                    else:
+                        chunks.append(out[i:i+16384])
+                for chunk in chunks:
+                    self.connection.send(chunk)
+                self.connection.send(sep)
+            except Exception as e:
+                print("FileTransferErr: " + e)
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
@@ -140,7 +143,7 @@ while True:
                 # Start the imaging session
                 for imageID in range(settings["ImageCount"]):
                     time.sleep(settings["Interval"]/1000000)
-                    log(f"Capturing image {imageID+1} of {settings['ImageCount']}...", conn=conn)
+                    log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
             elif command == "abortSession":
                 log("<p color=\"yellow\">Aborting session...</p>", "warning", conn=conn)

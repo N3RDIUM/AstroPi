@@ -111,6 +111,8 @@ class BoardCon:
             data = _socket.recv(16384).decode("utf-8")
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
+                nbytes = len(data)
+                self.parent.log(f"[IMAGE_TRANSFER] Received bytes: {nbytes}", "debug")
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
@@ -131,6 +133,7 @@ class BoardCon:
             self.files_written += 1
         with open(path, "wb") as f:
             f.write(buffer.encode("utf-8"))
+            self.parent.log(f"[IMAGE_TRANSFER] Wrote {len(buffer)} bytes to {path}", "debug")
         with rawpy.imread(path) as raw:
             rgb = raw.postprocess()
         imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
