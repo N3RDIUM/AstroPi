@@ -149,39 +149,12 @@ while True:
                 log("Camera warmed up! Starting imaging session...", conn=conn)
                 # Start the imaging session
                 for imageID in range(settings["ImageCount"]):
-                    # Receive data and decode it [For session abort]
-                    try:
-                        data = conn.recv(1024).decode("utf-8")
-                    except socket.timeout:
-                        continue
-                    strlen = 0
-                    strlenend = 0
-                    _data = []
-                    # Split the data into a list of JSON objects
-                    while True:
-                        try:
-                            strlenend += 1
-                            _data.append(json.loads(data[strlen:strlenend]))
-                            strlen = strlenend
-                            strlenend = strlenend + 1
-                        except json.decoder.JSONDecodeError:
-                            continue
-                        finally:
-                            if strlenend > len(data):
-                                break
-                    data = _data
-                    for dat in data:
-                        if dat['command'] == "abortSession":
-                            log("<p color=\"yellow\">Aborting session!</p>", "warning", conn=conn)
-                            camera.stop()
-                            abort=True
-                            break
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
                     if abort: 
                         abort=False
-                        break
+                        break # TODO: Add abort thread
             elif command == "abortSession":
                 log("<p color=\"yellow\">Aborting session...</p>", "warning", conn=conn)
         except Exception as e:
