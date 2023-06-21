@@ -40,50 +40,36 @@ while True:
 _socket.listen(1)
 
 class FileTransferThread:
-    filesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    def __init__(self):
-        log("File transfer socket created successfully!")
-        while True:
-            try:
-                self.filesocket.bind((device_ip, config.FILE_TRANSFER_PORT))
-                log("File transfer socket bound successfully!")
-                break
-            except OSError:
-                print("File transfer socket already in use, retrying in 5 seconds...")
-                time.sleep(5)
-        self.filesocket.listen(1)
-    
-    def start(self):
-        conn, addr = self.filesocket.accept()
-        self.connection = (conn, addr)
+    """
+    This transfers the files over the socket
+    """
+    def __init__(self, conn):
+        self.conn = conn
+        self.filequeue = []
         
+    def add_file(self, path):
+        self.filequeue.append(path)
+        
+    def start(self):
+        self.thread = threading.Thread(target=self._start)
+        self.thread.start()
+        
+    def _start(self):
+        time.sleep(5)
         while True:
-            try:
-                files = os.listdir("images")
-                print(files)
-                _files = [] # Filter for DNG files
-                for f in files:
-                    if f.endswith(".dng"):
-                        _files.append(f)
-                files = _files
-                print(files)
-                # Send the files to the client
-                out = base64.encode(f.read()).encode("utf-8")
-                print(len(out))
-                sep = "|||".encode("utf-8")
-                print(sep)
-                chunks = []
-                for i in range(0, len(out), 16384):
-                    if i == 0:
-                        chunks.append(out[:16384])
-                    else:
-                        chunks.append(out[i:i+16384])
-                print(len(chunks))
-                for chunk in chunks:
-                    self.connection.send(chunk)
-                self.connection.send(sep)
-            except Exception as e:
-                print("FileTransferErr: " + e)
+            if not self.filequeue:
+                time.sleep(1/1000)
+                continue
+            path = self.filequeue.pop(0)
+            log("Sending file: " + path)
+            with open(path, "rb") as f:
+                data = base64.b64encode(f.read()).decode("utf-8")
+            for i in range(0, len(data), 4096):
+                self.conn.send(data[i:i+4096].encode("utf-8"))
+            log("Sent file: " + path)
+            time.sleep(0.1)
+            self.conn.send("|||".encode("utf-8"))
+            os.remove(path)
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
@@ -94,7 +80,7 @@ conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf
 if not os.path.exists("images"):
     os.mkdir("images")
 filetransfer = FileTransferThread()
-threading.Thread(target=filetransfer.start).start()
+filetransfer.start()
 settings = {}
 abort=False
 
