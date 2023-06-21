@@ -126,6 +126,7 @@ while True:
                     ctrl.ExposureTime = settings["ExposureTime"]
                 log(f"Config success!\nCamera config: {camera_config}", conn=conn)
                 # Warm up the camera
+                camera.start()
                 time.sleep(2)
                 log("Camera warmed up! Starting imaging session...", conn=conn)
                 # Start the imaging session
