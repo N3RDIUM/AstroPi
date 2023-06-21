@@ -65,9 +65,17 @@ class FileTransferThread:
                     _files.append(f)
             files = _files
             # Send the files to the client
-            for f in files:
-                with open("images/" + f, "rb") as f:
-                    conn.sendall(base64.encode(f.read()).encode("utf-8") + "|||".encode("utf-8"))
+            out = base64.encode(f.read()).encode("utf-8")
+            sep = "|||".encode("utf-8")
+            chunks = []
+            for i in range(0, len(out), 16384):
+                if i == 0:
+                    chunks.append(out[:16384])
+                else:
+                    chunks.append(out[i:i+16384])
+            for chunk in chunks:
+                self.connection.sendall(chunk)
+            self.connection.sendall(sep)
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
