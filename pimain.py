@@ -43,8 +43,9 @@ class FileTransferThread:
     """
     This transfers the files over the socket
     """
-    def __init__(self, conn):
+    def __init__(self, conn, client):
         self.conn = conn
+        self.client = client
         self.filequeue = []
         
     def add_file(self, path):
@@ -64,8 +65,9 @@ class FileTransferThread:
             log("Sending file: " + path)
             with open(path, "rb") as f:
                 data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 4096):
-                self.conn.send(data[i:i+4096].encode("utf-8"))
+            log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug")
+            for i in range(0, len(data), 16384):
+                self.conn.send(data[i:i+16384].encode("utf-8"))
             log("Sent file: " + path)
             time.sleep(0.1)
             self.conn.send("|||".encode("utf-8"))
@@ -79,7 +81,7 @@ conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!",
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
 if not os.path.exists("images"):
     os.mkdir("images")
-filetransfer = FileTransferThread()
+filetransfer = FileTransferThread(client=conn)
 filetransfer.start()
 settings = {}
 abort=False
