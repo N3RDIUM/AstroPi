@@ -133,13 +133,13 @@ class BoardCon:
         with open(path, "wb") as f:
             f.write(buffer)
             self.parent.log(f"[IMAGE_TRANSFER] Wrote {len(buffer)} bytes to {path}", "debug")
-        with rawpy.imread(path) as raw:
-            rgb = raw.postprocess()
-        imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-        self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
-                                    background-repeat: no-repeat; 
-                                    background-position: center; 
-                                    background-color: black;""")
+        # with rawpy.imread(path) as raw:
+        #     rgb = raw.postprocess()
+        # imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
+        # self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
+        #                             background-repeat: no-repeat; 
+        #                             background-position: center; 
+        #                             background-color: black;""")
 
     def send_config(self, config):
         """

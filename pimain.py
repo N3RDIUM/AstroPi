@@ -104,6 +104,7 @@ abort=False
 while True:
     # Receive data and decode it
     try:
+        conn.settimeout(2)
         data = conn.recv(1024).decode("utf-8")
     except socket.timeout:
         continue
@@ -151,6 +152,30 @@ while True:
                 log("Camera warmed up! Starting imaging session...", conn=conn)
                 # Start the imaging session
                 for imageID in range(settings["ImageCount"]):
+                    # Receive data and decode it
+                    try:
+                        conn.settimeout(0.1)
+                        data = conn.recv(1024).decode("utf-8")
+                    except socket.timeout:
+                        pass
+                    strlen = 0
+                    strlenend = 0
+                    _data = []
+                    # Split the data into a list of JSON objects
+                    while True:
+                        try:
+                            strlenend += 1
+                            _data.append(json.loads(data[strlen:strlenend]))
+                            strlen = strlenend
+                            strlenend = strlenend + 1
+                        except json.decoder.JSONDecodeError:
+                            pass
+                        finally:
+                            if strlenend > len(data):
+                                break
+                    data = _data
+                    if data[0]["command"] == "abortSession":
+                        abort=True
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
