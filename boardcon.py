@@ -111,8 +111,6 @@ class BoardCon:
             data = _socket.recv(4096).decode("utf-8")
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
-                nbytes = len(data)
-                self.parent.log(f"[IMAGE_TRANSFER] Received bytes: {nbytes}", "info")
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
@@ -133,7 +131,7 @@ class BoardCon:
             path = f"{self.fileSavePath}/{self.files_written}.dng"
             self.files_written += 1
         with open(path, "wb") as f:
-            f.write(buffer.encode("utf-8"))
+            f.write(buffer)
             self.parent.log(f"[IMAGE_TRANSFER] Wrote {len(buffer)} bytes to {path}", "debug")
         with rawpy.imread(path) as raw:
             rgb = raw.postprocess()
