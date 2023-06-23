@@ -108,7 +108,7 @@ class BoardCon:
         buffer = ""
         while True:
             # Receive data and decode it
-            data = _socket.recv(16384).decode("utf-8")
+            data = _socket.recv(4096).decode("utf-8")
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
                 nbytes = len(data)
