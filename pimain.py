@@ -79,8 +79,10 @@ class FileTransferThread:
             with open(path, "rb") as f:
                 data = base64.b64encode(f.read()).decode("utf-8")
             log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
+            print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
             for i in range(0, len(data), 4096):
                 self.conn.send(data[i:i+4096].encode("utf-8"))
+                print(f"\rSent {i+4096}/{len(data)} bytes")
             time.sleep(0.1)
             self.conn.send("|||".encode("utf-8"))
             os.remove(path)
@@ -89,6 +91,7 @@ log("Listening for connections...")
 conn, addr = _socket.accept()
 conn.settimeout(2)
 log(f"Connection from {addr[0]}:{addr[1]}")
+print("\n\n")
 conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!", "level": "info"}).encode("utf-8"))
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
 if not os.path.exists("images"):

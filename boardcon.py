@@ -8,6 +8,21 @@ import threading
 import base64
 import imageio
 import rawpy
+import base64
+import re
+
+def decode_base64(data, altchars=b'+/'):
+    """Decode base64, padding being optional.
+
+    :param data: Base64 data as an ASCII byte string
+    :returns: The decoded byte string.
+
+    """
+    data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', data)  # normalize
+    missing_padding = len(data) % 4
+    if missing_padding:
+        data += b'='* (4 - missing_padding)
+    return base64.b64decode(data, altchars)
 
 class BoardCon:
     """
@@ -116,12 +131,12 @@ class BoardCon:
                 # Split the data according to the delimiter
                 data = data.split("|||")
                 if len(data) == 2: # If there are two elements in the list, then the delimiter was found
-                    buffer += base64.b64decode(data[0])
+                    buffer += decode_base64(data[0])
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
                     buffer = ""
-                    buffer += base64.b64decode(data[1])
+                    buffer += decode_base64(data[1])
                 else: # If there is only one element in the list, then the delimiter was not found
-                    buffer = base64.b64decode(data[0])
+                    buffer = decode_base64(data[0])
     
     def handle_buffer(self, buffer):
         """
