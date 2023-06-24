@@ -121,7 +121,7 @@ class BoardCon:
         Handle file transfer
         """
         while True:
-            _data = self.fileTransferSocket.recv(16384).decode("utf-8")
+            _data = self.fileTransferSocket.recv(1048576).decode("utf-8")
             if not _data: continue
             else:
                 if _data == "|E|O|F||":
