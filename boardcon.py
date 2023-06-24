@@ -1,31 +1,33 @@
 import os
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtCore
 import time
 import json
 import config
 import socket
 import threading
-import base64
 import imageio
 import rawpy
-import base64
-import base64
-import re
 from struct import unpack
 
-def decode_base64(data, altchars=b'+/'):
-    """Decode base64, padding being optional.
-
-    :param data: Base64 data as an ASCII byte string
-    :returns: The decoded byte string.
-
+class previewUpdater(QtCore.QThread):
     """
-    data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', data)  # normalize
-    missing_padding = len(data) % 4
-    if missing_padding:
-        data += b'='* (4 - missing_padding)
-    return base64.b64decode(data, altchars)
-
+    Preview Updater
+    
+    This class is used to update the preview image on the main window
+    """
+    def __init__(self, img):
+        """
+        Initialize the previewUpdater class
+        """
+        super().__init__()
+        self.img = img
+    
+    def run(self):
+        """
+        Run the previewUpdater thread
+        """
+        self.parent.addImagePreview(self.img)
+        
 class BoardCon:
     """
     BoardCon
@@ -139,7 +141,8 @@ class BoardCon:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-            self.parent.addImagePreview(f"{self.fileSavePath}/temp.png")
+            thread = previewUpdater(parent=self.parent, img=f"{self.fileSavePath}/temp.png")
+            thread.start()
         except:
             pass
 

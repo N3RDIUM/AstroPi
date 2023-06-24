@@ -129,13 +129,13 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Add an image preview to the preview tab
         """
-        # If there are already two images, remove the first one
-        if self.Preview.count() == 2:
-            self.Preview.removeWidget(self.Preview.currentWidget())
-        # Add the new image
-        self.Preview.addWidget(QtGui.QImage(fileName=path))
-        # Set the new image as the current image
-        self.Preview.setCurrentIndex(1)
+        label = QtWidgets.QLabel()
+        pixmap = QtGui.QPixmap(path)
+        label.setPixmap(pixmap)
+        label.setScaledContents(True)
+        label.setStyleSheet("background-color: black;")
+        self.Preview.removeWidget(self.Preview.currentWidget())
+        self.Preview.addWidget(label)
     
     def updateISO(self):
         """
