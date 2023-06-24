@@ -1,5 +1,5 @@
 import os
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 import time
 import json
 import config
@@ -139,10 +139,11 @@ class BoardCon:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-            self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
-                                        background-repeat: no-repeat; 
-                                        background-position: center; 
-                                        background-color: black;""")
+            label = QtWidgets.QLabel(self)
+            pixmap = QtGui.QPixmap(f"{self.fileSavePath}/temp.png")
+            label.setPixmap(pixmap)
+            self.preview.removeWidget(self.preview.currentWidget())
+            self.preview.addWidget(label)
         except:
             pass
 
