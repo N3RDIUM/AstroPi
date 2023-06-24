@@ -46,7 +46,7 @@ class FileTransferThread:
     def __init__(self, client):
         self.client = client
         self.filequeue = []
-        self.filesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.filesocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         log("File transfer socket created successfully!")
         while True:
             try:

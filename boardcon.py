@@ -93,7 +93,7 @@ class BoardCon:
                     self.parent.log(str(d["data"]), d["level"])
                 elif d["type"] == "connection":
                     self.verified = True
-                    self.fileTransferSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    self.fileTransferSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                     self.fileTransferSocket.connect((self.ip, config.FILE_TRANSFER_PORT))
                     self.fileTransferHandler = threading.Thread(target=self.handle_ft)
                     self.fileTransferHandler.start()
