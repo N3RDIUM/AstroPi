@@ -127,6 +127,7 @@ class BoardCon:
                 if _data == "|E|O|F||":
                     self.files_written += 1
                     self.parent.log(f"Received image {self.files_written}", "info")
+                    self.handle_ft_complete()
                 else:
                     try:
                         _data = decode_base64(_data.encode("utf-8"))
