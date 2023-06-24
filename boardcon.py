@@ -139,11 +139,7 @@ class BoardCon:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-            label = QtWidgets.QLabel(self)
-            pixmap = QtGui.QPixmap(f"{self.fileSavePath}/temp.png")
-            label.setPixmap(pixmap)
-            self.preview.removeWidget(self.preview.currentWidget())
-            self.preview.addWidget(label)
+            self.parent.addImagePreview(f"{self.fileSavePath}/temp.png")
         except:
             pass
 
