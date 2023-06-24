@@ -35,7 +35,7 @@ class AstroPi(QtWidgets.QMainWindow):
         
         # Set the Style Sheets
         self.setStyleSheet("background-color: #222222; color: white;")
-        self.Preview.currentWidget().setStyleSheet("""background-image: url(\"./assets/AstroPi.png\"); 
+        self.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{os.path.join(os.path.dirname(os.path.abspath(__file__)),"assets/AstroPi.png")}\"); 
                                     background-repeat: no-repeat; 
                                     background-position: center; 
                                     background-color: black;""")
