@@ -1,5 +1,5 @@
 import os
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 import time
 import json
 import config
@@ -8,25 +8,6 @@ import threading
 import imageio
 import rawpy
 from struct import unpack
-
-class previewUpdater(QtCore.QThread):
-    """
-    Preview Updater
-    
-    This class is used to update the preview image on the main window
-    """
-    def __init__(self, img):
-        """
-        Initialize the previewUpdater class
-        """
-        super().__init__()
-        self.img = img
-    
-    def run(self):
-        """
-        Run the previewUpdater thread
-        """
-        self.parent.addImagePreview(self.img)
         
 class BoardCon:
     """
@@ -141,10 +122,9 @@ class BoardCon:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-            thread = previewUpdater(parent=self.parent, img=f"{self.fileSavePath}/temp.png")
-            thread.start()
-        except:
-            pass
+            self.parent.preview(f"{self.fileSavePath}/temp.png")
+        except Exception as e:
+            self.parent.log("Error updating preview: " + str(e), "error")
 
     def send_config(self, config):
         """

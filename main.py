@@ -1,5 +1,5 @@
 # Imports
-from PyQt5 import QtWidgets, uic, QtGui
+from PyQt5 import QtWidgets, uic, QtGui, QtCore
 from boardcon import BoardCon
 import config
 import os
@@ -7,6 +7,7 @@ class AstroPi(QtWidgets.QMainWindow):
     """
     The main window of the AstroPi application
     """
+    previewSignal = QtCore.pyqtSignal(str)
     def __init__(self):
         """
         Initialize the main window
@@ -103,6 +104,9 @@ class AstroPi(QtWidgets.QMainWindow):
         # Set the default values for checkboxes
         self.SaveToDisk.setChecked(False)
         
+        # Set preview signal callback
+        self.previewSignal.connect(self._addImagePreview)
+        
     def connect(self):
         """
         Attempt to establish a connection to the AstroPi board
@@ -124,8 +128,14 @@ class AstroPi(QtWidgets.QMainWindow):
             self.ISO.sliderReleased.connect(self.updateISO)
         except:
             return
-        
-    def addImagePreview(self, path):
+
+    def preview(self, path):
+        """
+        Update the preview tab with the latest image
+        """
+        self.previewSignal.emit(path)
+
+    def _addImagePreview(self, path):
         """
         Add an image preview to the preview tab
         """
