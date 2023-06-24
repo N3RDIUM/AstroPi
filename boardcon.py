@@ -129,7 +129,7 @@ class BoardCon:
                     self.parent.log(f"Received image {self.files_written}", "info")
                 else:
                     try:
-                        _data = base64.b64decode(_data)
+                        _data = decode_base64(_data.encode("utf-8"))
                         with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
                             f.write(_data)
                     except Exception as e:
