@@ -130,10 +130,10 @@ class BoardCon:
                 else:
                     try:
                         _data = base64.b64decode(_data)
-                        with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.dng"), "ab") as f:
+                        with open(os.path.join(self.fileSavePath, f"image_{self.progress['image_count']}.dng"), "ab") as f:
                             f.write(_data)
                     except Exception as e:
-                        self.window.log(f"Received invalid base64 data: {e}, continuting.", "error")
+                        self.parent.log(f"Received invalid base64 data: {e}, continuting.", "error")
                         continue
         
     def handle_ft_complete(self):
