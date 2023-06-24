@@ -120,38 +120,30 @@ class BoardCon:
         """
         Handle the file transfer data received from the board
         """
-        _socket = self.fileTransferSocket
-        buffer = ""
         while True:
-            _data = _socket.recv(16384).decode("utf-8")
+            _data = self.fileTransferSocket.recv(16384).decode("utf-8")
             if not _data: continue
             else:
-                _data = _data.split("|E|O|F|")
-                if len(_data) > 1:
-                    self.handle_buffer(buffer + _data[0])
-                    buffer = _data[1]
+                if _data == "|E|O|F|":
+                    self.files_written += 1
+                    self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
                 else:
-                    buffer += _data[0]
+                    try:
+                        _data = decode_base64(_data)
+                        with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
+                            f.write(_data)
+                    except Exception as e:
+                        self.window.log(f"Received invalid base64 data: {e}", "error")
+                        continue
         
-    def handle_buffer(self, buffer):
-        """
-        Save the contents of a buffer to a file
-        """
-        buffer = decode_base64(buffer.encode("utf-8"))
-        path = f"{self.fileSavePath}/temp.dng"
-        if self.std:
-            path = f"{self.fileSavePath}/{self.files_written}.dng"
-            self.files_written += 1
-        with open(path, "wb") as f:
-            f.write(buffer)
-            self.parent.log(f"[IMAGE_TRANSFER] Wrote {len(buffer)} bytes to {path}", "debug")
-        # with rawpy.imread(path) as raw:
-        #     rgb = raw.postprocess()
-        # imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-        # self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
-        #                             background-repeat: no-repeat; 
-        #                             background-position: center; 
-        #                             background-color: black;""")
+    def handle_ft_complete(self):
+        with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
+            rgb = raw.postprocess()
+        imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
+        self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
+                                    background-repeat: no-repeat; 
+                                    background-position: center; 
+                                    background-color: black;""")
 
     def send_config(self, config):
         """
