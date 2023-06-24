@@ -126,11 +126,12 @@ class BoardCon:
             _data = _socket.recv(16384).decode("utf-8")
             if not _data: continue
             else:
-                if _data == "|E|O|F|":
-                    self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
-                    buffer = ""
+                _data = _data.split("|E|O|F|")
+                if len(_data) > 1:
+                    self.handle_buffer(buffer + _data[0])
+                    buffer = _data[1]
                 else:
-                    buffer += _data
+                    buffer += _data[0]
         
     def handle_buffer(self, buffer):
         """
