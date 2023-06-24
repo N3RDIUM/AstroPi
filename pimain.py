@@ -82,11 +82,20 @@ class FileTransferThread:
                 data = base64.b64encode(f.read()).decode("utf-8")
             for i in range(0, len(data), 1048576):
                 self.conn.send(data[i:i+1048576].encode("utf-8"))
-            time.sleep(0.1)
             self.conn.send("|E|O|F||".encode("utf-8"))
             os.remove(path)
             print(f"Sent file in {time.time()-t} seconds")
             log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
+    
+    def send(self, filename):
+        t = time.time()
+        with open(filename, "rb") as f:
+            data = base64.b64encode(f.read()).decode("utf-8")
+        for i in range(0, len(data), 1048576):
+            self.conn.send(data[i:i+1048576].encode("utf-8"))
+        self.conn.send("|E|O|F||".encode("utf-8"))
+        os.remove(filename)
+        log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
@@ -156,7 +165,7 @@ while True:
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
-                    filetransfer.add_file(f"images/{imageID}.dng")
+                    filetransfer.send(f"images/{imageID}.dng")
                     if abort: 
                         abort=False
                         break # TODO: Add abort thread
