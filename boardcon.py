@@ -112,14 +112,14 @@ class BoardCon:
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
                 # Split the data according to the delimiter
-                data = data.split(b"|||")
-                if len(data) == 2: # If there are two elements in the list, then the delimiter was found
+                data = data.split("|||")
+                if len(data) >= 2: # If there are two elements in the list, then the delimiter was found
                     buffer += data[0]
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
                     buffer = ""
                     buffer += data[1]
                 else: # If there is only one element in the list, then the delimiter was not found
-                    buffer = data[0]
+                    buffer += data[0]
     
     def handle_buffer(self, buffer):
         """
