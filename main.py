@@ -51,7 +51,6 @@ class AstroPi(QtWidgets.QMainWindow):
             self.BoardIP,
             self.ResolutionX,
             self.ResolutionY,
-            self.ImageCount,
             self.Interval,
             self.ExposureTime,
             self.FileTransferPath,
@@ -94,7 +93,6 @@ class AstroPi(QtWidgets.QMainWindow):
         self.BoardIP.setText("192.168.0.")
         self.ResolutionX.setText("4056")
         self.ResolutionY.setText("3040")
-        self.ImageCount.setText("10")
         self.Interval.setText("0")
         self.ExposureTime.setText("0")
         self.FileTransferPath.setText(os.getcwd())

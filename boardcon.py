@@ -23,7 +23,6 @@ class BoardCon:
         self.parent = parent
         self.camdetails = {}
         self.config = {
-            'ImageCount': 1,
             'Interval': 0,
             'ExposureTime': 1000000,
             'AnalogueGain': 1.0,
@@ -157,7 +156,6 @@ class BoardCon:
     def updateSettings(self):
         try:
             self.config = {
-                'ImageCount': int(self.parent.ImageCount.text()),
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
                 'AnalogueGain': self.config["AnalogueGain"] / 100,
