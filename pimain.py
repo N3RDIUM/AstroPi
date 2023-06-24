@@ -58,6 +58,9 @@ class FileTransferThread:
                 print("File transfer socket already in use, retrying in 5 seconds...")
                 time.sleep(5)
         self.filesocket.listen(1)
+        conn, addr = self.filesocket.accept()
+        self.connection = (conn, addr)
+        self.conn = conn
         
     def add_file(self, path):
         self.filequeue.append(path)
@@ -69,7 +72,7 @@ class FileTransferThread:
         length = pack('>Q', len(data))
         self.conn.sendall(length)
         self.conn.send(data.encode("utf-8"))
-        ack = self.socket.recv(1)
+        ack = self.filesocket.recv(1)
         if ack == b'\00':
             os.remove(filename)
         log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
