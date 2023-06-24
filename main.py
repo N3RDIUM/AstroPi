@@ -129,8 +129,13 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Add an image preview to the preview tab
         """
+        label = QtWidgets.QLabel()
         pixmap = QtGui.QPixmap(path)
-        self.Preview.currentWidget().setPixmap(pixmap)
+        label.setPixmap(pixmap)
+        label.setStyleSheet("background-color: black;")
+        self.Preview.removeWidget(self.Preview.currentWidget())
+        self.Preview.addWidget(label)
+        self.Preview.setCurrentWidget(label)
     
     def updateISO(self):
         """
