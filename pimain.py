@@ -70,7 +70,7 @@ class FileTransferThread:
             data = f.read()
         length = pack('>Q', len(data))
         self.conn.send(length)
-        self.conn.send(data.encode("utf-8"))
+        self.conn.send(data)
         log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
 
 log("Listening for connections...")
