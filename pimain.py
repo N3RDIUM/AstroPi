@@ -72,9 +72,6 @@ class FileTransferThread:
         length = pack('>Q', len(data))
         self.conn.send(length)
         self.conn.send(data.encode("utf-8"))
-        ack = self.filesocket.recv(1)
-        if ack == b'\00':
-            os.remove(filename)
         log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
 
 log("Listening for connections...")
