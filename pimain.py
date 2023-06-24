@@ -80,11 +80,28 @@ class FileTransferThread:
                 data = base64.b64encode(f.read()).decode("utf-8")
             log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
             print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
-            for i in range(0, len(data), 4096):
-                self.conn.send(data[i:i+4096].encode("utf-8"))
-                print(f"\rSent {i+4096}/{len(data)} bytes")
+            for dat in self.split_str_to_batches(data, 8192):
+                self.conn.send(dat)
             self.conn.send("|||".encode("utf-8"))
             os.remove(path)
+            
+    @staticmethod
+    def split_str_to_batches(string, size):
+        idx = 0
+        stop = False
+        ret = []
+        while not stop:
+            if len(string) < size:
+                ret = [string]
+                stop = True
+            else:
+                if idx+size > len(string):
+                    ret.append(string[idx:])
+                else:
+                    ret.append(string[idx:idx+size])
+                    idx += size
+                    if idx >= len(string):
+                        stop = True            
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
