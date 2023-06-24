@@ -3,7 +3,6 @@ import time
 import json
 import socket
 import config
-import base64
 import logging
 import threading
 import subprocess
@@ -78,9 +77,9 @@ class FileTransferThread:
             path = self.filequeue.pop(0)
             log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
             with open(path, "rb") as f:
-                data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 5000000000):
-                self.conn.send(data[i:i+5000000000].encode("utf-8"))
+                data = f.read()
+            for i in range(0, len(data), 107374200):
+                self.conn.send(data[i:i+107374200])
             self.conn.send("|E|O|F||".encode("utf-8"))
             os.remove(path)
 

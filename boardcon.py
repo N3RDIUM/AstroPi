@@ -5,25 +5,8 @@ import json
 import config
 import socket
 import threading
-import base64
 import imageio
 import rawpy
-import base64
-import base64
-import re
-
-def decode_base64(data, altchars=b'+/'):
-    """Decode base64, padding being optional.
-
-    :param data: Base64 data as an ASCII byte string
-    :returns: The decoded byte string.
-
-    """
-    data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', data)  # normalize
-    missing_padding = len(data) % 4
-    if missing_padding:
-        data += b'='* (4 - missing_padding)
-    return base64.b64decode(data, altchars)
 
 class BoardCon:
     """
@@ -121,7 +104,7 @@ class BoardCon:
         Handle file transfer
         """
         while True:
-            _data = self.fileTransferSocket.recv(5000000000).decode("utf-8")
+            _data = self.fileTransferSocket.recv(107374200).decode("utf-8")
             if not _data: continue
             else:
                 if _data == "|E|O|F||":
@@ -130,7 +113,7 @@ class BoardCon:
                     self.handle_ft_complete()
                 else:
                     try:
-                        _data = decode_base64(_data.encode("utf-8"))
+                        _data = _data.encode("utf-8")
                         with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
                             f.write(_data)
                     except Exception as e:
