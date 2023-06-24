@@ -66,10 +66,10 @@ class FileTransfer:
             data = base64.b64encode(f.read()).decode("utf-8")
         log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
         print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
-        self.conn.send(str(len(data)+16).encode("utf-8"))
-        time.sleep(0.1)
-        self.conn.send(data.encode("utf-8"))
+        for i in range(0, len(data), 1024):
+            self.conn.send(data[i:i+1024].encode("utf-8"))
         os.remove(path)
+        self.conn.send(b"|E|O|F|")
 
 log("Listening for connections...")
 conn, addr = _socket.accept()

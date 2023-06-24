@@ -124,21 +124,18 @@ class BoardCon:
         buffer = ""
         while True:
             # Receive data and decode it
-            len_ = 1024
-            try:
-                data = _socket.recv(len_).decode("utf-8")
-            except ConnectionResetError:
-                data = False
+            data = _socket.recv(1024).decode("utf-8")
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
-                try:
-                    len_ = int(data)
-                except ValueError:
-                    # Split the data according to the delimiter
-                    buffer = data
+                # Split the data according to the delimiter
+                data = data.split("|E|O|F|")
+                if len(data) >= 2: # If there are two elements in the list, then the delimiter was found
+                    buffer += data[0]
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
-                    buffer = None
-                    len_ = 1024
+                    buffer = ""
+                    buffer += data[1]
+                else: # If there is only one element in the list, then the delimiter was not found
+                    buffer += data[0]
         
     def handle_buffer(self, buffer):
         """
