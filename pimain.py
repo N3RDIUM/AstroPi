@@ -57,6 +57,9 @@ class FileTransfer:
                 print("File transfer socket already in use, retrying in 5 seconds...")
                 time.sleep(5)
         self.filesocket.listen(1)
+        conn, addr = self.filesocket.accept()
+        self.connection = (conn, addr)
+        self.conn = conn
         
     def sendfile(self, path):
         with open(path, "rb") as f:
