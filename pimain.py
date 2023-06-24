@@ -81,7 +81,6 @@ class FileTransferThread:
             print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
             for i in range(0, len(data), 4096):
                 self.conn.send(data[i:i+4096].encode("utf-8"))
-                print(f"\rSent {i+4096}/{len(data)} bytes")
             self.conn.send("|||".encode("utf-8"))
             os.remove(path)
 

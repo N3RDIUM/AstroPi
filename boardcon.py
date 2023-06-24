@@ -121,16 +121,18 @@ class BoardCon:
         Handle the file transfer data received from the board
         """
         while True:
-            _data = self.fileTransferSocket.recv(16384).decode("utf-8")
+            _data = self.fileTransferSocket.recv(4096).decode("utf-8")
             if not _data: continue
             else:
                 data = _data.split("|E|O|F|")
                 if len(data) > 1:
-                    self.files_written += 1
                     self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
-                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
+                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
                         f.write(decode_base64(data[0].encode("utf-8")))
                     self.handle_ft_complete()
+                    self.files_written += 1
+                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
+                        f.write(decode_base64(data[1].encode("utf-8")))
                 else:
                     with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
                         f.write(decode_base64(data[0].encode("utf-8")))
