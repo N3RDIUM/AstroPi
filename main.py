@@ -3,10 +3,6 @@ from PyQt5 import QtWidgets, uic, QtGui
 from boardcon import BoardCon
 import config
 import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 class AstroPi(QtWidgets.QMainWindow):
     """
     The main window of the AstroPi application
@@ -16,7 +12,7 @@ class AstroPi(QtWidgets.QMainWindow):
         Initialize the main window
         """
         super(AstroPi, self).__init__() # Call the inherited classes __init__ method
-        uic.loadUi('./UI/MainWindow.ui', self) # Load the .ui file
+        uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'UI/MainWindow.ui'), self) # Load the .ui file
         self.setupUi() # Setup the GUI
         
     def setupUi(self):
