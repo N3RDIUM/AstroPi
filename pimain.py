@@ -3,7 +3,6 @@ import time
 import json
 import socket
 import config
-import base64
 import logging
 from struct import pack
 import subprocess
@@ -68,7 +67,7 @@ class FileTransferThread:
     def send(self, filename):
         t = time.time()
         with open(filename, "rb") as f:
-            data = base64.b64encode(f.read()).decode("utf-8")
+            data = f.read()
         length = pack('>Q', len(data))
         self.conn.send(length)
         self.conn.send(data.encode("utf-8"))
