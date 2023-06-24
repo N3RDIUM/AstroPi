@@ -129,11 +129,11 @@ class BoardCon:
                     self.files_written += 1
                     self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
                     with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
-                        f.write(decode_base64(data[0]))
+                        f.write(decode_base64(data[0].encode("utf-8")))
                     self.handle_ft_complete()
                 else:
                     with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
-                        f.write(decode_base64(data[0]))
+                        f.write(decode_base64(data[0].encode("utf-8")))
         
     def handle_ft_complete(self):
         try:
