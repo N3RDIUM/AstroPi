@@ -70,7 +70,7 @@ class FileTransferThread:
         with open(filename, "rb") as f:
             data = base64.b64encode(f.read()).decode("utf-8")
         length = pack('>Q', len(data))
-        self.conn.sendall(length)
+        self.conn.send(length)
         self.conn.send(data.encode("utf-8"))
         ack = self.filesocket.recv(1)
         if ack == b'\00':

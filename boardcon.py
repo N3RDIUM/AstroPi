@@ -130,7 +130,7 @@ class BoardCon:
                 data += self.fileTransferSocket.recv(
                     4096 if to_read > 4096 else to_read)
             assert len(b'\00') == 1
-            self.fileTransferSocket.sendall(b'\00')
+            self.fileTransferSocket.send(b'\00')
             with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "wb") as f:
                 f.write(data)
             self.handle_ft_complete()
