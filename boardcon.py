@@ -138,7 +138,7 @@ class BoardCon:
         
     def handle_ft_complete(self):
         try:
-            with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
+            with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
             self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
