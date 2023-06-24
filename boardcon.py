@@ -125,7 +125,10 @@ class BoardCon:
         while True:
             # Receive data and decode it
             len_ = 1024
-            data = _socket.recv(len_).decode("utf-8")
+            try:
+                data = _socket.recv(len_).decode("utf-8")
+            except ConnectionResetError:
+                data = False
             if not data: continue # If there is no data, continue
             else: # If there is data, handle it
                 try:
