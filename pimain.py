@@ -70,7 +70,6 @@ class FileTransferThread:
         self.thread.start()
         
     def _start(self):
-        time.sleep(5)
         while True:
             if not self.filequeue:
                 time.sleep(1/1000)
