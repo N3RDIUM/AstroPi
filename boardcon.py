@@ -112,14 +112,20 @@ class BoardCon:
                 dat = self.fileTransferSocket.recv(
                     4096 if to_read > 4096 else to_read)
                 data += dat
-                with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
+                path = os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")
+                if not self.std:
+                    os.path.join(self.fileSavePath, f"temp.dng")
+                with open(path, "ab") as f:
                     f.write(dat)
             self.handle_ft_complete()
             self.files_written += 1
         
     def handle_ft_complete(self):
         try:
-            with rawpy.imread(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")) as raw:
+            path = os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")
+            if not self.std:
+                os.path.join(self.fileSavePath, f"temp.dng")
+            with rawpy.imread(path) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
             self.parent.preview(f"{self.fileSavePath}/temp.png")
