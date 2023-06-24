@@ -11,6 +11,7 @@ import rawpy
 import base64
 import base64
 import re
+from struct import unpack
 
 def decode_base64(data, altchars=b'+/'):
     """Decode base64, padding being optional.
@@ -121,21 +122,19 @@ class BoardCon:
         Handle file transfer
         """
         while True:
-            _data = self.fileTransferSocket.recv(1048576).decode("utf-8")
-            if not _data: continue
-            else:
-                if _data == "|E|O|F||":
-                    self.files_written += 1
-                    self.parent.log(f"Received image {self.files_written}", "info")
-                    self.handle_ft_complete()
-                else:
-                    try:
-                        _data = decode_base64(_data.encode("utf-8"))
-                        with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
-                            f.write(_data)
-                    except Exception as e:
-                        self.parent.log(f"Received invalid base64 data: {e}, continuting.", "error")
-                        continue
+            bs = self.fileTransferSocket.recv(8)
+            (length,) = unpack('>Q', bs)
+            data = b''
+            while len(data) < length:
+                to_read = length - len(data)
+                data += self.fileTransferSocket.recv(
+                    4096 if to_read > 4096 else to_read)
+            assert len(b'\00') == 1
+            self.fileTransferSocket.sendall(b'\00')
+            with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "wb") as f:
+                f.write(data)
+            self.handle_ft_complete()
+            self.files_written += 1
         
     def handle_ft_complete(self):
         try:

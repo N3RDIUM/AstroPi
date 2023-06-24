@@ -5,7 +5,7 @@ import socket
 import config
 import base64
 import logging
-import threading
+from struct import pack
 import subprocess
 from picamera2 import *
 
@@ -61,40 +61,17 @@ class FileTransferThread:
         
     def add_file(self, path):
         self.filequeue.append(path)
-        
-    def start(self):
-        conn, addr = self.filesocket.accept()
-        self.connection = (conn, addr)
-        self.conn = conn
-        self.thread = threading.Thread(target=self._start)
-        self.thread.start()
-        
-    def _start(self):
-        time.sleep(0.1)
-        while True:
-            if not self.filequeue:
-                time.sleep(1/1000)
-                continue
-            path = self.filequeue.pop(0)
-            t = time.time()
-            log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
-            with open(path, "rb") as f:
-                data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 1048576):
-                self.conn.send(data[i:i+1048576].encode("utf-8"))
-            self.conn.send("|E|O|F||".encode("utf-8"))
-            os.remove(path)
-            print(f"Sent file in {time.time()-t} seconds")
-            log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
     
     def send(self, filename):
         t = time.time()
         with open(filename, "rb") as f:
             data = base64.b64encode(f.read()).decode("utf-8")
-        for i in range(0, len(data), 1048576):
-            self.conn.send(data[i:i+1048576].encode("utf-8"))
-        self.conn.send("|E|O|F||".encode("utf-8"))
-        os.remove(filename)
+        length = pack('>Q', len(data))
+        self.conn.sendall(length)
+        self.conn.send(data.encode("utf-8"))
+        ack = self.socket.recv(1)
+        if ack == b'\00':
+            os.remove(filename)
         log(f"Sent file in {time.time()-t} seconds", "debug", self.client)
 
 log("Listening for connections...")
@@ -107,7 +84,6 @@ conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf
 if not os.path.exists("images"):
     os.mkdir("images")
 filetransfer = FileTransferThread(client=conn)
-filetransfer.start()
 settings = {}
 abort=False
 
