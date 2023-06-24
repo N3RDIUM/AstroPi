@@ -110,10 +110,11 @@ class BoardCon:
             data = b''
             while len(data) < length:
                 to_read = length - len(data)
-                data += self.fileTransferSocket.recv(
+                dat = self.fileTransferSocket.recv(
                     4096 if to_read > 4096 else to_read)
-            with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "wb") as f:
-                f.write(data)
+                data += dat
+                with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
+                    f.write(dat)
             self.handle_ft_complete()
             self.files_written += 1
         
