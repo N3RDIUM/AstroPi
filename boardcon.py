@@ -125,12 +125,12 @@ class BoardCon:
             if not _data: continue
             else:
                 if _data == "|E|O|F||":
-                    self.progress["image_count"] += 1
-                    self.parent.log(f"Received image {self.progress['image_count']}", "info")
+                    self.files_written += 1
+                    self.parent.log(f"Received image {self.files_written}", "info")
                 else:
                     try:
                         _data = base64.b64decode(_data)
-                        with open(os.path.join(self.fileSavePath, f"image_{self.progress['image_count']}.dng"), "ab") as f:
+                        with open(os.path.join(self.fileSavePath, f"image_{self.files_written}.dng"), "ab") as f:
                             f.write(_data)
                     except Exception as e:
                         self.parent.log(f"Received invalid base64 data: {e}, continuting.", "error")
