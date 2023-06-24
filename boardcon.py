@@ -123,19 +123,14 @@ class BoardCon:
         _socket = self.fileTransferSocket
         buffer = ""
         while True:
-            # Receive data and decode it
-            data = _socket.recv(1024).decode("utf-8")
-            if not data: continue # If there is no data, continue
-            else: # If there is data, handle it
-                # Split the data according to the delimiter
-                data = data.split("|E|O|F|")
-                if len(data) >= 2: # If there are two elements in the list, then the delimiter was found
-                    buffer += data[0]
+            _data = _socket.recv(16384).decode("utf-8")
+            if not _data: continue
+            else:
+                if _data == "|E|O|F|":
                     self.handle_buffer(buffer) # Clear the buffer, i.e. write the data to a file
                     buffer = ""
-                    buffer += data[1]
-                else: # If there is only one element in the list, then the delimiter was not found
-                    buffer += data[0]
+                else:
+                    buffer += _data
         
     def handle_buffer(self, buffer):
         """
