@@ -120,6 +120,7 @@ class BoardCon:
         """
         Handle the file transfer data received from the board
         """
+        buf = ""
         while True:
             _data = self.fileTransferSocket.recv(4096).decode("utf-8")
             if not _data: continue
@@ -127,21 +128,20 @@ class BoardCon:
                 data = _data.split("|E|O|F|")
                 if len(data) > 1:
                     self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
-                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
-                        f.write(decode_base64(data[0].encode("utf-8")))
+                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
+                        f.write(decode_base64(str(buf + data[0]).encode("utf-8")))
                     self.handle_ft_complete()
                     self.files_written += 1
-                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
-                        f.write(decode_base64(data[1].encode("utf-8")))
+                    buf = data[1]
                 else:
-                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
-                        f.write(decode_base64(data[0].encode("utf-8")))
-        
+                    buf += data[0]
+                    
     def handle_ft_complete(self):
         try:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
+            self.parent.log(f"Converted image {self.files_written}/{self.config['ImageCount']} temporarily.", "info")
             self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
                                         background-repeat: no-repeat; 
                                         background-position: center; 
