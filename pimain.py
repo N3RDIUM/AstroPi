@@ -40,12 +40,13 @@ while True:
         time.sleep(5)
 _socket.listen(1)
 
-class FileTransfer:
+class FileTransferThread:
     """
     This transfers the files over the socket
     """
     def __init__(self, client):
         self.client = client
+        self.filequeue = []
         self.filesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         log("File transfer socket created successfully!")
         while True:
@@ -57,28 +58,33 @@ class FileTransfer:
                 print("File transfer socket already in use, retrying in 5 seconds...")
                 time.sleep(5)
         self.filesocket.listen(1)
+        
+    def add_file(self, path):
+        self.filequeue.append(path)
+        
+    def start(self):
         conn, addr = self.filesocket.accept()
         self.connection = (conn, addr)
         self.conn = conn
-        self.files = []
+        self.thread = threading.Thread(target=self._start)
+        self.thread.start()
         
-    def sendfile(self, path):
-        with open(path, "rb") as f:
-            data = base64.b64encode(f.read()).decode("utf-8")
-        log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
-        print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
-        for i in range(0, len(data), 4096):
-            self.conn.send(data[i:i+4096].encode("utf-8"))
-        os.remove(path)
-        time.sleep(0.4)
-        self.conn.send(b"|E|O|F|")
-        
-    def start(self):
-        threading.Thread(target=self._start).start()
-    
     def _start(self):
+        time.sleep(5)
         while True:
-            self.sendfile("images/" + self.files.pop(0))
+            if not self.filequeue:
+                time.sleep(1/1000)
+                continue
+            path = self.filequeue.pop(0)
+            with open(path, "rb") as f:
+                data = base64.b64encode(f.read()).decode("utf-8")
+            log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
+            print("\r[IMAGE_TRANSFER ASTROPI] Sending file: " + path)
+            for i in range(0, len(data), 4096):
+                self.conn.send(data[i:i+4096].encode("utf-8"))
+                print(f"\rSent {i+4096}/{len(data)} bytes")
+            self.conn.send("|||".encode("utf-8"))
+            os.remove(path)
 
 log("Listening for connections...")
 conn, addr = _socket.accept()
@@ -89,7 +95,7 @@ conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!",
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
 if not os.path.exists("images"):
     os.mkdir("images")
-filetransfer = FileTransfer(client=conn)
+filetransfer = FileTransferThread(client=conn)
 filetransfer.start()
 settings = {}
 abort=False
@@ -148,7 +154,7 @@ while True:
                     time.sleep(settings["Interval"]/1000000)
                     log(f"[ASTROPI_SESSION] Capturing image {imageID+1} of {settings['ImageCount']}", conn=conn)
                     camera.capture_file(f"images/{imageID}.dng", name="raw")
-                    filetransfer.files.append(f"images/{imageID}.dng")
+                    filetransfer.add_file(f"images/{imageID}.dng")
                     if abort: 
                         abort=False
                         break # TODO: Add abort thread

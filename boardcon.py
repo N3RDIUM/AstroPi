@@ -124,26 +124,28 @@ class BoardCon:
             _data = self.fileTransferSocket.recv(16384).decode("utf-8")
             if not _data: continue
             else:
-                if _data == "|E|O|F|":
+                data = _data.split("|E|O|F|")
+                if len(data) > 1:
                     self.files_written += 1
                     self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
+                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
+                        f.write(decode_base64(data[0]))
+                    self.handle_ft_complete()
                 else:
-                    try:
-                        _data = decode_base64(_data)
-                        with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
-                            f.write(_data)
-                    except Exception as e:
-                        self.window.log(f"Received invalid base64 data: {e}", "error")
-                        continue
+                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "ab") as f:
+                        f.write(decode_base64(data[0]))
         
     def handle_ft_complete(self):
-        with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
-            rgb = raw.postprocess()
-        imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-        self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
-                                    background-repeat: no-repeat; 
-                                    background-position: center; 
-                                    background-color: black;""")
+        try:
+            with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
+                rgb = raw.postprocess()
+            imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
+            self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
+                                        background-repeat: no-repeat; 
+                                        background-position: center; 
+                                        background-color: black;""")
+        except:
+            pass
 
     def send_config(self, config):
         """
