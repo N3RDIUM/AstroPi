@@ -118,30 +118,29 @@ class BoardCon:
                     
     def handle_ft(self):
         """
-        Handle the file transfer data received from the board
+        Handle file transfer
         """
-        buf = ""
         while True:
             _data = self.fileTransferSocket.recv(4096).decode("utf-8")
             if not _data: continue
             else:
-                data = _data.split("|E|O|F|")
-                if len(data) > 1:
-                    self.parent.log(f"Received image {self.files_written}/{self.config['ImageCount']}", "info")
-                    with open(os.path.join(self.fileSavePath, f"image{self.files_written}.dng"), "wb") as f:
-                        f.write(decode_base64(str(buf + data[0]).encode("utf-8")))
-                    self.handle_ft_complete()
-                    self.files_written += 1
-                    buf = data[1]
+                if _data == "|E|O|F||":
+                    self.progress["image_count"] += 1
+                    self.parent.log(f"Received image {self.progress['image_count']}", "info")
                 else:
-                    buf += data[0]
-                    
+                    try:
+                        _data = base64.b64decode(_data)
+                        with open(os.path.join(self.window.save_dir, f"image_{self.progress['image_count']}.dng"), "ab") as f:
+                            f.write(_data)
+                    except Exception as e:
+                        self.window.log(f"Received invalid base64 data: {e}, continuting.", "error")
+                        continue
+        
     def handle_ft_complete(self):
         try:
             with rawpy.imread(os.path.join(self.fileSavePath, f"image{self.files_written}.dng")) as raw:
                 rgb = raw.postprocess()
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
-            self.parent.log(f"Converted image {self.files_written}/{self.config['ImageCount']} temporarily.", "info")
             self.parent.Preview.currentWidget().setStyleSheet(f"""background-image: url(\"{self.fileSavePath}/temp.png);
                                         background-repeat: no-repeat; 
                                         background-position: center; 
