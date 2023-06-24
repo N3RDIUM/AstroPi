@@ -79,8 +79,8 @@ class FileTransferThread:
             log("[IMAGE_TRANSFER ASTROPI] Sending file: " + path, "debug", self.conn)
             with open(path, "rb") as f:
                 data = base64.b64encode(f.read()).decode("utf-8")
-            for i in range(0, len(data), 16384):
-                self.conn.send(data[i:i+16384].encode("utf-8"))
+            for i in range(0, len(data), 500000000):
+                self.conn.send(data[i:i+500000000].encode("utf-8"))
             time.sleep(0.1)
             self.conn.send("|E|O|F||".encode("utf-8"))
             os.remove(path)
