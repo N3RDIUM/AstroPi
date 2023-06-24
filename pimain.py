@@ -90,6 +90,7 @@ conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf
 if not os.path.exists("images"):
     os.mkdir("images")
 filetransfer = FileTransfer(client=conn)
+filetransfer.start()
 settings = {}
 abort=False
 
