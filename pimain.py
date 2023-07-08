@@ -124,7 +124,6 @@ while True:
             elif command == "startImaging":
                 log("Starting imaging...", "success", conn=conn)
                 camera = Picamera2()
-                camera.iso = 100
                 camera_config = camera.configure(camera_config=camera.create_still_configuration(
                     main={}, raw={}
                 ))
