@@ -124,11 +124,11 @@ while True:
             elif command == "startImaging":
                 log("Starting imaging...", "success", conn=conn)
                 camera = Picamera2()
+                camera.iso = 100
                 camera_config = camera.configure(camera_config=camera.create_still_configuration(
                     main={}, raw={}
                 ))
                 with camera.controls as ctrl:
-                    ctrl.AnalogueGain = settings["AnalogueGain"]
                     ctrl.ExposureTime = settings["ExposureTime"]
                 log(f"Config success!\nCamera config: {camera_config}", conn=conn)
                 # Warm up the camera
