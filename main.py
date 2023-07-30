@@ -149,7 +149,7 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Update the ISO value in the settings
         """
-        ISO = float(self.ISO.value()) * 1600
+        ISO = float(self.ISO.value()) * 16
         if ISO == 1584: ISO = 1600
         self.comms.updateSettings()
         self.ISOText.setText(f"ISO [{str(int(ISO))}]:\n[Analog Gain: {self.comms.config['AnalogGain']}]")
