@@ -29,7 +29,6 @@ class BoardCon:
             'ResolutionX': 4056,
             'ResolutionY': 3040,
         }
-        self.conf_iso = 100
         self.fileSavePath = "./"
         self.files_written = 0
         self.std = False
@@ -165,7 +164,7 @@ class BoardCon:
             self.config = {
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
-                'AnalogGain': (self.conf_iso * 1600) / 100,
+                'AnalogGain': float(self.parent.ISO.value() * 1600) / 100,
                 'ResolutionX': int(self.parent.ResolutionX.text()),
                 'ResolutionY': int(self.parent.ResolutionY.text())
             }
