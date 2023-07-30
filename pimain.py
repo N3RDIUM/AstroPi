@@ -129,6 +129,7 @@ while True:
                 ))
                 with camera.controls as ctrl:
                     ctrl.ExposureTime = settings["ExposureTime"]
+                    ctrl.AnalogGain = settings["AnalogGain"]
                 log(f"Config success!\nCamera config: {camera_config}", conn=conn)
                 # Warm up the camera
                 camera.start()
