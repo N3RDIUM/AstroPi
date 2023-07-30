@@ -25,7 +25,7 @@ class BoardCon:
         self.config = {
             'Interval': 0,
             'ExposureTime': 1000000,
-            'AnalogueGain': 1.0,
+            'AnalogGain': 1.0,
             'ResolutionX': 4056,
             'ResolutionY': 3040,
         }
@@ -164,7 +164,7 @@ class BoardCon:
             self.config = {
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
-                'AnalogueGain': self.config["AnalogueGain"] / 100,
+                'AnalogGain': (self.config["AnalogueGain"] * 1600) / 100,
                 'ResolutionX': int(self.parent.ResolutionX.text()),
                 'ResolutionY': int(self.parent.ResolutionY.text())
             }
