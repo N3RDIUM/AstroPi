@@ -149,11 +149,9 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         Update the ISO value in the settings
         """
-        ISO = int(self.ISO.value() / 100 * 1600)
-        if ISO == 1584:
-            ISO = 1600
-        self.ISOText.setText(f"ISO [{str(ISO)}]:")
-        self.comms.config["ISO"] = ISO
+        ISO = self.ISO.value()
+        self.comms.conf_iso = ISO
+        self.ISOText.setText(f"ISO [{str(int(ISO / 100 * 1600))}]:")
         self.comms.updateSettings()
         
     def updateSTD(self):
