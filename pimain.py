@@ -6,7 +6,7 @@ import config
 import logging
 from struct import pack
 import subprocess
-DEV = True
+DEV = False
 if not DEV:
     from picamera2 import *
 
