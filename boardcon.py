@@ -111,21 +111,24 @@ class BoardCon:
         Handle file transfer
         """
         while True:
-            bs = self.fileTransferSocket.recv(8)
-            (length,) = unpack('>Q', bs)
-            data = b''
-            while len(data) < length:
-                to_read = length - len(data)
-                dat = self.fileTransferSocket.recv(
-                    4096 if to_read > 4096 else to_read)
-                data += dat
-                path = os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")
-                if not self.std:
-                    os.path.join(self.fileSavePath, f"temp.dng")
-                with open(path, "ab") as f:
-                    f.write(dat)
-            self.handle_ft_complete()
-            self.files_written += 1
+            try:
+                bs = self.fileTransferSocket.recv(8)
+                (length,) = unpack('>Q', bs)
+                data = b''
+                while len(data) < length:
+                    to_read = length - len(data)
+                    dat = self.fileTransferSocket.recv(
+                        4096 if to_read > 4096 else to_read)
+                    data += dat
+                    path = os.path.join(self.fileSavePath, f"image_{self.files_written}.dng")
+                    if not self.std:
+                        os.path.join(self.fileSavePath, f"temp.dng")
+                    with open(path, "ab") as f:
+                        f.write(dat)
+                self.handle_ft_complete()
+                self.files_written += 1
+            except Exception as e:
+                pass
         
     def handle_ft_complete(self):
         try:

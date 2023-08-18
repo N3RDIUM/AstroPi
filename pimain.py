@@ -93,7 +93,7 @@ if not DEV:
     camera = Picamera2()
     conn.sendall(json.dumps({
         "type": "camdetails", 
-        "data": camera.global_camera_info
+        "data": list(camera.global_camera_info())
     }).encode("utf-8"))
     log(f"Warming up camera...", conn=conn)
     camera.start()
