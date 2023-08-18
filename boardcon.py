@@ -93,18 +93,21 @@ class BoardCon:
             data = _data
             # Handle the data
             for d in data:
-                if d["type"] == "log":
-                    self.parent.log(str(d["data"]), d["level"])
-                elif d["type"] == "connection":
-                    self.verified = True
-                    self.fileTransferSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    self.fileTransferSocket.connect((self.ip, config.FILE_TRANSFER_PORT))
-                    self.fileTransferHandler = threading.Thread(target=self.handle_ft)
-                    self.fileTransferHandler.start()
-                elif d["type"] == "camdetails":
-                    self.camdetails = d["data"]
-                elif d["type"] == "camstatus":
-                    self.camstatus.update(d["data"])
+                try:
+                    if d["type"] == "log":
+                        self.parent.log(str(d["data"]), d["level"])
+                    elif d["type"] == "connection":
+                        self.verified = True
+                        self.fileTransferSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        self.fileTransferSocket.connect((self.ip, config.FILE_TRANSFER_PORT))
+                        self.fileTransferHandler = threading.Thread(target=self.handle_ft)
+                        self.fileTransferHandler.start()
+                    elif d["type"] == "camdetails":
+                        self.camdetails = d["data"]
+                    elif d["type"] == "camstatus":
+                        self.camstatus.update(d["data"])
+                except Exception as e:
+                    self.parent.log(f"Exception in receive thread: {e}", "error")
                     
     def handle_ft(self):
         """
