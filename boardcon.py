@@ -102,7 +102,7 @@ class BoardCon:
                     self.fileTransferHandler = threading.Thread(target=self.handle_ft)
                     self.fileTransferHandler.start()
                 elif d["type"] == "camdetails":
-                    self.camdetails.update(d["data"])
+                    self.camdetails = d["data"]
                 elif d["type"] == "camstatus":
                     self.camstatus.update(d["data"])
                     
