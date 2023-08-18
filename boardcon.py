@@ -22,10 +22,15 @@ class BoardCon:
         self.ip = ip
         self.parent = parent
         self.camdetails = {}
+        self.camstatus = {
+            "capturing": False,
+            "abort": False,
+        }
         self.config = {
+            'Frames': 1,
             'Interval': 0,
             'ExposureTime': 1000000,
-            'AnalogueGain': 1.0,
+            'AnalogueGain': 1.28,
             'ResolutionX': 4056,
             'ResolutionY': 3040,
         }
@@ -49,7 +54,7 @@ class BoardCon:
                     raise TimeoutError("Connection timed out!")
             self.parent.log(f"Connection established with AstroPi Board at {self.ip}", "info")
             self.parent.alertPopup("AstroPi", f"Connection established with AstroPi Board at {self.ip}", "info")
-            self.parent.enableConfigTabs()
+            self.parent.enableConfigTab()
             self.parent.unlockButtons()
             self.parent.setBoardStatus("<font color=\"green\">CONNECTED</font>")
         except Exception as e:
@@ -97,7 +102,9 @@ class BoardCon:
                     self.fileTransferHandler = threading.Thread(target=self.handle_ft)
                     self.fileTransferHandler.start()
                 elif d["type"] == "camdetails":
-                    self.camdetails = d["data"]
+                    self.camdetails.update(d["data"])
+                elif d["type"] == "camstatus":
+                    self.camstatus.update(d["data"])
                     
     def handle_ft(self):
         """
@@ -127,6 +134,9 @@ class BoardCon:
                 os.path.join(self.fileSavePath, f"temp.dng")
             with rawpy.imread(path) as raw:
                 rgb = raw.postprocess()
+            # Downscale the image 2x for speed
+            # TODO: Make this a setting
+            rgb = rgb[::2, ::2]
             imageio.imsave(f"{self.fileSavePath}/temp.png", rgb)
             self.parent.preview(f"{self.fileSavePath}/temp.png")
         except Exception as e:
@@ -156,12 +166,20 @@ class BoardCon:
     def abortSession(self):
         self.socket.send(json.dumps({"command": "abortSession"}).encode('utf-8'))
         
-    def startImaging(self):
-        self.socket.send(json.dumps({"command": "startImaging"}).encode('utf-8'))
+    def shutter(self):
+        threading.Thread(target=self._shutter).start()
+        
+    def _shutter(self):
+        for i in range(self.config["Frames"]):
+            if self.camstatus["abort"]: break
+            self.socket.send(json.dumps({"command": "shutter"}).encode('utf-8'))
+            self.camstatus["capturing"] = True
+            while self.camstatus["capturing"]: pass
         
     def updateSettings(self):
         try:
             self.config = {
+                'Frames': int(self.parent.Frames.text()),
                 'Interval': int(self.parent.Interval.text()),
                 'ExposureTime': int(self.parent.ExposureTime.text()),
                 'AnalogueGain': float(self.parent.ISO.value() * 16) / 100,
@@ -175,12 +193,3 @@ class BoardCon:
         except Exception as e:
             self.parent.log("Error: " + str(e), "error")
             self.parent.alertPopup("AstroPi", "Error validating settings: " + str(e), "error")
-            
-        _config = self.config
-        self.parent.SettingsReview.setRowCount(len(_config))
-        self.parent.SettingsReview.setColumnCount(2)
-        self.parent.SettingsReview.setHorizontalHeaderLabels(["Setting", "Value"])
-        for n, key in enumerate(sorted(_config.keys())):
-            _key = key.replace("_", " ").title()
-            self.parent.SettingsReview.setItem(n, 0, QtWidgets.QTableWidgetItem(_key))
-            self.parent.SettingsReview.setItem(n, 1, QtWidgets.QTableWidgetItem(str(_config[key])))

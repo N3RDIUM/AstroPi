@@ -6,7 +6,9 @@ import config
 import logging
 from struct import pack
 import subprocess
-from picamera2 import *
+DEV = True
+if not DEV:
+    from picamera2 import *
 
 def log(msg, level=logging.INFO, conn=None):
     """
@@ -77,7 +79,7 @@ log("Listening for connections...")
 conn, addr = _socket.accept()
 conn.settimeout(2)
 log(f"Connection from {addr[0]}:{addr[1]}")
-print("\n\n")
+print("\n")
 conn.sendall(json.dumps({"type": "log", "data": "Hello World from the AstroPi!", "level": "info"}).encode("utf-8"))
 conn.sendall(json.dumps({"type": "connection", "data": "connected"}).encode("utf-8"))
 if not os.path.exists("images"):
@@ -85,6 +87,51 @@ if not os.path.exists("images"):
 filetransfer = FileTransferThread(client=conn)
 settings = {}
 abort=False
+camera = None
+imageID = 0
+if not DEV:
+    camera = Picamera2()
+    conn.sendall(json.dumps({
+        "type": "camdetails", 
+        "data": camera.global_camera_info
+    }).encode("utf-8"))
+    log(f"Warming up camera...", conn=conn)
+    camera.start()
+    time.sleep(2)
+    log("Camera warmed up successfully!", conn=conn)
+
+def handleCommand(data, camera):
+    global imageID
+    global settings
+    global abort
+    for d in data:
+        command = d["command"]
+        try:
+            if command == "updateSystem":
+                log(subprocess.check_output(["sudo", "apt", "update", "-y", "&", "sudo", "apt", "upgrade", "-y"], stderr=subprocess.STDOUT), conn=conn)
+            elif command == "pullUpdates":
+                log(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT), conn=conn)
+            elif command == "updateSettings":
+                settings = d["settings"]
+                if camera:
+                    with camera.controls as ctrl:
+                        ctrl.ExposureTime = settings["ExposureTime"]
+                        ctrl.AnalogueGain = settings["AnalogueGain"]
+            elif command == "shutter":
+                log(f"[ASTROPI_SESSION] Capturing image {imageID}", "success", conn=conn)
+                conn.sendall(json.dumps({"type": "camstatus", "data": {"capturing": True, "abort": False}}).encode("utf-8"))
+                if camera:
+                    time.sleep(settings["Interval"]/1000000)
+                    camera.capture_file(f"images/{imageID}.dng", name="raw")
+                    filetransfer.send(f"images/{imageID}.dng")
+                    log(f"[ASTROPI_SESSION] Captured image {imageID}", conn=conn)
+                imageID += 1
+                conn.sendall(json.dumps({"type": "camstatus", "data": {"capturing": False, "abort": False}}).encode("utf-8"))
+            elif command == "abortSession":
+                log("<p color=\"yellow\">[ASTROPI_SESSION] Aborting session after next capture...</p>", "warning", conn=conn)
+                conn.sendall(json.dumps({"type": "camstatus", "data": {"capturing": False, "abort": True}}).encode("utf-8"))
+        except Exception as e:
+            log(f"Error: {e}", level="error", conn=conn)
 
 while True:
     # Receive data and decode it
@@ -109,44 +156,4 @@ while True:
             if strlenend > len(data):
                 break
     data = _data
-    for d in data:
-        command = d["command"]
-        try:
-            if command == "updateSystem":
-                log(subprocess.check_output(["sudo", "apt", "update", "-y", "&", "sudo", "apt", "upgrade", "-y"], stderr=subprocess.STDOUT), conn=conn)
-            elif command == "pullUpdates":
-                log(subprocess.check_output(["git", "pull"], stderr=subprocess.STDOUT), conn=conn)
-            elif command == "updateSettings":
-                settings = d["settings"]
-                print("New config:")
-                for key in settings:
-                    print(f"\t{key}: {settings[key]}")
-            elif command == "startImaging":
-                log("Starting imaging...", "success", conn=conn)
-                camera = Picamera2()
-                camera_config = camera.configure(camera_config=camera.create_still_configuration(
-                    main={}, raw={}
-                ))
-                with camera.controls as ctrl:
-                    ctrl.ExposureTime = settings["ExposureTime"]
-                    ctrl.AnalogueGain = settings["AnalogueGain"]
-                log(f"Config success!\nCamera config: {camera_config}", conn=conn)
-                # Warm up the camera
-                camera.start()
-                time.sleep(2)
-                log("Camera warmed up! Starting imaging session...", conn=conn)
-                # Start the imaging session
-                imageID = 0
-                while True:
-                    time.sleep(settings["Interval"]/1000000)
-                    log(f"[ASTROPI_SESSION] Capturing image {imageID+1}", conn=conn)
-                    camera.capture_file(f"images/{imageID}.dng", name="raw")
-                    filetransfer.send(f"images/{imageID}.dng")
-                    imageID += 1
-                    if abort: 
-                        abort=False
-                        break # TODO: Add abort thread
-            elif command == "abortSession":
-                log("<p color=\"yellow\">Aborting session...</p>", "warning", conn=conn)
-        except Exception as e:
-            log(f"Error: {e}", level="error", conn=conn)
+    handleCommand(data, camera)

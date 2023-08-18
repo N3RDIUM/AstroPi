@@ -36,7 +36,29 @@
       <widget class="QWidget" name="page_2"/>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="2">
+    <item row="2" column="0">
+     <widget class="QTextEdit" name="Console">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="acceptRichText">
+       <bool>true</bool>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
      <widget class="QTabWidget" name="Tabs">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -194,37 +216,27 @@
            <widget class="QLineEdit" name="ExposureTime"/>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="IntervalText">
-            <property name="text">
-             <string>Interval [uS]:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="Interval"/>
-          </item>
-          <item row="5" column="0">
            <widget class="QLabel" name="ISOText">
             <property name="text">
              <string>ISO [CURRVAL]:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="4" column="1">
            <widget class="QSlider" name="ISO">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="6" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="Line" name="line_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="7" column="0" colspan="2">
+          <item row="6" column="0" colspan="2">
            <widget class="QLabel" name="FileTransferTitle">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -237,17 +249,17 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="FileTransferPathText">
             <property name="text">
              <string>Path:</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="7" column="1">
            <widget class="QLineEdit" name="FileTransferPath"/>
           </item>
-          <item row="9" column="1">
+          <item row="8" column="1">
            <widget class="QPushButton" name="FileTransferPathBrowse">
             <property name="text">
              <string>Browse...</string>
@@ -258,184 +270,118 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="ReviewTab">
-       <attribute name="title">
-        <string>Review</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <layout class="QFormLayout" name="formLayout_3">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="SettingsReviewTitle">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;SETTINGS REVIEW&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QTableWidget" name="SettingsReview"/>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QPushButton" name="ConfirmButton">
-            <property name="text">
-             <string>CONFIRM</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="StartTab">
-       <attribute name="title">
-        <string>Start Session</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <layout class="QFormLayout" name="formLayout_4">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="StartSessionTitle">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;START SESSION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="SessionAbortButton">
-            <property name="text">
-             <string>!ABORT</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="StartImagingButton">
-            <property name="text">
-             <string>START IMAGING</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="Line" name="line_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QLabel" name="CameraStatusTitle">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;CAMERA STATUS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="SessionEtaText">
-            <property name="text">
-             <string>Eta</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="SessionProgressEta">
-            <property name="text">
-             <string>0 seconds</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="SessionCurrentText">
-            <property name="text">
-             <string>Current</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="SessionProgressCurrent">
-            <property name="text">
-             <string>0/0us</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="SessionImageText">
-            <property name="text">
-             <string>Image</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QLabel" name="SessionProgressImage">
-            <property name="text">
-             <string>Current/Total</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="SessionTransferredText">
-            <property name="text">
-             <string>Transferred</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QLabel" name="SessionProgressTransfer">
-            <property name="text">
-             <string>Current/CurrQueueLen</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="0" colspan="2">
-           <widget class="QProgressBar" name="SessionProgressBar">
-            <property name="value">
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QCheckBox" name="SaveToDisk">
-            <property name="text">
-             <string>Save to disk</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QTextEdit" name="Console">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="undoRedoEnabled">
-       <bool>false</bool>
-      </property>
-      <property name="acceptRichText">
-       <bool>true</bool>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <item row="2" column="1">
+     <layout class="QFormLayout" name="ImagingPane">
+      <item row="0" column="0">
+       <widget class="QLabel" name="FramesLabel">
+        <property name="text">
+         <string>#Frames:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="Frames">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="IntervalLabel">
+        <property name="text">
+         <string>Interval (uS)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="Interval">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="SaveToDiskLabel">
+        <property name="text">
+         <string>Save to Disk</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="SaveToDisk">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="SessionAbortButton">
+        <property name="text">
+         <string>!ABORT</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="Shutter">
+        <property name="text">
+         <string>CAPTURE</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QProgressBar" name="SessionProgressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="SesssionProgressLabel">
+        <property name="text">
+         <string>Session Progress:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="CurrentImageLabel">
+        <property name="text">
+         <string>Current Image:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QProgressBar" name="CurrentProgressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>&lt;p align=&quot;center&quot;&gt;&lt;h3&gt;IMAGING&lt;/h3&gt;&lt;/p&gt;</string>
       </property>
      </widget>
     </item>
@@ -447,7 +393,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

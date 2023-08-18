@@ -41,7 +41,6 @@ class AstroPi(QtWidgets.QMainWindow):
                                     background-position: center; 
                                     background-color: black;""")
         self.ISO.setStyleSheet("color: #006087;")
-        self.SettingsReview.setStyleSheet("background-color: #001d87; color: white;")
         self.Console.setStyleSheet("background-color: #303547; color: white;")
         
         # Reduce paragraph spacing in the log
@@ -54,6 +53,7 @@ class AstroPi(QtWidgets.QMainWindow):
             self.Interval,
             self.ExposureTime,
             self.FileTransferPath,
+            self.Frames
         ]
         for textEdit in self.textEdits:
             textEdit.setStyleSheet("background-color: #006087; color: white;")
@@ -64,9 +64,8 @@ class AstroPi(QtWidgets.QMainWindow):
             self.PullUpdatesButton,
             self.ConnectViaSSHButton,
             self.FileTransferPathBrowse,
-            self.ConfirmButton,
             self.SessionAbortButton,
-            self.StartImagingButton,
+            self.Shutter,
         ]
         for button in self.buttons:
             button.setStyleSheet("background-color: #260087; color: white;")
@@ -77,8 +76,6 @@ class AstroPi(QtWidgets.QMainWindow):
         
         # Disable all tabs except the first one
         self.Tabs.setTabEnabled(1, False)
-        self.Tabs.setTabEnabled(2, False)
-        self.Tabs.setTabEnabled(3, False)
         
         # Disable all buttons except the connect button
         for button in self.buttons:
@@ -87,9 +84,8 @@ class AstroPi(QtWidgets.QMainWindow):
                 
         # Add button callbacks
         self.ConnectButton.clicked.connect(self.connect)
-        self.ConfirmButton.clicked.connect(self.enableImagingTab)
         
-        # Set default values to text inputs
+        # Set default values
         self.BoardIP.setText("192.168.0.")
         self.ResolutionX.setText("4056")
         self.ResolutionY.setText("3040")
@@ -97,6 +93,10 @@ class AstroPi(QtWidgets.QMainWindow):
         self.ExposureTime.setText("0")
         self.FileTransferPath.setText(os.getcwd())
         self.ISO.setValue(100)
+        self.Frames.setText("1")
+        self.SaveToDisk.setChecked(True)
+        
+        # Set the ISO text
         self.ISOText.setText("ISO [1600]:")
         
         # Set the default values for checkboxes
@@ -117,9 +117,11 @@ class AstroPi(QtWidgets.QMainWindow):
             self.ConnectViaSSHButton.clicked.connect(self.comms.connectViaSSH)
             self.FileTransferPathBrowse.clicked.connect(self.setSaveDir)
             self.SessionAbortButton.clicked.connect(self.comms.abortSession)
-            self.StartImagingButton.clicked.connect(self.comms.startImaging)
+            self.Shutter.clicked.connect(self.comms.shutter)
             # Add the callback for the text input
             self.FileTransferPath.textChanged.connect(self._setSaveDir)
+            self.Frames.textChanged.connect(self.comms.updateSettings)
+            self.SaveToDisk.stateChanged.connect(self.updateSTD)
             for ti in self.textEdits[1:-1]:
                 ti.editingFinished.connect(self.comms.updateSettings)
             # Add callback for the ISO slider AFTER the slider is left
@@ -160,20 +162,11 @@ class AstroPi(QtWidgets.QMainWindow):
         """
         self.comms.std = self.SaveToDisk.isChecked()
 
-    def enableConfigTabs(self):
+    def enableConfigTab(self):
         """
-        Enable the configuration tabs
+        Enable the configuration tab
         """
         self.Tabs.setTabEnabled(1, True)
-        self.Tabs.setTabEnabled(2, True)
-        
-    def enableImagingTab(self):
-        """
-        Enable the imaging tab
-        """
-        self.Tabs.setTabEnabled(3, True)
-        # Callback for the save to disk checkbox
-        self.SaveToDisk.stateChanged.connect(self.updateSTD)
         
     def setSaveDir(self):
         """
