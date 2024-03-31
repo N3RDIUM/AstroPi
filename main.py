@@ -104,7 +104,7 @@ def settings():
 
 def main():
     try:
-        app.run(host="0.0.0.0", port=8080, debug=True)
+        app.run(host="0.0.0.0", port=8080, debug=False)
     except Exception as e:
         cam.release()
         print(f'Exited due to exception {e}. The camera was released successfully.')
