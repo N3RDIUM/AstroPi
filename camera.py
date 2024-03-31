@@ -18,20 +18,23 @@ class Camera:
             'exposure': 1000, # in ms
             'iso': 100
         }
+        self.init = False
+        
+    def initialise_camera(self):
+        self.camera.start(show_preview=False)
+        self.init = True
+        
+    def release(self):
+        self.camera.stop()
     
     def step_preview(self):
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        with self.camera as camera:
-            camera.set_controls({
-                "ExposureTime": self.settings['exposure'], 
-                "AnalogueGain": self.settings['iso'] * 100
-            })
-            impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
-            camera.capture_file(impath)
-            
-            self.written += 1
+        impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
+        self.camera.capture_file(impath)
+        
+        self.written += 1
         
         return '../' + impath
     
@@ -59,6 +62,10 @@ class Camera:
             except:
                 self.logger.error(f'[internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] * 100
+        })
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
         
