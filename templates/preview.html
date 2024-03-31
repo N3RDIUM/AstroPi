@@ -13,11 +13,16 @@
                 panzoom(element);
             }
 
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms || DEF_DELAY));
+            }
+
             var interval = null
             async function shutterClick() {
                 if(interval) {
                     await fetch('/preview-stop')
                     clearInterval(interval);
+                    await sleep(200) // Sleep time should be more than interval time!!
                     interval = null;
                     document.getElementById('indicator').classList.remove('rpane-shooting');
                     document.getElementById('scene').setAttribute('src', default_preview);
