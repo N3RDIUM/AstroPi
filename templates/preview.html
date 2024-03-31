@@ -25,7 +25,6 @@
                 if(time) {
                     if(interval) {
                         canceled = true;
-                        await fetch('/preview-stop')
                         clearInterval(interval);
                         await sleep(100);
                         interval = null;
@@ -44,7 +43,6 @@
                         })
                     } else {
                         canceled = false;
-                        await fetch('/preview-start')
                         let path = await fetch("/preview-step");
                         path = await path.text();
                         src = path;
@@ -114,20 +112,6 @@
                     }
                 }
             }
-            
-            async function updateExposureUnit(value) {
-                let response = await fetch("/settings", {
-                    method: "post",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        key: 'exposure-unit',
-                        value: value.toString()
-                    })
-                })
-            }
 
             async function updateISO(value) {
                 let response = await fetch("/settings", {
@@ -165,12 +149,7 @@
                 <div class="setting">
                     <span class="setting-txt">Exposure time:&nbsp</span>
                     <input class="setting-entry" name="exposure" id="exposure" onchange="updateExposure(this.value)" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();">
-                    <select class="setting-dropdown" name="exposure-unit" id="exposure-unit" onchange="updateExposureUnit(this.value)">
-                        <option selected>Milliseconds</option>
-                        <option>Seconds</option>
-                        <option>Minutes</option>
-                        <option>Hours</option>
-                    </select>
+                    <span class="setting-txt">ms</span>
                     <span class="setting-txt" id="exposure-status">[OK]</span>
                 </div>
                 <div class="setting">

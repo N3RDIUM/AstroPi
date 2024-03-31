@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request
-from _camera import Camera
+from camera import Camera
 import shutil
 import os
 import logging
@@ -59,21 +59,6 @@ def preview():
 def preview_step():
     impath = cam.step_preview()
     return impath
-
-@app.route('/preview-start')
-def preview_start():
-    if not cam.init:
-        cam.initialise_camera()
-        
-    return "Success!"
-
-@app.route('/preview-stop')
-def preview_stop():
-    if cam.init:
-        cam.release()
-        cam.init = False
-    
-    return "Success!"
 
 @app.route('/logs')
 def logs():
