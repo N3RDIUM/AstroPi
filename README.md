@@ -42,13 +42,8 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Write the contributing guidelines
 - [ ] Create a demo video
 - [ ] Create some sample images
-- [ ] Design the camera and cooling fan housing for 3d prints
+
 ##  CODE
 - [ ] Create a startup script for the raspberry pi which runs git pull and starts the server
-- [x] Stream to socket, get live preview
-- [ ] Create setup for windows, linux
-- [ ] Create setup for mac (maybe?)
-- [ ] Create a mobile app (for travellers)
-- [ ] Create a web app (for remote control)
 - [ ] Custom image filenames
 - [ ] Astrometry

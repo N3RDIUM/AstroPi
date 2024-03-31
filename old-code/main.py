@@ -35,7 +35,7 @@ class AstroPi(QtWidgets.QMainWindow):
 |<strong> | $$  | $$ /$$$$$$$/  |  $$$$/| $$      |  $$$$$$/| $$      | $$ </strong>| https://github.com/n3rdium/AstroPi/issues     |
 |<strong> |__/  |__/|_______/    \___/  |__/       \______/ |__/      |__/ </strong>| <i>CLEAR SKIES!</i>                                  |
 |__________________________________________________________________________________________________________________|
-</font> """, "log")
+</div> """, "log")
         
         # Set the Style Sheets
         self.setStyleSheet("background-color: #222222; color: white;")
