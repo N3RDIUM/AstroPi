@@ -8,7 +8,9 @@
                 requestAnimationFrame(update);
                 let logs = await fetch("/logs");
                 logs = await logs.text();
-                document.getElementById('logs').innerText = logs;
+                if(logs != document.getElementById('logs').innerText) {
+                    document.getElementById('logs').innerText = logs;
+                }
             }
             requestAnimationFrame(update)
         </script>

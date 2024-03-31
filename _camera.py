@@ -6,7 +6,9 @@ import shutil
 import os
 
 SETTINGS = set([
-    'exposure'
+    'exposure',
+    'exposure-unit',
+    'iso'
 ])
 class Camera:
     def __init__(self, logger) -> None:
@@ -14,7 +16,9 @@ class Camera:
         self.logger = logger
         self.init = False
         self.settings = {
-            'exposure': 1000
+            'exposure': 1000, # in ms
+            'exposure-unit': 'Milliseconds',
+            'iso': 100
         }
         
     def initialise_camera(self):
@@ -43,11 +47,24 @@ class Camera:
             try:
                 value = float(value)
                 if value <= 0:
-                    self.logger.error(f'[! NOT ON A PI] [internals/_camera] Expected value > 0: {value}')
+                    self.logger.error(f'[! NOT ON A PI] [internals/_camera] Expected value > 0 for {key}, got {value}')
                     return f'[!!]'
                 self.settings[key] = value
             except:
-                self.logger.error(f'[! NOT ON A PI] [internals/_camera] Cannot convert to float: {value}')
+                self.logger.error(f'[! NOT ON A PI] [internals/_camera] Cannot convert to float for {key}: {value}')
+                return f'[!!]'
+        if key == 'exposure-unit':
+            value = str(value)
+            self.settings[key] = value
+        if key == 'iso':
+            try:
+                value = int(value)
+                if value <= 0:
+                    self.logger.error(f'[! NOT ON A PI] [internals/_camera] Expected natural number for {key}, got {value}')
+                    return f'[!!]'
+                self.settings[key] = value
+            except:
+                self.logger.error(f'[! NOT ON A PI] [internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
         self.logger.info(f'[! NOT ON A PI] [internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
