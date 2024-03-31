@@ -3,6 +3,9 @@ from PyQt5 import QtWidgets, uic, QtGui, QtCore
 from boardcon import BoardCon
 import config
 import os
+
+# TODO: Shift from pyqt5 to flask + html UI
+
 class AstroPi(QtWidgets.QMainWindow):
     """
     The main window of the AstroPi application
@@ -97,7 +100,7 @@ class AstroPi(QtWidgets.QMainWindow):
         self.SaveToDisk.setChecked(True)
         
         # Set the ISO text
-        self.ISOText.setText("ISO [1600]:")
+        self.ISOText.setText("ISO [default 1600]:")
         
         # Set the default values for checkboxes
         self.SaveToDisk.setChecked(False)

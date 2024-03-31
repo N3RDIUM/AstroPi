@@ -2,12 +2,12 @@
 
 <h1 align="center">AstroPi</h1>
 
-<p align="center">A DIY astronomy camera made with a raspberry pi 3b+ and the PiCamera v3! This project is in its pre beta stage. </p>
+<p align="center">A DIY astronomy camera made with a raspberry pi 5 and the HQ Camera! This project is in its pre beta stage. </p>
 
-If you're the cheap type of amateur astronomer, I know you'd rather make your own astrophotography camera than buy one. This project is for you! This project is a DIY astrophotography camera made with a raspberry pi 3b+ and the PiCamera v3. This project is in its pre beta stage.
+If you're the cheap type of amateur astronomer, I know you'd rather make your own astrophotography camera than buy one. This project is for you! This project is a DIY astrophotography camera made with a raspberry pi 5 and the HQ Camera. This project is in its pre beta stage.
 
 ## Overview
-This project has been tested on a Raspberry Pi 3b+ and PiCamera v3. It is not guaranteed to work on other versions of the Pi or the PiCamera. Testing on other versions of the Pi and PiCamera is welcome.
+This project has been tested on a Raspberry Pi 5 and HQ Camera. It is not guaranteed to work on other versions of the Pi or the PiCamera. Testing on other versions of the Pi and PiCamera is welcome.
 
 ## Demo
 Coming soon!
@@ -19,9 +19,9 @@ Coming soon!
 - [ ] Monitor the temperature of the camera
 
 ## Materials
-- Raspberry Pi 3b+
-- PiCamera v3
-- Raspberry Pi 3b+ case (with fan slot)
+- Raspberry Pi 5
+- HQ Camera
+- Raspberry Pi 5 case (with fan slot)
 - An extra fan (for cooling the camera)
 - A laptop or desktop computer
 - Loooooong Ethernet cable
@@ -30,7 +30,7 @@ Coming soon!
 Please follow the instructions in my blog post [here](astropi.n3rdium.dev/setup) to set up your AstroPi.
 
 ## Usage
-I've made a light application to control your AstroPi. It's available on Linux and Windows. Sorry, Mac users! Support is coming soon. You can download the application [here](astropi.n3rdium.dev/download).
+I've made a light application to control your AstroPi. It runs on the Raspberry Pi 5 as a Flask server, and you can access it from any machine. The images are auto-downloaded by the website on the client-side, after which they can be deleted from the internal storage.
 
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) before contributing.
@@ -51,3 +51,4 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Create a mobile app (for travellers)
 - [ ] Create a web app (for remote control)
 - [ ] Custom image filenames
+- [ ] Astrometry
