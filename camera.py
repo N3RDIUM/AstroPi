@@ -2,6 +2,7 @@
 from uuid import uuid4
 import shutil
 import os
+import time
 import picamera2
 
 SETTINGS = set([
@@ -22,6 +23,7 @@ class Camera:
         
     def initialise_camera(self):
         self.camera.start(show_preview=False)
+        time.sleep(2)
         self.init = True
         
     def release(self):

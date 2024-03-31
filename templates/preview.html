@@ -22,11 +22,11 @@
             var canceled = false;
             var src = default_preview;
             async function shutterClick() {
-                console.log('Shutter button clicked!')
                 if(time) {
                     if(interval) {
                         canceled = true;
                         clearInterval(interval);
+                        await fetch('/preview-stop');
                         await sleep(100);
                         interval = null;
                         document.getElementById('indicator').classList.remove('rpane-shooting');
@@ -44,6 +44,7 @@
                         })
                     } else {
                         canceled = false;
+                        await fetch('/preview-start')
                         let path = await fetch("/preview-step");
                         path = await path.text();
                         src = path;
