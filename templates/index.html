@@ -4,19 +4,19 @@
         <link rel="icon" type="image/x-icon" href="../static/assets/AstroPi.ico">
         <link rel="stylesheet" href="../static/css/index.css">
         <script>
-            async function updateLogs() {
-                requestAnimationFrame(updateLogs);
+            async function update() {
+                requestAnimationFrame(update);
                 let logs = await fetch("/logs");
                 logs = await logs.text();
                 document.getElementById('logs').innerText = logs;
             }
-            requestAnimationFrame(updateLogs)
+            requestAnimationFrame(update)
         </script>
     </head>
     <body>
         <div class="topbar">
             <img clsas="topbar-icon" src="../static/assets/AstroPi.png" alt="AstroPi Icon" width="48" height="48">
-            <h1 class="topbar-title">AstroPi</h1>
+            <h1 class="topbar-title">AstroPi | Home</h1>
         </div>
         <div class="logs">
             <pre id="logs"></pre>

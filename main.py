@@ -1,17 +1,40 @@
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from _camera import Camera
+import shutil
+import os
 import logging
+import sys
 
-logging.basicConfig(
-    format='%(message)s', 
-    filename='astropi.log'
-)
+if os.path.exists('astropi.log'): os.remove('astropi.log')
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+
+stdout_handler = logging.StreamHandler(sys.stdout)
+stdout_handler.setLevel(logging.DEBUG)
+stdout_handler.setFormatter(formatter)
+
+file_handler = logging.FileHandler('astropi.log')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stdout_handler)
+
+if not os.path.exists('static/preview'):
+    os.makedirs('static/preview')
+else: 
+    shutil.rmtree('static/preview')
+    os.makedirs('static/preview')
+    
+cam = Camera()
 app = Flask(__name__)
-log = logging.getLogger('werkzeug')
-log.disabled = True
+flasklog = logging.getLogger('werkzeug')
+flasklog.disabled = True
 
-logging.log(logging.INFO, ''' __________________________________________________________________________________________________________________
+logger.info(''' __________________________________________________________________________________________________________________
 |   /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha                            |
 |  /$$__  $$            | $$                        | $$__  $$|__/ | Welcome to AstroPi v0.1-alpha!                |
 | | $$  \ $$  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$ | $$  \ $$ /$$ | This is a very early version of the software, |
@@ -27,11 +50,59 @@ logging.log(logging.INFO, ''' __________________________________________________
 def home():
     return render_template('index.html')
 
+@app.route('/preview')
+def preview():
+    return render_template('preview.html')
+
+@app.route('/preview-step')
+def preview_step():
+    impath = cam.step_preview()
+    return impath
+
+@app.route('/preview-start')
+def preview_start():
+    if not cam.init:
+        cam.initialise_camera()
+        
+    return "Success!"
+
+@app.route('/preview-stop')
+def preview_stop():
+    if cam.init:
+        cam.release()
+        cam.init = False
+    
+    return "Success!"
+
 @app.route('/logs')
 def logs():
     with open('astropi.log', 'r') as f:
         logs = f.read()
     return logs
 
+LEVELS_MAP = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
+    'fatal': logging.FATAL
+}
+@app.route('/add-log', methods=['POST'])
+def addLog():
+    params = request.get_json()
+    msg = params['msg']
+    lvl = params['lvl']
+    level = LEVELS_MAP[str(lvl)]
+    logger.log(level, str(msg))
+    return 'Success!'
+
+def main():
+    try:
+        app.run(host="0.0.0.0", port=8080, debug=True)
+    except Exception as e:
+        cam.release()
+        print(f'Exited due to exception {e}. The camera was released successfully.')
+
 if __name__ == "__main__":
-    app.run(host="localhost", port=8080, debug=True)
+    main()

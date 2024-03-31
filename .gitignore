@@ -128,6 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# AstroPi log files
+# AstroPi log files and image folders
 log.txt
 PiLog.txt
+preview/

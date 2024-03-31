@@ -3,3 +3,4 @@ picamera2
 imageio
 rawpy
 opencv-python
+pillow
