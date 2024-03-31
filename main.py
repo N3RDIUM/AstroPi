@@ -64,15 +64,12 @@ def preview_step():
 def preview_start():
     if not cam.init:
         cam.initialise_camera()
-        
     return "Success!"
 
 @app.route('/preview-stop')
 def preview_stop():
     if cam.init:
         cam.release()
-        cam.init = False
-    
     return "Success!"
 
 @app.route('/logs')

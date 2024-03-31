@@ -9,11 +9,11 @@ SETTINGS = set([
     'iso'
 ])
 
+camera = picamera2.Picamera2()
 class Camera:
     def __init__(self, logger) -> None:
         self.written = 0
         self.logger = logger
-        self.camera = picamera2.Picamera2()
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
@@ -21,18 +21,19 @@ class Camera:
         self.init = False
         
     def initialise_camera(self):
-        self.camera.start(show_preview=False)
+        camera.start(show_preview=False)
         self.init = True
         
     def release(self):
-        self.camera.stop()
+        camera.stop()
+        self.init = False
     
     def step_preview(self):
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
-        self.camera.capture_file(impath)
+        camera.capture_file(impath)
         
         self.written += 1
         
@@ -68,6 +69,3 @@ class Camera:
         })
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
-        
-    def release(self):
-        self.cap.release()
