@@ -13,6 +13,7 @@ class Camera:
     def __init__(self, logger) -> None:
         self.written = 0
         self.logger = logger
+        self.camera = picamera2.Picamera2()
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
@@ -22,7 +23,7 @@ class Camera:
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        with picamera2.Picamera2() as camera:
+        with self.camera as camera:
             camera.set_controls({
                 "ExposureTime": self.settings['exposure'], 
                 "AnalogueGain": self.settings['iso'] * 100
