@@ -1,7 +1,5 @@
 # NOTE: This is for non-pi devices only!
 from uuid import uuid4
-import cv2
-from PIL import Image
 import shutil
 import os
 import picamera2
