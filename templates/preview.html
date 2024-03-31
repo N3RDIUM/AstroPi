@@ -87,6 +87,31 @@
                 document.getElementById('exposure-status').innerText = response.toString();
                 if(response.toString() == '[OK]') {
                     time = Number(value.toString())
+                    if(interval) {
+                        clearInterval(interval);
+                        interval = null;
+                        let path = await fetch("/preview-step");
+                        path = await path.text();
+                        src = path;
+                        interval = setInterval(async () => {
+                            let path = await fetch("/preview-step");
+                            path = await path.text();
+                            if(!canceled){
+                                src = path
+                            }
+                        }, time)
+                        fetch("/add-log", {
+                            method: "post",
+                            headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                msg: "[/preview] Refreshed preview with new exposure time!",
+                                lvl: 'info'
+                            })
+                        })
+                    }
                 }
             }
             
@@ -139,7 +164,7 @@
             <div class="preview-lpane">
                 <div class="setting">
                     <span class="setting-txt">Exposure time:&nbsp</span>
-                    <input class="setting-entry" name="exposure" id="exposure" placeholder="Number, eg. 1000" onchange="updateExposure(this.value)">
+                    <input class="setting-entry" name="exposure" id="exposure" onchange="updateExposure(this.value)" onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();">
                     <select class="setting-dropdown" name="exposure-unit" id="exposure-unit" onchange="updateExposureUnit(this.value)">
                         <option selected>Milliseconds</option>
                         <option>Seconds</option>
@@ -150,7 +175,7 @@
                 </div>
                 <div class="setting">
                     <span class="setting-txt">ISO:&nbsp</span>
-                    <input class="setting-entry" name="iso" id="iso" placeholder="Number, eg. 1000" onchange="updateISO(this.value)">
+                    <input class="setting-entry" name="iso" id="iso" onchange="updateISO(this.value)"  onkeypress = "this.onchange();" onpaste = "this.onchange();" oninput = "this.onchange();">
                     <span class="setting-txt" id="iso-status">[OK]</span>
                 </div>
             </div>
