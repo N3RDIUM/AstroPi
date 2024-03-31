@@ -68,6 +68,3 @@ class Camera:
         })
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
-        
-    def release(self):
-        self.cap.release()
