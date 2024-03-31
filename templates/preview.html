@@ -15,7 +15,6 @@
 
             var interval = null
             async function shutterClick() {
-                console.log(interval)
                 if(interval) {
                     await fetch('/preview-stop')
                     clearInterval(interval);
@@ -39,7 +38,7 @@
                         let path = await fetch("/preview-step");
                         path = await path.text();
                         document.getElementById('scene').setAttribute('src', path);
-                    }, 1000)
+                    }, 100)
                     document.getElementById('indicator').classList.add('rpane-shooting');
                     fetch("/add-log", {
                         method: "post",
