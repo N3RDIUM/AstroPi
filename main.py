@@ -29,7 +29,7 @@ else:
     shutil.rmtree('static/preview')
     os.makedirs('static/preview')
     
-cam = Camera()
+cam = Camera(logger)
 app = Flask(__name__)
 flasklog = logging.getLogger('werkzeug')
 flasklog.disabled = True
@@ -96,6 +96,13 @@ def addLog():
     level = LEVELS_MAP[str(lvl)]
     logger.log(level, str(msg))
     return 'Success!'
+
+@app.route('/settings', methods=['POST'])
+def settings():
+    params = request.get_json()
+    key = params['key']
+    value = params['value']
+    return cam.setting(key, value)
 
 def main():
     try:

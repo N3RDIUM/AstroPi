@@ -44,6 +44,7 @@ html, body {
 .preview-lpane {
     height: 20vh;
     width: calc(100% - 64px);
+    overflow: scroll;
 }
 .preview-rpane {
     height: 20vh;
@@ -70,4 +71,23 @@ html, body {
 }
 .preview-toggle:active {
     transform: scale(0.9);
+}
+.setting {
+    width: calc(100% - 24px);
+    margin: 8px;
+    margin-bottom: 0;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 4px;
+}
+.setting-txt {
+    margin-right: 8px;
+}
+.setting-entry {
+    margin-right: 8px;
+}
+.setting-dropdown {
+    margin-right: 8px;
 }
