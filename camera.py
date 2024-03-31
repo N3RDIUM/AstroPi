@@ -1,4 +1,3 @@
-# NOTE: This is for non-pi devices only!
 from uuid import uuid4
 import shutil
 import os
