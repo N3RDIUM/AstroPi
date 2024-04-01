@@ -1,12 +1,22 @@
 <html>
     <head>
-        <title>AstroPi Preview</title>
+        <title>AstroPi Capture</title>
         <link rel="icon" type="image/x-icon" href="../static/assets/AstroPi.ico">
         <link rel="stylesheet" href="../static/css/index.css">
 
         <script src="../static/js/panzoom.min.js"></script>
         <script>
             const default_preview = '../static/assets/AstroPi.png';
+
+            const downloadFile = (file) => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'Download Btn');
+                element.setAttribute('download', file);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
             
             window.onload = function() {
                 var element = document.getElementById('scene');
@@ -39,7 +49,7 @@
                             'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                msg: "[/preview] Stopped capturing!",
+                                msg: "[/preview] Stopped preview!",
                                 lvl: 'info'
                             })
                         })
@@ -48,11 +58,12 @@
                         await fetch('/start');
                         canceled = false;
                         interval = setInterval(async () => {
-                            let path = await fetch("/capture-step");
+                            let path = await fetch("/preview-step");
                             path = await path.text();
                             if(!canceled){
                                 document.getElementById('scene').setAttribute('src', path);
                             }
+                            downloadFile(path);
                         }, time)
                         fetch("/add-log", {
                             method: "post",
@@ -61,7 +72,7 @@
                             'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                msg: "[/preview] Started Capturing!!",
+                                msg: "[/preview] Started preview!",
                                 lvl: 'info'
                             })
                         })

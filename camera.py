@@ -43,6 +43,16 @@ class Camera:
         
         return '../' + impath
     
+    def capture(self):
+        impath = "static/captured/" + str(self.written) + str(uuid4()) + ".dng"
+        self.initialise_camera()
+        self.camera.capture_file(impath, 'raw')
+        self.release()
+        
+        self.written += 1
+        
+        return '../' + impath
+    
     def setting(self, key, value):
         if not key in SETTINGS:
             self.logger.error(f'[internals/_camera] No such setting: {key}')

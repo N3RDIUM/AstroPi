@@ -61,10 +61,22 @@ def log():
 def preview():
     return render_template('preview.html')
 
+@app.route('/capture')
+def preview():
+    return render_template('capture.html')
+
 @app.route('/preview-step')
 def preview_step():
     try:
         impath = cam.step_preview()
+        return impath
+    except:
+        return '../static/assets/AstroPi.png`'
+    
+@app.route('/capture-step')
+def preview_step():
+    try:
+        impath = cam.capture()
         return impath
     except:
         return '../static/assets/AstroPi.png`'
