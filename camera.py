@@ -41,14 +41,12 @@ class Camera:
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(uuid4()) + ".png"
-        self.camera.configure(self.preview_config)
         self.camera.capture_file(impath)
         
         return '../' + impath
     
     def step_preview(self):
         impath = "static/captured/" + str(uuid4()) + ".png"
-        self.camera.configure(self.capture_config)
         self.camera.capture_file(impath, name="raw")
         
         return '../' + impath
