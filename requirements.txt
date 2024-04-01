@@ -1,2 +1,4 @@
 flask
+rawpy
+pillow
 picamera2

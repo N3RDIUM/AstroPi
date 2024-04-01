@@ -5,6 +5,18 @@ import os
 from threading import Lock
 import picamera2
 import time
+from PIL import Image
+import rawpy
+
+def convert_dng_to_jpg(input_dng_file, output_jpg_file):
+    with rawpy.imread(input_dng_file) as raw:
+        rgb = raw.postprocess(
+            use_camera_wb=True,
+            output_color=rawpy.ColorSpace.sRGB,
+        )
+    image = Image.fromarray(rgb)
+    image.save(output_jpg_file, format='JPEG', quality=100)
+
 
 SETTINGS = set([
     'exposure',
@@ -15,7 +27,7 @@ class Camera:
     def __init__(self, logger) -> None:
         self.logger = logger
         self.camera = picamera2.Picamera2()
-        self.config = self.camera.create_still_configuration(raw={})
+        self.config = self.camera.create_still_configuration(main={}, raw={})
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
@@ -34,7 +46,7 @@ class Camera:
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        impath = "static/preview/" + str(uuid4()) + ".jpg"
+        impath = "static/preview/" + str(uuid4()) + ".png"
         self.initialise_camera()
         self.camera.capture_file(impath)
         self.release()
@@ -43,12 +55,10 @@ class Camera:
     
     def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
-        impath_jpg = "static/captured/" + str(time.time()) + ".jpg"
-        self.camera.configure(self.config)
         self.initialise_camera()
-        r = self.camera.capture_request()
-        r.save("main", impath_jpg)
-        r.save_dng(impath)
+        self.camera.capture_file(impath, 'raw')
+        self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
+        convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
         self.release()
         
         return '../' + impath
