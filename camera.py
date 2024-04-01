@@ -44,7 +44,7 @@ class Camera:
     def refresh_controls(self):
         with self.camera.controls as ctrl:
             ctrl.AnalogueGain = 16.0
-            ctrl.ExposureTime = 2000
+            ctrl.ExposureTime = 20000
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
