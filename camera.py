@@ -50,9 +50,9 @@ class Camera:
         impath = "static/preview/" + str(uuid4()) + ".png"
             
         self.camera.start()
-        time.sleep(1)
+        time.sleep(1 / 60)
         self.refresh_controls()
-        time.sleep(1)
+        time.sleep(1 / 60)
         self.camera.capture_file(impath)
         self.camera.stop()
         
