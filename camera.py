@@ -12,44 +12,36 @@ SETTINGS = set([
 
 class Camera:
     def __init__(self, logger) -> None:
+        self.written = 0
         self.logger = logger
         self.camera = picamera2.Picamera2()
-        capture_config = self.camera.create_still_configuration(raw={}, display=None)
-        self.camera.configure(capture_config)
+        self.config = self.camera.create_still_configuration(main={}, raw={})
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
         }
-        self.reload_config()
         self.init = False
         
     def initialise_camera(self):
         self.camera.start(show_preview=False)
-        time.sleep(2)
         self.init = True
         
     def release(self):
         self.camera.stop()
-        
-    def reload_config(self):
-        with self.camera.controls as ctrl:
-            ctrl.AnalogueGain = int(self.settings['iso']) / 100
-            ctrl.ExposureTime = int(self.settings['exposure'])
     
     def step_preview(self):
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        impath = "static/preview/" + str(uuid4()) + ".png"
-        result = self.camera.capture_request()
-        result.save('main', impath)
+        impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
+        self.camera.configure(self.config)
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] * 100
+        })
+        self.camera.capture_file(impath)
         
-        return '../' + impath
-    
-    def capture(self):
-        impath = "static/captured/" + str(time.time()) + ".dng"
-        result = self.camera.capture_request()
-        result.save_dng(impath)
+        self.written += 1
         
         return '../' + impath
     
@@ -77,7 +69,6 @@ class Camera:
             except:
                 self.logger.error(f'[internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
-            
-        self.reload_config()
+        
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
