@@ -50,13 +50,11 @@ class Camera:
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
-        if self.init:
-            self.release()
             
         self.refresh_controls()
-        self.initialise_camera()
+        self.camera.start()
         self.camera.capture_file(impath)
-        self.release()
+        self.camera.stop()
         
         return '../' + impath
     
@@ -65,6 +63,7 @@ class Camera:
         if self.init:
             self.release()
         
+        self.refresh_controls()
         self.initialise_camera()
         self.camera.capture_file(impath, 'raw')
         self.release()
