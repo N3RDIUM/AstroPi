@@ -63,10 +63,13 @@ def preview():
 
 @app.route('/preview-step')
 def preview_step():
-    cam.initialise_camera()
     impath = cam.step_preview()
-    cam.release()
     return impath
+
+@app.route('/stop')
+def stop(): cam.release()
+@app.route('/start')
+def start(): cam.initialise_camera()
 
 @app.route('/logs')
 def logs():

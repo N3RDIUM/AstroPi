@@ -27,6 +27,7 @@
                     if(interval) {
                         canceled = true;
                         clearInterval(interval);
+                        await fetch('/stop');
                         await sleep(100);
                         interval = null;
                         document.getElementById('indicator').classList.remove('rpane-shooting');
@@ -43,6 +44,8 @@
                             })
                         })
                     } else {
+                        document.getElementById('indicator').classList.add('rpane-shooting');
+                        await fetch('/start');
                         canceled = false;
                         interval = setInterval(async () => {
                             let path = await fetch("/preview-step");
@@ -51,7 +54,6 @@
                                 document.getElementById('scene').setAttribute('src', path);
                             }
                         }, time)
-                        document.getElementById('indicator').classList.add('rpane-shooting');
                         fetch("/add-log", {
                             method: "post",
                             headers: {

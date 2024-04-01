@@ -25,7 +25,7 @@ class Camera:
         
     def initialise_camera(self):
         self.camera.start(show_preview=False)
-        time.sleep(1)
+        time.sleep(2)
         self.init = True
         
     def release(self):
@@ -46,7 +46,7 @@ class Camera:
         return '../' + impath
     
     def step_preview(self):
-        impath = "static/captured/" + str(uuid4()) + ".png"
+        impath = "static/captured/" + str(time.time()) + ".png"
         self.camera.capture_file(impath, name="raw")
         
         return '../' + impath
