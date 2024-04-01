@@ -14,6 +14,8 @@ class Camera:
     def __init__(self, logger) -> None:
         self.logger = logger
         self.camera = picamera2.Picamera2()
+        capture_config = self.camera.create_still_configuration(main={}, raw={})
+        self.camera.configure(capture_config)
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
@@ -30,20 +32,9 @@ class Camera:
         self.camera.stop()
         
     def reload_config(self):
-        self.preview_config = self.camera.create_still_configuration({
-            "main": {},
-            "controls": {
-                "ExposureTime": self.settings['exposure'], 
-                "AnalogueGain": self.settings['iso'] * 100
-            }
-        })
-        self.capture_config = self.camera.create_still_configuration({
-            "raw": {},
-            "controls": {
-                "ExposureTime": self.settings['exposure'], 
-                "AnalogueGain": self.settings['iso'] * 100
-            }
-        })
+        with self.camera.controls as ctrl:
+            ctrl.AnalogueGain = int(self.settings['iso']) / 100
+            ctrl.ExposureTime = int(self.settings['exposure'])
     
     def step_preview(self):
         shutil.rmtree('static/preview')
