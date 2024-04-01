@@ -68,12 +68,12 @@ def capture_step():
 
 @app.route('/stop')
 def stop():
-    cam.release()
+    # cam.release()
     return 'Success!'
 
 @app.route('/start')
 def start(): 
-    cam.initialise_camera()
+    # cam.initialise_camera()
     return 'Success!'
 
 @app.route('/logs')
