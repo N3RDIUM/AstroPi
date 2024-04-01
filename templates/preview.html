@@ -22,8 +22,11 @@
             var canceled = false;
             var src = default_preview;
             async function shutterClick() {
+                console.log('1')
                 if(time) {
+                    console.log('2')
                     if(interval) {
+                        console.log('3')
                         canceled = true;
                         clearInterval(interval);
                         await fetch('/preview-stop');
@@ -43,6 +46,7 @@
                             })
                         })
                     } else {
+                        console.log('4')
                         canceled = false;
                         await fetch('/preview-start')
                         let path = await fetch("/preview-step");
