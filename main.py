@@ -49,7 +49,7 @@ logger.info('''
 
 @app.route('/log')
 def log():
-    return render_template('index.html')
+    return render_template('log.html')
 
 @app.route('/preview')
 def preview():
