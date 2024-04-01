@@ -63,8 +63,11 @@ def preview():
 
 @app.route('/preview-step')
 def preview_step():
-    impath = cam.step_preview()
-    return impath
+    try:
+        impath = cam.step_preview()
+        return impath
+    except:
+        return '../static/assets/AstroPi.png`'
 
 @app.route('/stop')
 def stop(): 
