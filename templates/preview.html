@@ -39,7 +39,7 @@
                             'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                msg: "[/preview] Stopped capturing!",
+                                msg: "[/preview] Stopped preview!",
                                 lvl: 'info'
                             })
                         })
@@ -48,7 +48,7 @@
                         await fetch('/start');
                         canceled = false;
                         interval = setInterval(async () => {
-                            let path = await fetch("/capture-step");
+                            let path = await fetch("/preview-step");
                             path = await path.text();
                             if(!canceled){
                                 document.getElementById('scene').setAttribute('src', path);
@@ -61,7 +61,7 @@
                             'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                msg: "[/preview] Started Capturing!!",
+                                msg: "[/preview] Started preview!",
                                 lvl: 'info'
                             })
                         })
