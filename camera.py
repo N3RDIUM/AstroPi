@@ -4,6 +4,7 @@ import shutil
 import os
 from threading import Lock
 import picamera2
+import time
 
 SETTINGS = set([
     'exposure',
@@ -12,7 +13,6 @@ SETTINGS = set([
 
 class Camera:
     def __init__(self, logger) -> None:
-        self.written = 0
         self.logger = logger
         self.camera = picamera2.Picamera2()
         self.config = self.camera.create_still_configuration(main={}, raw={})
@@ -34,22 +34,18 @@ class Camera:
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
+        impath = "static/preview/" + str(uuid4()) + ".png"
         self.initialise_camera()
         self.camera.capture_file(impath)
         self.release()
         
-        self.written += 1
-        
         return '../' + impath
     
     def capture(self):
-        impath = "static/captured/" + str(self.written) + str(uuid4()) + ".dng"
+        impath = "static/captured/" + str(time.time()) + ".dng"
         self.initialise_camera()
         self.camera.capture_file(impath, 'raw')
         self.release()
-        
-        self.written += 1
         
         return '../' + impath
     
