@@ -23,7 +23,6 @@ class Camera:
         
     def initialise_camera(self):
         self.camera.start(show_preview=False)
-        time.sleep(2)
         self.init = True
         
     def release(self):
