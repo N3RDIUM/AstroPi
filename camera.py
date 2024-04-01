@@ -41,17 +41,34 @@ class Camera:
         
     def release(self):
         self.camera.stop()
+        
+    def refresh_controls(self):
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] / 100
+        })
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
-        print(self.camera.controls)
+        if self.init:
+            self.release()
+            
+        self.refresh_controls()
+        self.initialise_camera()
         self.camera.capture_file(impath)
+        self.release()
         
         return '../' + impath
     
     def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
+        if self.init:
+            self.release()
+        
+        self.initialise_camera()
         self.camera.capture_file(impath, 'raw')
+        self.release()
+        
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
         convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
         
@@ -81,11 +98,8 @@ class Camera:
             except:
                 self.logger.error(f'[internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
-            
-        self.camera.set_controls({
-            "ExposureTime": self.settings['exposure'], 
-            "AnalogueGain": self.settings['iso'] / 100
-        })
+        
+        self.refresh_controls()
         
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
