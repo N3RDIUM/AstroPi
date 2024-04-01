@@ -48,7 +48,9 @@ class Camera:
             "ExposureTime": self.settings['exposure'], 
             "AnalogueGain": self.settings['iso'] / 100
         })
+        self.initialise_camera()
         self.camera.capture_file(impath)
+        self.release()
         
         return '../' + impath
     
@@ -58,7 +60,9 @@ class Camera:
             "ExposureTime": self.settings['exposure'], 
             "AnalogueGain": self.settings['iso'] / 100
         })
+        self.initialise_camera()
         self.camera.capture_file(impath, 'raw')
+        self.release()
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
         convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
         
