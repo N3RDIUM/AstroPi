@@ -30,11 +30,11 @@ class Camera:
         self.camera.stop()
         
     def reload_config(self):
-        self.preview_config = picamera2.create_preview_configuration(main={}, controls={
+        self.preview_config = picamera2.CameraConfiguration(main={}, controls={
             "ExposureTime": self.settings['exposure'], 
             "AnalogueGain": self.settings['iso'] * 100
         })
-        self.capture_config = picamera2.create_still_configuration(raw={}, controls={
+        self.capture_config = picamera2.CameraConfiguration(raw={}, controls={
             "ExposureTime": self.settings['exposure'], 
             "AnalogueGain": self.settings['iso'] * 100
         })
