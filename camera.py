@@ -25,7 +25,7 @@ class Camera:
         
     def initialise_camera(self):
         self.camera_lock.acquire()
-        self.camera.start(show_preview=False)
+        self.camera.start()
         self.init = True
         self.camera_lock.release()
         
