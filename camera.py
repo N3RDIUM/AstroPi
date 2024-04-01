@@ -32,6 +32,7 @@ class Camera:
             'exposure': 1000, # in ms
             'iso': 100
         }
+        self.refresh_controls()
         self.init = False
         self.camera_lock = Lock()
         
@@ -43,16 +44,15 @@ class Camera:
         self.camera.stop()
         
     def refresh_controls(self):
-        self.camera.set_controls({
-            "ExposureTime": self.settings['exposure'], 
-            "AnalogueGain": self.settings['iso'] / 100
-        })
+        with self.camera.controls as ctrl:
+            ctrl.AnalogueGain = 16.0
+            ctrl.ExposureTime = 1000
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
             
-        self.refresh_controls()
         self.camera.start()
+        self.refresh_controls()
         self.camera.capture_file(impath)
         self.camera.stop()
         
@@ -63,8 +63,8 @@ class Camera:
         if self.init:
             self.release()
         
-        self.refresh_controls()
         self.initialise_camera()
+        self.refresh_controls()
         self.camera.capture_file(impath, 'raw')
         self.release()
         
