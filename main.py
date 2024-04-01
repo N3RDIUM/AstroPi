@@ -66,11 +66,8 @@ def preview_step():
     
 @app.route('/capture-step')
 def capture_step():
-    try:
-        impath = cam.capture()
-        return impath
-    except:
-        return '../static/assets/AstroPi.png`'
+    impath = cam.capture()
+    return impath
 
 @app.route('/stop')
 def stop():
