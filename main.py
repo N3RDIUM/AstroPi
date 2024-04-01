@@ -23,17 +23,8 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(stdout_handler)
 
-if not os.path.exists('static/preview'):
-    os.makedirs('static/preview')
-else: 
-    shutil.rmtree('static/preview')
-    os.makedirs('static/preview')
-    
-if not os.path.exists('static/captured'):
-    os.makedirs('static/captured')
-else: 
-    shutil.rmtree('static/captured')
-    os.makedirs('static/captured')
+os.makedirs('static/preview', exist_ok=True)
+os.makedirs('static/captured', exist_ok=True)
     
 cam = Camera(logger)
 app = Flask(__name__)
