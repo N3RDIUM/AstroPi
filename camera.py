@@ -35,7 +35,9 @@ class Camera:
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
+        self.initialise_camera()
         self.camera.capture_file(impath)
+        self.release()
         
         self.written += 1
         
