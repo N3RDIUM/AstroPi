@@ -8,8 +8,10 @@
                 requestAnimationFrame(update);
                 let logs = await fetch("/logs");
                 logs = await logs.text();
-                if(logs != document.getElementById('logs').innerText) {
-                    document.getElementById('logs').innerText = logs;
+                const element = document.getElementById('logs');
+                if(logs != element.innerText) {
+                    element.innerText = logs;
+                    element.scrollTop = element.scrollHeight;
                 }
             }
             requestAnimationFrame(update)

@@ -47,8 +47,8 @@ logger.info('''
 |__________________________________________________________________________________________________________________|
 ''')
 
-@app.route('/')
-def home():
+@app.route('/log')
+def log():
     return render_template('index.html')
 
 @app.route('/preview')
