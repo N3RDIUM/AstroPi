@@ -43,8 +43,8 @@ class Camera:
         
     def refresh_controls(self):
         with self.camera.controls as ctrl:
-            ctrl.AnalogueGain = 16.0
-            ctrl.ExposureTime = 20000
+            ctrl.AnalogueGain = int(self.settings['iso']) / 100
+            ctrl.ExposureTime = int(self.settings['exposure'])
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
@@ -56,6 +56,7 @@ class Camera:
         self.camera.capture_file(impath)
         time.sleep(1 / 60)
         self.camera.stop()
+        time.sleep(1 / 60)
         
         return '../' + impath
     
@@ -65,9 +66,13 @@ class Camera:
             self.release()
         
         self.initialise_camera()
+        time.sleep(1 / 60)
         self.refresh_controls()
+        time.sleep(1 / 60)
         self.camera.capture_file(impath, 'raw')
+        time.sleep(1 / 60)
         self.release()
+        time.sleep(1 / 60)
         
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
         convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
