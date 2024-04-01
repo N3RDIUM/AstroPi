@@ -43,23 +43,24 @@ class Camera:
         self.camera.stop()
     
     def step_preview(self):
-        shutil.rmtree('static/preview')
-        os.makedirs('static/preview')
-        
         impath = "static/preview/" + str(uuid4()) + ".png"
-        self.initialise_camera()
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] / 100
+        })
         self.camera.capture_file(impath)
-        self.release()
         
         return '../' + impath
     
     def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
-        self.initialise_camera()
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] / 100
+        })
         self.camera.capture_file(impath, 'raw')
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
         convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
-        self.release()
         
         return '../' + impath
     
@@ -90,7 +91,7 @@ class Camera:
             
         self.camera.set_controls({
             "ExposureTime": self.settings['exposure'], 
-            "AnalogueGain": self.settings['iso'] * 100
+            "AnalogueGain": self.settings['iso'] / 100
         })
         
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
