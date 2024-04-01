@@ -34,11 +34,6 @@ class Camera:
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
-        self.camera.configure(self.config)
-        self.camera.set_controls({
-            "ExposureTime": self.settings['exposure'], 
-            "AnalogueGain": self.settings['iso'] * 100
-        })
         self.camera.capture_file(impath)
         
         self.written += 1
@@ -69,6 +64,13 @@ class Camera:
             except:
                 self.logger.error(f'[internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
+            
+        self.release()
+        self.camera.configure(self.config)
+        self.camera.set_controls({
+            "ExposureTime": self.settings['exposure'], 
+            "AnalogueGain": self.settings['iso'] * 100
+        })
         
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
