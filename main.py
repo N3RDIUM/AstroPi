@@ -62,7 +62,7 @@ def preview():
     return render_template('preview.html')
 
 @app.route('/capture')
-def preview():
+def capture():
     return render_template('capture.html')
 
 @app.route('/preview-step')
