@@ -15,7 +15,7 @@ class Camera:
     def __init__(self, logger) -> None:
         self.logger = logger
         self.camera = picamera2.Picamera2()
-        self.config = self.camera.create_still_configuration(main={}, raw={})
+        self.config = self.camera.create_still_configuration(raw={})
         self.settings = {
             'exposure': 1000, # in ms
             'iso': 100
@@ -44,10 +44,11 @@ class Camera:
     def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
         impath_jpg = "static/captured/" + str(time.time()) + ".jpg"
+        self.camera.configure(self.config)
         self.initialise_camera()
         r = self.camera.capture_request()
         r.save("main", impath_jpg)
-        r.save_dng("raw", impath)
+        r.save_dng(impath)
         self.release()
         
         return '../' + impath
