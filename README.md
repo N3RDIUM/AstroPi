@@ -48,3 +48,4 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Add nav to the homepage route
 - [ ] Custom image filenames
 - [ ] Astrometry
+- [ ] Two-way settings sync between the pi and the client

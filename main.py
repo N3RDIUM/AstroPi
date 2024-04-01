@@ -29,6 +29,12 @@ else:
     shutil.rmtree('static/preview')
     os.makedirs('static/preview')
     
+if not os.path.exists('static/captured'):
+    os.makedirs('static/captured')
+else: 
+    shutil.rmtree('static/captured')
+    os.makedirs('static/captured')
+    
 cam = Camera(logger)
 app = Flask(__name__)
 flasklog = logging.getLogger('werkzeug')
