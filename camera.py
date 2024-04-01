@@ -34,7 +34,7 @@ class Camera:
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
-        impath = "static/preview/" + str(uuid4()) + ".png"
+        impath = "static/preview/" + str(uuid4()) + ".jpg"
         self.initialise_camera()
         self.camera.capture_file(impath)
         self.release()
@@ -43,8 +43,11 @@ class Camera:
     
     def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
+        impath_jpg = "static/captured/" + str(time.time()) + ".jpg"
         self.initialise_camera()
-        self.camera.capture_file(impath, 'raw')
+        r = self.camera.capture_request()
+        r.save("main", impath_jpg)
+        r.save_dng("raw", impath)
         self.release()
         
         return '../' + impath
