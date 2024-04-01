@@ -10,7 +10,7 @@
 
             const downloadFile = (file) => {
                 const element = document.createElement('a');
-                element.setAttribute('href', 'Download Btn');
+                element.setAttribute('href', file);
                 element.setAttribute('download', file);
                 element.style.display = 'none';
                 document.body.appendChild(element);
@@ -127,7 +127,7 @@
     <body>
         <div class="topbar">
             <img clsas="topbar-icon" src="../static/assets/AstroPi.png" alt="AstroPi Icon" width="48" height="48">
-            <h1 class="topbar-title">AstroPi | Preview</h1>
+            <h1 class="topbar-title">AstroPi | Capture</h1>
         </div>
         <div class="image-preview">
             <img src="../static/assets/AstroPi.png" alt="" id="scene">
