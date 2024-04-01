@@ -67,9 +67,14 @@ def preview_step():
     return impath
 
 @app.route('/stop')
-def stop(): cam.release()
+def stop(): 
+    cam.release()
+    return 'Success!'
+
 @app.route('/start')
-def start(): cam.initialise_camera()
+def start(): 
+    cam.initialise_camera()
+    return 'Success!'
 
 @app.route('/logs')
 def logs():
