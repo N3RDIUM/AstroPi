@@ -27,7 +27,6 @@
                     if(interval) {
                         canceled = true;
                         clearInterval(interval);
-                        await fetch('/preview-stop');
                         await sleep(100);
                         interval = null;
                         document.getElementById('indicator').classList.remove('rpane-shooting');
@@ -44,8 +43,6 @@
                             })
                         })
                     } else {
-                        await fetch('/preview-start');
-                        await sleep(2000); // Camera warm-up time
                         canceled = false;
                         interval = setInterval(async () => {
                             let path = await fetch("/preview-step");
