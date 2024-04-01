@@ -70,12 +70,16 @@ def preview_step():
         return '../static/assets/AstroPi.png`'
 
 @app.route('/stop')
-def stop(): 
+def stop():
+    # Lets keep this here for some reason
+    # Yes, the /preview page still fetches /stop!
     # cam.release()
     return 'Success!'
 
 @app.route('/start')
 def start(): 
+    # Lets keep this here for some reason
+    # Yes, the /preview page still fetches /start!
     # cam.initialise_camera()
     return 'Success!'
 
