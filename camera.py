@@ -30,13 +30,14 @@ class Camera:
         self.camera.stop()
         
     def reload_config(self):
-        self.preview_config = picamera2.CameraConfiguration({
+        self.preview_config = self.camera.create_still_configuration({
+            "main": {},
             "controls": {
                 "ExposureTime": self.settings['exposure'], 
                 "AnalogueGain": self.settings['iso'] * 100
             }
         })
-        self.capture_config = picamera2.CameraConfiguration({
+        self.capture_config = self.camera.create_still_configuration({
             "raw": {},
             "controls": {
                 "ExposureTime": self.settings['exposure'], 
@@ -57,7 +58,7 @@ class Camera:
     def step_preview(self):
         impath = "static/captured/" + str(uuid4()) + ".png"
         self.camera.configure(self.capture_config)
-        self.camera.capture_file(impath)
+        self.camera.capture_file(impath, name="raw")
         
         return '../' + impath
     
