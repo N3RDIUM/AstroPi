@@ -46,7 +46,6 @@
                     if(interval) {
                         canceled = true;
                         clearInterval(interval);
-                        await fetch('/stop');
                         await sleep(100);
                         interval = null;
                         document.getElementById('indicator').classList.remove('rpane-shooting');
@@ -71,6 +70,8 @@
                             path = await path.text();
                             if(!canceled){
                                 document.getElementById('scene').setAttribute('src', path.replace('dng', 'jpg'));
+                            } else {
+                                await fetch('/stop');
                             }
                             downloadFile(path);
                         }, time)
