@@ -14,7 +14,7 @@ class Camera:
     def __init__(self, logger) -> None:
         self.logger = logger
         self.camera = picamera2.Picamera2()
-        capture_config = self.camera.create_still_configuration(main={}, raw={})
+        capture_config = self.camera.create_still_configuration(raw={}, display=None)
         self.camera.configure(capture_config)
         self.settings = {
             'exposure': 1000, # in ms
@@ -41,13 +41,15 @@ class Camera:
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(uuid4()) + ".png"
-        self.camera.capture_file(impath)
+        result = self.camera.capture_request()
+        result.save('main', impath)
         
         return '../' + impath
     
     def step_preview(self):
-        impath = "static/captured/" + str(time.time()) + ".png"
-        self.camera.capture_file(impath, name="raw")
+        impath = "static/captured/" + str(time.time()) + ".dng"
+        result = self.camera.capture_request()
+        result.save_dng(impath)
         
         return '../' + impath
     
