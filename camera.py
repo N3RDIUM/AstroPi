@@ -44,10 +44,6 @@ class Camera:
     
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
-        self.camera.set_controls({
-            "ExposureTime": self.settings['exposure'], 
-            "AnalogueGain": self.settings['iso'] / 100
-        })
         self.camera.capture_file(impath)
         
         return '../' + impath
