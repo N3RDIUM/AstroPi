@@ -46,7 +46,7 @@ class Camera:
         
         return '../' + impath
     
-    def step_preview(self):
+    def capture(self):
         impath = "static/captured/" + str(time.time()) + ".dng"
         result = self.camera.capture_request()
         result.save_dng(impath)
