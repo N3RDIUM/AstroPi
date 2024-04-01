@@ -2,7 +2,7 @@
 from uuid import uuid4
 import shutil
 import os
-import time
+from threading import Lock
 import picamera2
 
 SETTINGS = set([
@@ -21,20 +21,27 @@ class Camera:
             'iso': 100
         }
         self.init = False
+        self.camera_lock = Lock()
         
     def initialise_camera(self):
+        self.camera_lock.acquire()
         self.camera.start(show_preview=False)
         self.init = True
+        self.camera_lock.release()
         
     def release(self):
+        self.camera_lock.acquire()
         self.camera.stop()
+        self.camera_lock.release()
     
     def step_preview(self):
         shutil.rmtree('static/preview')
         os.makedirs('static/preview')
         
         impath = "static/preview/" + str(self.written) + str(uuid4()) + ".png"
+        self.camera_lock.acquire()
         self.camera.capture_file(impath)
+        self.camera_lock.release()
         
         self.written += 1
         
@@ -65,12 +72,14 @@ class Camera:
                 self.logger.error(f'[internals/_camera] Cannot convert to natural number: {value}')
                 return f'[!!]'
             
+        self.camera_lock.acquire()
         self.release()
         self.camera.configure(self.config)
         self.camera.set_controls({
             "ExposureTime": self.settings['exposure'], 
             "AnalogueGain": self.settings['iso'] * 100
         })
+        self.camera_lock.release()
         
         self.logger.info(f'[internals/_camera] Setting {key} is now {value}!')
         return '[OK]'
