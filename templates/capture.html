@@ -8,14 +8,23 @@
         <script>
             const default_preview = '../static/assets/AstroPi.png';
 
-            const downloadFile = (file) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', file);
-                element.setAttribute('download', file);
-                element.style.display = 'none';
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
+            function downloadFile(file) {
+                // Create a link and set the URL using `createObjectURL`
+                const link = document.createElement("a");
+                link.style.display = "none";
+                link.href = URL.createObjectURL(file);
+                link.download = file.name;
+              
+                // It needs to be added to the DOM so it can be clicked
+                document.body.appendChild(link);
+                link.click();
+              
+                // To make this work on Firefox we need to wait
+                // a little while before removing it.
+                setTimeout(() => {
+                  URL.revokeObjectURL(link.href);
+                  link.parentNode.removeChild(link);
+                }, 0);
             }
             
             window.onload = function() {
