@@ -1,7 +1,5 @@
 # NOTE: This is for non-pi devices only!
 from uuid import uuid4
-import shutil
-import os
 from threading import Lock
 import picamera2
 import time
@@ -52,7 +50,9 @@ class Camera:
         impath = "static/preview/" + str(uuid4()) + ".png"
             
         self.camera.start()
+        time.sleep(1)
         self.refresh_controls()
+        time.sleep(1)
         self.camera.capture_file(impath)
         self.camera.stop()
         
