@@ -21,6 +21,8 @@
             var time = null;
             var canceled = false;
             var src = default_preview;
+            
+            async function shutterClick() {
                 if(time) {
                     if(interval) {
                         canceled = true;
