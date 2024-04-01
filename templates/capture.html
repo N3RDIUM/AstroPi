@@ -69,7 +69,7 @@
                         interval = setInterval(async () => {
                             let path = await fetch("/capture-step");
                             path = await path.text();
-                            path.replace('dng', 'jpg')
+                            path = path.replace('dng', 'jpg');
                             if(!canceled){
                                 document.getElementById('scene').setAttribute('src', path);
                             }
