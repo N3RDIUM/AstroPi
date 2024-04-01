@@ -21,19 +21,15 @@
             var time = null;
             var canceled = false;
             var src = default_preview;
-            async function shutterClick() {
-                console.log('1')
                 if(time) {
-                    console.log('2')
                     if(interval) {
-                        console.log('3')
                         canceled = true;
                         clearInterval(interval);
                         await fetch('/preview-stop');
                         await sleep(100);
                         interval = null;
                         document.getElementById('indicator').classList.remove('rpane-shooting');
-                        src = default_preview;
+                        document.getElementById('scene').setAttribute('src', default_preview);
                         fetch("/add-log", {
                             method: "post",
                             headers: {
@@ -46,15 +42,14 @@
                             })
                         })
                     } else {
-                        console.log('4')
-                        canceled = false;
                         await fetch('/preview-start');
                         await sleep(2000); // Camera warm-up time
+                        canceled = false;
                         interval = setInterval(async () => {
                             let path = await fetch("/preview-step");
                             path = await path.text();
                             if(!canceled){
-                                src = path
+                                document.getElementById('scene').setAttribute('src', path);
                             }
                         }, time)
                         document.getElementById('indicator').classList.add('rpane-shooting');
@@ -115,12 +110,6 @@
                     }
                 }
             }
-
-            function update() {
-                requestAnimationFrame(update);
-                document.getElementById('scene').setAttribute('src', src);
-            }
-            requestAnimationFrame(update)
         </script>
     </head>
     <body>
