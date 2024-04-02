@@ -2,3 +2,4 @@ flask
 rawpy
 pillow
 picamera2
+astrometry

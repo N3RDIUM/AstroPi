@@ -132,3 +132,4 @@ dmypy.json
 log.txt
 PiLog.txt
 preview/
+.cache/
