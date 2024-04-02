@@ -4,7 +4,7 @@
 
 <p align="center">A DIY astronomy camera made with a raspberry pi 5 and the HQ Camera! This project is in its pre beta stage. </p>
 
-If you're the cheap type of amateur astronomer, I know you'd rather make your own astrophotography camera than buy one. This project is for you! This project is a DIY astrophotography camera made with a raspberry pi 5 and the HQ Camera. This project is in its pre beta stage.
+If you're the DIY kind of amateur astronomer, I know you'd rather make your own astrophotography camera than buy one. This project is for you! This project is a DIY astrophotography camera made with a raspberry pi 5 and the HQ Camera. This project is in its pre beta stage.
 
 ## Overview
 This project has been tested on a Raspberry Pi 5 and HQ Camera. It is not guaranteed to work on other versions of the Pi or the PiCamera. Testing on other versions of the Pi and PiCamera is welcome.
