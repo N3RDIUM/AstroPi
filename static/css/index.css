@@ -91,3 +91,7 @@ html, body {
 .setting-dropdown {
     margin-right: 8px;
 }
+.navlink {
+    color: white;
+    text-decoration: dashed underline white 1px;
+}
