@@ -119,7 +119,7 @@ def prepare_download():
     logger.log(logging.INFO, f"[internals/prepare-download] Archiving static/captured into {outfile}")
     shutil.make_archive(outfile, 'zip', 'static/captured-raw')
     logger.log(logging.INFO, "[internals/prepare-download] Archive created successfully! Returning link to client...")
-    return '../' + outfile
+    return '../' + outfile + '.zip'
     
 def main():
     try:
