@@ -115,7 +115,7 @@ def settings():
 
 @app.route('/prepare-download')
 def prepare_download():
-    outfile = f'static/archives/{uuid.uuid4()}.zip'
+    outfile = f'static/archives/{uuid.uuid4()}'
     logger.log(logging.INFO, f"[internals/prepare-download] Archiving static/captured into {outfile}")
     shutil.make_archive(outfile, 'zip', 'static/captured-raw')
     logger.log(logging.INFO, "[internals/prepare-download] Archive created successfully! Returning link to client...")
