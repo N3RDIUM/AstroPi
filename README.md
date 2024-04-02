@@ -45,7 +45,7 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 
 ##  CODE
 - [ ] Create a startup script for the raspberry pi which runs git pull and starts the server
-- [ ] Add nav to the homepage route
+- [x] Add nav to the homepage route
 - [ ] Custom image filenames
 - [ ] Astrometry
 - [ ] Two-way settings sync between the pi and the client
