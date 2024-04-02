@@ -61,7 +61,7 @@ class Camera:
         return '../' + impath
     
     def capture(self):
-        impath = "static/captured/" + str(time.time()) + ".dng"
+        impath = "static/captured-raw/" + str(time.time()) + ".dng"
         if self.init:
             self.release()
         
@@ -75,7 +75,7 @@ class Camera:
         time.sleep(1 / 60)
         
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
-        convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
+        convert_dng_to_jpg(impath, impath.removesuffix('.dng').replace('/captured/', '/captured-raw/') + '.jpg')
         
         return '../' + impath.removesuffix('.dng') + '.jpg'
     

@@ -26,6 +26,7 @@ logger.addHandler(stdout_handler)
 
 os.makedirs('static/preview', exist_ok=True)
 os.makedirs('static/captured', exist_ok=True)
+os.makedirs('static/captured-raw', exist_ok=True)
 os.makedirs('static/archives', exist_ok=True)
     
 cam = Camera(logger)
@@ -116,7 +117,7 @@ def settings():
 def prepare_download():
     outfile = f'static/archives/{uuid.uuid4()}.zip'
     logger.log(logging.INFO, f"[internals/prepare-download] Archiving static/captured into {outfile}")
-    shutil.make_archive(outfile, 'zip', 'static/captured')
+    shutil.make_archive(outfile, 'zip', 'static/captured-raw')
     logger.log(logging.INFO, "[internals/prepare-download] Archive created successfully! Returning link to client...")
     return '../' + outfile
     

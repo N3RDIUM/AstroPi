@@ -26,6 +26,7 @@
             window.onload = async function() {
                 const element = document.getElementById('logs');
                 element.innerText += "[/download] Preparing download link...\n"
+                element.innerText += "[/download] Archiving files...\n"
                 let link = await fetch("/prepare-download");
                 link = await link.text();
                 element.innerText += "[/download] Download link received: " + link + "\n";
