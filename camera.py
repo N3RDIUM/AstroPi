@@ -77,7 +77,7 @@ class Camera:
         self.logger.info(f'[internals/_camera] Converting DNG to JPG for preview: {impath}')
         convert_dng_to_jpg(impath, impath.removesuffix('.dng') + '.jpg')
         
-        return '../' + impath
+        return '../' + impath.removesuffix('.dng') + '.jpg'
     
     def setting(self, key, value):
         if not key in SETTINGS:

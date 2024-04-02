@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>AstroPi Logs</title>
+        <link rel="icon" type="image/x-icon" href="../static/assets/AstroPi.ico">
+        <link rel="stylesheet" href="../static/css/index.css">
+        <script>
+            function downloadFile(file) {
+                // Create a link and set the URL using `createObjectURL`
+                const link = document.createElement("a");
+                link.style.display = "none";
+                link.href = file;
+                link.download = file;
+              
+                // It needs to be added to the DOM so it can be clicked
+                document.body.appendChild(link);
+                link.click();
+              
+                // To make this work on Firefox we need to wait
+                // a little while before removing it.
+                setTimeout(() => {
+                  URL.revokeObjectURL(link.href);
+                  link.parentNode.removeChild(link);
+                }, 0);
+            }
+
+            window.onload = async function() {
+                const element = document.getElementById('logs');
+                element.innerText += "[/download] Preparing download link...\n"
+                let link = await fetch("/prepare-download");
+                link = await link.text();
+                element.innerText += "[/download] Download link received: " + link + "\n";
+                element.innerText += "[/download] Downloading zipfile...\n";
+                downloadFile(link);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="topbar">
+            <img clsas="topbar-icon" src="../static/assets/AstroPi.png" alt="AstroPi Icon" width="48" height="48">
+            <h1 class="topbar-title">AstroPi | Download Subs</h1>
+        </div>
+        <div class="content">
+            <div class="logs">
+                <pre id="logs"></pre>
+            </div>
+        </div>
+    </body>
+</html>

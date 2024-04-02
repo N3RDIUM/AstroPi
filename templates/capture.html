@@ -7,25 +7,6 @@
         <script src="../static/js/panzoom.min.js"></script>
         <script>
             const default_preview = '../static/assets/AstroPi.png';
-
-            function downloadFile(file) {
-                // Create a link and set the URL using `createObjectURL`
-                const link = document.createElement("a");
-                link.style.display = "none";
-                link.href = file;
-                link.download = file;
-              
-                // It needs to be added to the DOM so it can be clicked
-                document.body.appendChild(link);
-                link.click();
-              
-                // To make this work on Firefox we need to wait
-                // a little while before removing it.
-                setTimeout(() => {
-                  URL.revokeObjectURL(link.href);
-                  link.parentNode.removeChild(link);
-                }, 0);
-            }
             
             window.onload = function() {
                 var element = document.getElementById('scene');
@@ -69,11 +50,10 @@
                             let path = await fetch("/capture-step");
                             path = await path.text();
                             if(!canceled){
-                                document.getElementById('scene').setAttribute('src', path.replace('dng', 'jpg'));
+                                document.getElementById('scene').setAttribute('src', path);
                             } else {
                                 await fetch('/stop');
                             }
-                            downloadFile(path);
                         }, time)
                         fetch("/add-log", {
                             method: "post",

@@ -1,10 +1,11 @@
 
 from flask import Flask, render_template, request
 from camera import Camera
-import shutil
 import os
 import logging
 import sys
+import shutil
+import uuid
 
 if os.path.exists('astropi.log'): os.remove('astropi.log')
 
@@ -25,6 +26,7 @@ logger.addHandler(stdout_handler)
 
 os.makedirs('static/preview', exist_ok=True)
 os.makedirs('static/captured', exist_ok=True)
+os.makedirs('static/archives', exist_ok=True)
     
 cam = Camera(logger)
 app = Flask(__name__)
@@ -106,6 +108,14 @@ def settings():
     value = params['value']
     return cam.setting(key, value)
 
+@app.route('/prepare-download')
+def prepare_download():
+    outfile = f'static/archives/{uuid.uuid4()}.zip'
+    logger.log(logging.INFO, f"[internals/prepare-download] Archiving static/captured into {outfile}")
+    shutil.make_archive(outfile, 'zip', 'static/captured')
+    logger.log(logging.INFO, "[internals/prepare-download] Archive created successfully! Returning link to client...")
+    return '../' + outfile
+    
 def main():
     try:
         app.run(host="0.0.0.0", port=8080, debug=False)
