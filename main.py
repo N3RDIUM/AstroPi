@@ -58,6 +58,10 @@ def preview():
 def capture():
     return render_template('capture.html')
 
+@app.route('/download')
+def download():
+    return render_template('download.html')
+
 @app.route('/preview-step')
 def preview_step():
     impath = cam.step_preview()
