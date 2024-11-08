@@ -1,5 +1,3 @@
-
-
 import astrometry
 
 solver = astrometry.Solver(
