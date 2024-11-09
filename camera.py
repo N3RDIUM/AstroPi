@@ -27,7 +27,7 @@ class Camera:
         self.camera = picamera2.Picamera2()
         self.config = self.camera.create_still_configuration(main={}, raw={})
         self.settings = {
-            "exposure": 1000,  # in ms
+            "exposure": 1000000,  # in us
             "iso": 100,
         }
         self.refresh_controls()
