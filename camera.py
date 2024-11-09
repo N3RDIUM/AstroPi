@@ -1,4 +1,3 @@
-# NOTE: This is for non-pi devices only!
 import time
 from threading import Lock
 from uuid import uuid4

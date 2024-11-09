@@ -1,11 +1,13 @@
 
-from flask import Flask, render_template, request
-from camera import Camera
-import os
 import logging
-import sys
+import os
 import shutil
+import sys
 import uuid
+
+from flask import Flask, render_template, request
+
+from camera import Camera
 
 if os.path.exists('astropi.log'): os.remove('astropi.log')
 
@@ -28,7 +30,7 @@ os.makedirs('static/preview', exist_ok=True)
 os.makedirs('static/captured', exist_ok=True)
 os.makedirs('static/captured-raw', exist_ok=True)
 os.makedirs('static/archives', exist_ok=True)
-    
+
 cam = Camera(logger)
 app = Flask(__name__)
 flasklog = logging.getLogger('werkzeug')
@@ -71,7 +73,7 @@ def download():
 def preview_step():
     impath = cam.step_preview()
     return impath
-    
+
 @app.route('/capture-step')
 def capture_step():
     impath = cam.capture()
@@ -83,7 +85,7 @@ def stop():
     return 'Success!'
 
 @app.route('/start')
-def start(): 
+def start():
     # cam.initialise_camera()
     return 'Success!'
 
@@ -124,7 +126,7 @@ def prepare_download():
     shutil.make_archive(outfile, 'zip', 'static/captured-raw')
     logger.log(logging.INFO, "[internals/prepare-download] Archive created successfully! Returning link to client...")
     return '../' + outfile + '.zip'
-    
+
 def main():
     try:
         app.run(host="0.0.0.0", port=8080, debug=False)
