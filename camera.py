@@ -1,5 +1,4 @@
 import time
-from threading import Lock
 from uuid import uuid4
 
 import picamera2
@@ -26,12 +25,11 @@ class Camera:
         self.camera = picamera2.Picamera2()
         self.config = self.camera.create_still_configuration(main={}, raw={})
         self.settings = {
-            "exposure": 1000000,  # in us
+            "exposure": 1000,
             "iso": 100,
         }
         self.refresh_controls()
         self.init = False
-        self.camera_lock = Lock()
 
     def initialise_camera(self):
         self.camera.start()
@@ -49,13 +47,9 @@ class Camera:
         impath = "static/preview/" + str(uuid4()) + ".png"
 
         self.camera.start()
-        time.sleep(0.125)
         self.refresh_controls()
-        time.sleep(0.125)
         self.camera.capture_file(impath)
-        time.sleep(0.125)
         self.camera.stop()
-        time.sleep(0.125)
 
         return "../" + impath
 
@@ -67,13 +61,9 @@ class Camera:
             self.release()
 
         self.initialise_camera()
-        time.sleep(0.125)
         self.refresh_controls()
-        time.sleep(0.125)
         self.camera.capture_file(impath, "raw")
-        time.sleep(0.125)
         self.release()
-        time.sleep(0.125)
 
         self.logger.info(
             f"[internals/_camera] Converting DNG to JPG for preview: {impath} -> {impath_jpg}"
