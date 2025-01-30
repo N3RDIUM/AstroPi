@@ -25,7 +25,7 @@ class Camera:
         self.camera = picamera2.Picamera2()
         self.config = self.camera.create_still_configuration(main={}, raw={})
         self.settings = {
-            "exposure": 1000,
+            "exposure": 1000000,
             "iso": 100,
         }
         self.refresh_controls()
@@ -41,7 +41,7 @@ class Camera:
     def refresh_controls(self):
         with self.camera.controls as ctrl:
             ctrl.AnalogueGain = int(self.settings["iso"]) / 100
-            ctrl.ExposureTime = int(self.settings["exposure"])
+            ctrl.ExposureTime = int(self.settings["exposure"]) * 1000
 
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"

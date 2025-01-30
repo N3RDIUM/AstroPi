@@ -42,7 +42,7 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Create some sample images
 
 ##  CODE
-- [ ] Developer mode: for development on non-pi devices
+- [ ] Developer mode: for development on non-pi devices (just solid black frames).
 - [ ] Create a startup script for the raspberry pi which runs git pull and starts the server
 - [ ] Display integration
 - [ ] Major UI overhaul
