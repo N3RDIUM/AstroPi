@@ -48,9 +48,11 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 - [ ] Major UI overhaul
 - [ ] Let the user control ALL settings, not just exposure time and gain.
 - [ ] ISO -> Gain
-- [ ] Non-persistent preview, just overwrite a `preview.jpg`
+- [ ] Non-persistent preview, just use the mjpg stream thing
+- [ ] For capture previews, capture both jpg and dng, stream to mjpg, save both dng (the actual data) and jpg (for the gallery)
 - [ ] Create an index of captured files, allow the user to see them sequentially ("gallery" page?)
 - [ ] Allow the user to transfer the captured files to a USB device instead of zipping and downloading
 - [ ] Internal storage management: allow the user to delete captures from older sessions
 - [ ] "Session" paradigm for separating data from different sessions
+- [ ] Video capture support
 

@@ -35,7 +35,7 @@ app = Flask(__name__)
 flasklog = logging.getLogger('werkzeug')
 flasklog.disabled = True
 
-logger.info('''
+logger.info(r'''
  __________________________________________________________________________________________________________________
 |   /$$$$$$              /$$                         /$$$$$$$  /$$ | AstroPi v0.1-alpha                            |
 |  /$$__  $$            | $$                        | $$__  $$|__/ | Welcome to AstroPi v0.1-alpha!                |
