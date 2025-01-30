@@ -1,4 +1,3 @@
-
 import logging
 import os
 import shutil
@@ -120,7 +119,7 @@ def settings():
     return cam.setting(key, value)
 
 @app.route('/prepare-download')
-def prepare_download():
+def prepare_download(): # TODO: This is impractical.
     outfile = f'static/archives/{uuid.uuid4()}'
     logger.log(logging.INFO, f"[internals/prepare-download] Archiving static/captured into {outfile}")
     shutil.make_archive(outfile, 'zip', 'static/captured-raw')

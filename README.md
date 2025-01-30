@@ -4,13 +4,11 @@
 
 <p align="center">A DIY astronomy camera made with a raspberry pi 5 and the HQ Camera! This project is in its pre beta stage. </p>
 
-If you're the DIY kind of amateur astronomer, I know you'd rather make your own astrophotography camera than buy one. This project is for you! This project is a DIY astrophotography camera made with a raspberry pi 5 and the HQ Camera. This project is in its pre beta stage.
-
 ## Overview
-This project has been tested on a Raspberry Pi 5 and HQ Camera. It is not guaranteed to work on other versions of the Pi or the PiCamera. Testing on other versions of the Pi and PiCamera is welcome.
+TODO
 
 ## Demo
-Coming soon!
+TODO
 
 ## Features
 - [x] Control the camera remotely
@@ -26,11 +24,11 @@ Coming soon!
 - A laptop or desktop computer
 - Loooooong Ethernet cable
 
-## Build your AstroPi
-Please follow the instructions in my blog post [here](astropi.n3rdium.dev/setup) to set up your AstroPi.
+## Build your own AstroPi
+TODO (+ link to site, create the actual site pages)
 
 ## Usage
-I've made a light application to control your AstroPi. It runs on the Raspberry Pi 5 as a Flask server, and you can access it from any machine. The images are auto-downloaded by the website on the client-side, after which they can be deleted from the internal storage.
+TODO
 
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) before contributing.
@@ -45,7 +43,13 @@ Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTIN
 
 ##  CODE
 - [ ] Create a startup script for the raspberry pi which runs git pull and starts the server
-- [x] Add nav to the homepage route
-- [ ] Custom image filenames
-- [ ] Astrometry
-- [ ] Two-way settings sync between the pi and the client
+- [ ] Display integration
+- [ ] Major UI overhaul
+- [ ] Let the user control ALL settings, not just exposure time and gain.
+- [ ] ISO -> Gain
+- [ ] Non-persistent preview, just overwrite a `preview.jpg`
+- [ ] Create an index of captured files, allow the user to see them sequentially ("gallery" page?)
+- [ ] Allow the user to transfer the captured files to a USB device instead of zipping and downloading
+- [ ] Internal storage management: allow the user to delete captures from older sessions
+- [ ] "Session" paradigm for separating data from different sessions
+
