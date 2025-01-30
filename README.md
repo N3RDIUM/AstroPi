@@ -2,7 +2,7 @@
 
 <h1 align="center">AstroPi</h1>
 
-<p align="center">A DIY astronomy camera made with a raspberry pi 5 and the HQ Camera! This project is in its pre beta stage. </p>
+<p align="center">A DIY astronomy camera made with a raspberry pi 5 and the HQ Camera! </p>
 
 ## Overview
 TODO
