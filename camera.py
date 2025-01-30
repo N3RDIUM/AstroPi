@@ -41,7 +41,7 @@ class Camera:
     def refresh_controls(self):
         with self.camera.controls as ctrl:
             ctrl.AnalogueGain = int(self.settings["iso"]) / 100
-            ctrl.ExposureTime = int(self.settings["exposure"]) * 1000
+        self.camera.shutter_speed = int(self.settings["exposure"]) * 1000
 
     def step_preview(self):
         impath = "static/preview/" + str(uuid4()) + ".png"
