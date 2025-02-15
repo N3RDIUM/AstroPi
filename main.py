@@ -5,7 +5,7 @@ from flask import Flask
 
 # Init logging
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
 stdout_handler = logging.StreamHandler(sys.stdout)
