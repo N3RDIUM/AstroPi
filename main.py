@@ -23,7 +23,7 @@ logger.addHandler(stdout_handler)
 logger.log(logging.DEBUG, "[main] Initializing 0mq")
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-_ = socket.bind("tcp://*:457121")
+_ = socket.bind("tcp://*:8081")
 
 # Init flask
 logger.log(logging.DEBUG, "[main] Initializing Flask")
@@ -38,6 +38,6 @@ def root():
 
 # Driver
 if __name__ == "__main__":
-    logger.log(logging.INFO, "[main] Running flask server on host 0.0.0.0 port 457120")
-    app.run(host="0.0.0.0", port=457120, debug=False)
+    logger.log(logging.INFO, "[main] Running flask server on host 0.0.0.0 port 8080")
+    app.run(host="0.0.0.0", port=8080, debug=False)
 
