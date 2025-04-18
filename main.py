@@ -1,8 +1,8 @@
 import sys
 import zmq
 import logging
-import subprocess
 from flask import Flask
+from picamera2 import Picamera2
 
 # Init logging
 logger = logging.getLogger()
@@ -20,6 +20,10 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(stdout_handler)
 
+# Init camera
+camera = Picamera2()
+camera.start()
+
 # Init 0mq
 logger.log(logging.DEBUG, "[main] Initializing 0mq")
 context = zmq.Context()
@@ -35,10 +39,10 @@ flasklog.disabled = True
 # Flask routes
 @app.route("/")
 def root():
-    return "AstroPi Rewrite"
+    return "AstroPi Rewrite v0.0.0"
 
 # Driver
 if __name__ == "__main__":
-    logger.log(logging.INFO, "[main] Running flask server on host 0.0.0.0 port 8080")
+    logger.log(logging.INFO, "[main] Running flask server on port 8080")
     app.run(host="0.0.0.0", port=8080, debug=False)
 
