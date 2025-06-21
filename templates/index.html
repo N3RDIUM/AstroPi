@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>AstroPi</title>
+
+        <link rel="stylesheet" href="../static/css/index.css" />
+        <script src="../static/js/index.js"></script>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="left">
+                <div class="preview">
+                    <img class="img-preview" src="" />
+                    <div class="shutters">
+                        <button 
+                            title="Toggle Preview"
+                            class="preview-shutter"
+                        />
+                        <button
+                            title="Toggle Capture"
+                            class="capture-shutter"
+                        />
+                    </div>
+                </div>
+                <div class="panel">
+                    <div
+                        title="Histogram"
+                        class="histogram"
+                    ></div>
+                    <div
+                        title="Files"
+                        class="files"
+                    ></div>
+                </div>
+            </div>
+            <div class="right">
+                <h1 class="ctrls-head">Camera controls</h1>
+
+                <div class="control">
+                    Resolution:
+                    <input class="res-input"/>px
+                    x
+                    <input class="res-input"/>px
+                </div>
+                <div class="control">
+                    Exposure:
+                    <input class="exposure-input"/>sec
+                </div>
+                <div class="control">
+                    Gain:
+                    <input class="gain-input"/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
