@@ -1,5 +1,4 @@
 import sys
-import zmq
 import logging
 from flask import Flask
 from picamera2 import Picamera2
@@ -24,12 +23,6 @@ logger.addHandler(stdout_handler)
 camera = Picamera2()
 camera.start()
 
-# Init 0mq
-logger.log(logging.DEBUG, "[main] Initializing 0mq")
-context = zmq.Context()
-socket = context.socket(zmq.REP)
-_ = socket.bind("tcp://*:8081")
-
 # Init flask
 logger.log(logging.DEBUG, "[main] Initializing Flask")
 app = Flask(__name__)
@@ -39,7 +32,7 @@ flasklog.disabled = True
 # Flask routes
 @app.route("/")
 def root():
-    return "AstroPi Rewrite v0.0.0"
+    return "AstroPi v0.0.1"
 
 # Driver
 if __name__ == "__main__":
