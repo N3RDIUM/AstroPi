@@ -38,7 +38,7 @@ flasklog.disabled = True
 def root():
     return "AstroPi v0.0.1"
 
-@app.route("/settings/<str:name>", methods=["POST"])
+@app.route("/settings/<name>", methods=["POST"])
 def setting(name):
     print(name)
     return 200
