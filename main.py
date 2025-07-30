@@ -1,7 +1,9 @@
 import sys
+import time
 import logging
 from flask import Flask
 from picamera2 import Picamera2
+from libcamera import controls
 
 # Init logging
 logger = logging.getLogger()
@@ -27,8 +29,20 @@ camera.configure(config)
 
 camera.start()
 
+logger.info("Waiting for the camera to warm up...")
+time.sleep(2)
+
 # Some camera configuration
-print(camera.controls)
+ctrl = {
+    "AeEnable": False,
+    "NoiseReductionMode": controls.draft.NoiseReductionModeEnum.Off,
+    "AwbEnable": False,
+    "ColourGains": (2.0, 2.0),
+    "AnalogueGain": 20,
+    "ExposureTime": int(60 * 1e6),
+}
+camera.set_controls(ctrl)
+print(ctrl)
 
 # Init flask
 logger.log(logging.DEBUG, "[main] Initializing Flask")
@@ -41,7 +55,7 @@ flasklog.disabled = True
 def root():
     return "AstroPi v0.0.1"
 
-@app.route("/settings/<name>", methods=["POST"])
+@app.route("/controls/", methods=["POST"])
 def setting(name):
     print(name)
     return "hi"
