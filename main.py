@@ -1,9 +1,10 @@
 import sys
 import time
 import logging
-from flask import Flask
+from flask import Flask, request
 from picamera2 import Picamera2
 from libcamera import controls
+from threading import Lock
 
 # Init logging
 logger = logging.getLogger()
@@ -23,6 +24,7 @@ logger.addHandler(stdout_handler)
 
 # Init camera
 camera = Picamera2()
+lock = Lock()
 
 config = camera.create_still_configuration()
 camera.configure(config)
@@ -56,9 +58,14 @@ def root():
     return "AstroPi v0.0.1"
 
 @app.route("/controls/", methods=["POST"])
-def setting(name):
-    print(name)
-    return "hi"
+def setting():
+    ctrl.update(dict(request.form))
+
+    lock.acquire()
+    camera.set_controls(ctrl)
+    lock.release()
+
+    return ctrl
 
 # Driver
 if __name__ == "__main__":
