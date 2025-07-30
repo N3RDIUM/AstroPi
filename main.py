@@ -65,7 +65,9 @@ def setting():
     camera.set_controls(ctrl)
     lock.release()
 
-    return ctrl
+    print(ctrl)
+
+    return "success"
 
 # Driver
 if __name__ == "__main__":
