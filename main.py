@@ -22,7 +22,7 @@ logger.addHandler(stdout_handler)
 # Init camera
 camera = Picamera2()
 
-config = camera.create_capture_configuration()
+config = camera.create_still_configuration()
 camera.configure(config)
 
 camera.start()
