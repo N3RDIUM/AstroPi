@@ -29,6 +29,7 @@ camera.start()
 
 # Some camera configuration
 with camera.controls as ctrl:
+    print(ctrl)
     print(dir(ctrl))
 
 # Init flask
