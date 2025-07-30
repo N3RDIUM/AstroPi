@@ -41,7 +41,7 @@ def root():
 @app.route("/settings/<name>", methods=["POST"])
 def setting(name):
     print(name)
-    return 200
+    return "hi"
 
 # Driver
 if __name__ == "__main__":
