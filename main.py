@@ -27,6 +27,11 @@ camera.configure(config)
 
 camera.start()
 
+# Some camera configuration
+with camera.controls as ctrl:
+    print(ctrl)
+    print(dir(ctrl))
+
 # Init flask
 logger.log(logging.DEBUG, "[main] Initializing Flask")
 app = Flask(__name__)
