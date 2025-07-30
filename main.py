@@ -21,6 +21,10 @@ logger.addHandler(stdout_handler)
 
 # Init camera
 camera = Picamera2()
+
+config = camera.create_capture_configuration()
+camera.configure(config)
+
 camera.start()
 
 # Init flask
@@ -33,6 +37,11 @@ flasklog.disabled = True
 @app.route("/")
 def root():
     return "AstroPi v0.0.1"
+
+@app.route("/settings/<str:name>", methods=["POST"])
+def setting(name):
+    print(name)
+    return 200
 
 # Driver
 if __name__ == "__main__":
