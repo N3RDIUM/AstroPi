@@ -18,7 +18,7 @@ class CameraControls:
 @dataclass
 class IntervalometerControls:
     Count: int
-    Cooldown: int  # seconds
+    Cooldown: float  # seconds
 
 @dataclass
 class Command: ...

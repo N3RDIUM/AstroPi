@@ -81,7 +81,7 @@ def intervalometer_controls():
 
     if "cooldown" in controls:
         try:
-            configuration.Cooldown = int(controls["cooldown"])
+            configuration.Cooldown = float(controls["cooldown"])
         except Exception as e:
             return jsonify({
                 "response": f"failed to set cooldown: {e}"
