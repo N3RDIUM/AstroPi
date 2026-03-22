@@ -17,7 +17,7 @@ from .camera import (
 DEFAULT_EXPOSURE_TIME: int = 100000
 DEFAULT_ANALOGUE_GAIN: float = 8.0
 DEFAULT_COUNT: int = 1
-DEFAULT_COOLDOWN: int = 100000
+DEFAULT_COOLDOWN: int = 1
 
 app = Flask(__name__)
 cam = Camera()

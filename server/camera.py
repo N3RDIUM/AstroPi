@@ -18,7 +18,7 @@ class CameraControls:
 @dataclass
 class IntervalometerControls:
     Count: int
-    Cooldown: int  # microseconds
+    Cooldown: int  # seconds
 
 @dataclass
 class Command: ...
@@ -82,8 +82,6 @@ class Camera:
         )
 
         while self.alive:
-            print("tick")
-
             if intervalometer.state == DeviceState.PREVIEW:
                 ...
             elif intervalometer.state == DeviceState.SHOOTING:
