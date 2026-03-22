@@ -80,6 +80,7 @@ class Camera:
             ),
             state = DeviceState.STOPPED
         )
+        count: int = 0
 
         while self.alive:
             if len(self.command_queue) != 0:
@@ -143,6 +144,7 @@ class Camera:
 
                     intervalometer.state = DeviceState.SHOOTING
                     device.start()
+                    count = 0
 
                 elif isinstance(cmd, StopCapture):
                     if intervalometer.state == DeviceState.STOPPED:
@@ -161,10 +163,10 @@ class Camera:
                 ...
 
             elif intervalometer.state == DeviceState.SHOOTING:
-                if intervalometer.controls.Count == 0:
+                if count == intervalometer.controls.Count:
                     device.stop()
                     intervalometer.state = DeviceState.STOPPED
-                    print("[INFO] sequence captured successfully")
+                    print(f"[INFO] {count} images captured successfully")
                     continue
 
                 try:
@@ -180,8 +182,7 @@ class Camera:
                 time.sleep(intervalometer.controls.Cooldown)
                 print("[INFO] wait ended")
 
-                intervalometer.controls.Count -= 1
-
+                count += 1
 
     def submit_command(self, command: Command) -> None:
         self.command_queue.append(command)
