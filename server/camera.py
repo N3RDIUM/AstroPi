@@ -81,6 +81,7 @@ class Camera:
             state = DeviceState.STOPPED
         )
         count: int = 0
+        session_id = uuid4()
 
         while self.alive:
             if len(self.command_queue) != 0:
@@ -124,6 +125,8 @@ class Camera:
 
                     intervalometer.state = DeviceState.PREVIEW
                     device.start()
+                    session_id = uuid4()
+                    count = 0
 
                 elif isinstance(cmd, StopPreview):
                     if intervalometer.state == DeviceState.STOPPED:
@@ -144,6 +147,7 @@ class Camera:
 
                     intervalometer.state = DeviceState.SHOOTING
                     device.start()
+                    session_id = uuid4()
                     count = 0
 
                 elif isinstance(cmd, StopCapture):
@@ -170,7 +174,8 @@ class Camera:
                     continue
 
                 try:
-                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
+                    save_dir = os.path.join(CAPTURE_DIR, str(session_id))
+                    filename = os.path.join(save_dir, f"{count}.png")
                     _ = device.capture_file(filename)
                 except Exception as e:
                     print(f"[ERR] failed to capture: {e}")
