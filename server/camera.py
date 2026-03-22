@@ -93,6 +93,11 @@ class Camera:
                     print("[WARN] device received empty command")
                     continue
 
+                # TODO only capture/configure camera on thread
+                # other stuff handled externally on the main thread
+                # also, provide hooks/listeners for things like session id
+                # and captured images (eg. latest-capture)
+
                 elif isinstance(cmd, UpdateControls):
                     if intervalometer.state != DeviceState.STOPPED:
                         print("[ERR] device not stopped, cannot update controls")
@@ -119,6 +124,7 @@ class Camera:
                 elif isinstance(cmd, StartPreview):
                     if intervalometer.state == DeviceState.PREVIEW:
                         print("[INFO] preview already running!")
+                        continue
                     elif intervalometer.state == DeviceState.SHOOTING:
                         print("[ERR] cannot start preview mode while shooting")
                         continue
@@ -131,6 +137,7 @@ class Camera:
                 elif isinstance(cmd, StopPreview):
                     if intervalometer.state == DeviceState.STOPPED:
                         print("[INFO] preview already stopped!")
+                        continue
                     elif intervalometer.state == DeviceState.SHOOTING:
                         print("[ERR] cannot stop preview mode while shooting")
                         continue
@@ -141,6 +148,7 @@ class Camera:
                 elif isinstance(cmd, StartCapture):
                     if intervalometer.state == DeviceState.SHOOTING:
                         print("[INFO] already shooting!")
+                        continue
                     elif intervalometer.state == DeviceState.PREVIEW:
                         print("[ERR] cannot start shooting in preview mode")
                         continue
@@ -153,6 +161,7 @@ class Camera:
                 elif isinstance(cmd, StopCapture):
                     if intervalometer.state == DeviceState.STOPPED:
                         print("[INFO] already stopped!")
+                        continue
                     elif intervalometer.state == DeviceState.PREVIEW:
                         print("[ERR] cannot stop shooting in preview mode")
                         continue
