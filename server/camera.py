@@ -175,6 +175,8 @@ class Camera:
 
                 try:
                     save_dir = os.path.join(CAPTURE_DIR, str(session_id))
+                    if not os.path.isdir(save_dir):
+                        os.makedirs(save_dir)
                     filename = os.path.join(save_dir, f"{count}.png")
                     _ = device.capture_file(filename)
                 except Exception as e:
