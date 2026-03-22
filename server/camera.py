@@ -75,8 +75,8 @@ class Camera:
         device = picamera2.Picamera2()
         intervalometer = Intervalometer(
             controls = IntervalometerControls(
-                Count = 0,
-                Cooldown = 0
+                Count = 1,
+                Cooldown = 1
             ),
             state = DeviceState.STOPPED
         )
