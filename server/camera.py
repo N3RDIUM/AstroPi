@@ -10,17 +10,15 @@ CAPTURE_DIR = "./capture"
 if not os.path.isdir(CAPTURE_DIR):
     os.mkdir(CAPTURE_DIR)
 
-type Microseconds = int
-
 @dataclass
 class CameraControls:
     AnalogueGain: float
-    ExposureTime: Microseconds
+    ExposureTime: int  # microseconds
 
 @dataclass
 class IntervalometerControls:
     Count: int
-    Cooldown: Microseconds
+    Cooldown: int  # microseconds
 
 @dataclass
 class Command: ...
