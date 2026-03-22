@@ -82,32 +82,9 @@ class Camera:
         )
 
         while self.alive:
-            if intervalometer.state == DeviceState.PREVIEW:
-                ...
-
-            elif intervalometer.state == DeviceState.SHOOTING:
-                if intervalometer.controls.Count == 0:
-                    device.stop()
-                    intervalometer.state = DeviceState.STOPPED
-                    print("[INFO] sequence captured successfully")
-
-                try:
-                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
-                    _ = device.capture_file(filename)
-                except Exception as e:
-                    print(f"[ERR] failed to capture: {e}")
-                    continue
-
-                # TODO call/provide hooks
-                
-                print("[INFO] waiting intervalometer")
-                time.sleep(intervalometer.controls.Cooldown)
-                print("[INFO] wait ended")
-
-                intervalometer.controls.Count -= 1
-
             if len(self.command_queue) != 0:
                 cmd = self.command_queue.pop(0)
+                print(cmd)
                 cmd_type = type(cmd)
 
                 if cmd_type == Command:
@@ -179,6 +156,31 @@ class Camera:
 
                 else:
                     print(f"[ERR] unknown command type: {cmd_type}")
+
+            if intervalometer.state == DeviceState.PREVIEW:
+                ...
+
+            elif intervalometer.state == DeviceState.SHOOTING:
+                if intervalometer.controls.Count == 0:
+                    device.stop()
+                    intervalometer.state = DeviceState.STOPPED
+                    print("[INFO] sequence captured successfully")
+
+                try:
+                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
+                    _ = device.capture_file(filename)
+                except Exception as e:
+                    print(f"[ERR] failed to capture: {e}")
+                    continue
+
+                # TODO call/provide hooks
+                
+                print("[INFO] waiting intervalometer")
+                time.sleep(intervalometer.controls.Cooldown)
+                print("[INFO] wait ended")
+
+                intervalometer.controls.Count -= 1
+
 
     def submit_command(self, command: Command) -> None:
         self.command_queue.append(command)
