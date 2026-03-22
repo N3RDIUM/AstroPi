@@ -92,14 +92,18 @@ class Camera:
                     device.stop()
                 except Exception as e:
                     print(f"[ERR] failed to capture: {e}")
+                    continue
 
                 # TODO call/provide hooks
                 
+                print("[INFO] waiting intervalometer")
                 time.sleep(intervalometer.controls.Cooldown)
-                intervalometer.controls.Count -= 1
+                print("[INFO] wait ended")
 
+                intervalometer.controls.Count -= 1
                 if intervalometer.controls.Count == 0:
                     intervalometer.state = DeviceState.STOPPED
+                    print("[INFO] sequence captured successfully")
 
             if len(self.command_queue) != 0:
                 cmd = self.command_queue.pop(0)
