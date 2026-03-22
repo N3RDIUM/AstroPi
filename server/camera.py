@@ -83,7 +83,7 @@ class Camera:
 
         while self.alive:
             if intervalometer.state == DeviceState.PREVIEW:
-                continue
+                ...
             elif intervalometer.state == DeviceState.SHOOTING:
                 try:
                     device.start()
@@ -97,7 +97,9 @@ class Camera:
                 
                 time.sleep(intervalometer.controls.Cooldown)
                 intervalometer.controls.Count -= 1
-                continue
+
+                if intervalometer.controls.Count == 0:
+                    intervalometer.state = DeviceState.STOPPED
 
             if len(self.command_queue) != 0:
                 cmd = self.command_queue.pop(0)
