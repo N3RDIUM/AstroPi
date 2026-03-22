@@ -85,6 +85,10 @@ class Camera:
             if intervalometer.state == DeviceState.PREVIEW:
                 ...
             elif intervalometer.state == DeviceState.SHOOTING:
+                if intervalometer.controls.Count == 0:
+                    intervalometer.state = DeviceState.STOPPED
+                    print("[INFO] sequence captured successfully")
+
                 try:
                     device.start()
                     filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
@@ -101,9 +105,6 @@ class Camera:
                 print("[INFO] wait ended")
 
                 intervalometer.controls.Count -= 1
-                if intervalometer.controls.Count == 0:
-                    intervalometer.state = DeviceState.STOPPED
-                    print("[INFO] sequence captured successfully")
 
             if len(self.command_queue) != 0:
                 cmd = self.command_queue.pop(0)
