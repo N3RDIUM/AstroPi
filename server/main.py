@@ -10,12 +10,11 @@ from .camera import (
     StartPreview,
     StartCapture,
     StopPreview,
-    StopCapture,
-    Microseconds
+    StopCapture
 )
 
 
-DEFAULT_EXPOSURE_TIME: Microseconds = 100000
+DEFAULT_EXPOSURE_TIME: int = 100000
 DEFAULT_ANALOGUE_GAIN: float = 8.0
 DEFAULT_COUNT: int = 1
 DEFAULT_COOLDOWN: int = 100000
