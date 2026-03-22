@@ -165,6 +165,7 @@ class Camera:
                     device.stop()
                     intervalometer.state = DeviceState.STOPPED
                     print("[INFO] sequence captured successfully")
+                    continue
 
                 try:
                     filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
