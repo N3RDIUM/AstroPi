@@ -31,7 +31,7 @@ def home():
 
 @app.route('/camera_controls/', methods=["POST"])
 def cam_controls():
-    controls = request.form
+    controls = request.get_json()
 
     configuration = CameraControls(
         ExposureTime = DEFAULT_EXPOSURE_TIME,
@@ -64,7 +64,7 @@ def cam_controls():
 
 @app.route('/intervalometer_controls/', methods=["POST"])
 def intervalometer_controls():
-    controls = request.form
+    controls = request.get_json()
 
     configuration = IntervalometerControls(
         Count = DEFAULT_COUNT,
