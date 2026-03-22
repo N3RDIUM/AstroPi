@@ -87,7 +87,7 @@ class Camera:
             elif intervalometer.state == DeviceState.SHOOTING:
                 try:
                     device.start()
-                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.dng")
+                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
                     _ = device.capture_file(filename)
                     device.stop()
                 except Exception as e:
