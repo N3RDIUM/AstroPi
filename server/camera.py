@@ -84,16 +84,16 @@ class Camera:
         while self.alive:
             if intervalometer.state == DeviceState.PREVIEW:
                 ...
+
             elif intervalometer.state == DeviceState.SHOOTING:
                 if intervalometer.controls.Count == 0:
+                    device.stop()
                     intervalometer.state = DeviceState.STOPPED
                     print("[INFO] sequence captured successfully")
 
                 try:
-                    device.start()
                     filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.png")
                     _ = device.capture_file(filename)
-                    device.stop()
                 except Exception as e:
                     print(f"[ERR] failed to capture: {e}")
                     continue
@@ -145,6 +145,7 @@ class Camera:
                         continue
 
                     intervalometer.state = DeviceState.PREVIEW
+                    device.start()
 
                 elif isinstance(cmd, StopPreview):
                     if intervalometer.state == DeviceState.STOPPED:
@@ -154,6 +155,7 @@ class Camera:
                         continue
 
                     intervalometer.state = DeviceState.STOPPED
+                    device.stop()
 
                 elif isinstance(cmd, StartCapture):
                     if intervalometer.state == DeviceState.SHOOTING:
@@ -163,6 +165,7 @@ class Camera:
                         continue
 
                     intervalometer.state = DeviceState.SHOOTING
+                    device.start()
 
                 elif isinstance(cmd, StopCapture):
                     if intervalometer.state == DeviceState.STOPPED:
@@ -172,6 +175,7 @@ class Camera:
                         continue
 
                     intervalometer.state = DeviceState.STOPPED
+                    device.stop()
 
                 else:
                     print(f"[ERR] unknown command type: {cmd_type}")
