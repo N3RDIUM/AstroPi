@@ -85,10 +85,13 @@ class Camera:
             if intervalometer.state == DeviceState.PREVIEW:
                 continue
             elif intervalometer.state == DeviceState.SHOOTING:
-                device.start()
-                filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.dng")
-                _ = device.capture_file(filename)
-                device.stop()
+                try:
+                    device.start()
+                    filename = os.path.join(CAPTURE_DIR, f"{uuid4()}.dng")
+                    _ = device.capture_file(filename)
+                    device.stop()
+                except Exception as e:
+                    print(f"[ERR] failed to capture: {e}")
 
                 # TODO call/provide hooks
                 
